@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dspg26l3t5vyj"
+path="res://.godot/imported/fanfare_1 (1).wav-e305fd6046ed775ea9aca7d394eeed40.sample"
+
+[deps]
+
+source_file="res://Assets/Audio/BGM/fanfare_1 (1).wav"
+dest_files=["res://.godot/imported/fanfare_1 (1).wav-e305fd6046ed775ea9aca7d394eeed40.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

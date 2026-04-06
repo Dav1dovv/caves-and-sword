@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://b74rp6vq14uh2"]
+
+[ext_resource type="PackedScene" uid="uid://bny4sqh4i8i5v" path="res://misc/HarvestItems/Harvestable.tscn" id="1_x3clc"]
+[ext_resource type="Texture2D" uid="uid://bb5jlgmcqg46" path="res://Assets/Textures/StonePiece.png" id="2_i28hn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x3clc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i28hn"]
+size = Vector2(20.54052, 27)
+
+[node name="HarvestItem" unique_id=1934415035 instance=ExtResource("1_x3clc")]
+y_sort_enabled = true
+durability = 20.0
+harvest_tool_lvl = 0
+
+[node name="CollisionShape2D" parent="StaticBody2D" parent_id_path=PackedInt32Array(1226065190) index="0" unique_id=605264910]
+shape = SubResource("RectangleShape2D_x3clc")
+
+[node name="optimizer" parent="." index="1" unique_id=2100972979]
+rect = Rect2(-10, -27, 20, 29)
+
+[node name="CollisionShape2D" parent="." index="4" unique_id=1716306559]
+position = Vector2(0.27026016, -14.5)
+shape = SubResource("RectangleShape2D_i28hn")
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="6" unique_id=1027623057]
+position = Vector2(0, -9)
+texture = ExtResource("2_i28hn")
+offset = Vector2(0, -7)

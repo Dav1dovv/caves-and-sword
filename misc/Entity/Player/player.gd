@@ -1,0 +1,394 @@
+extends Entity
+class_name Player
+
+const ANIM_SPEED_SCALE      := 1.5
+const HAND_ANIM_SPEED_SCALE := 1.0
+
+# ─────────────────────────────────────────
+#  Скорость
+# ─────────────────────────────────────────
+var standart_speed: float = 10.0
+var slow_speed:     float = 7.0
+var dash_speed:     float = 20.0
+
+## Насколько быстро игрок набирает скорость.
+## 0.01 = очень плавно │ 0.20 = средний │ 0.50 = резкий │ 1.0 = мгновенно
+@export_range(0.01, 1.0, 0.01) var acceleration: float = 0.20
+
+## Насколько быстро игрок тормозит при отпускании кнопки.
+## 0.01 = скользит │ 0.45 = быстро │ 1.0 = стоп мгновенно
+@export_range(0.01, 1.0, 0.01) var friction: float = 0.45
+
+var _current_velocity: Vector2 = Vector2.ZERO
+
+# ─────────────────────────────────────────
+#  LUNGE (рывок-атака)
+# ─────────────────────────────────────────
+# Состояние рывка
+var _is_lunging:        bool    = false
+var _lunge_timer:       float   = 0.0
+var _lunge_direction:   Vector2 = Vector2.ZERO
+var _lunge_hit_bodies:  Array   = []   # кого уже задели за этот рывок
+
+# ─────────────────────────────────────────
+#  Нода-ссылки
+# ─────────────────────────────────────────
+@onready var progress_bar:      ProgressBar      = $HUD/ProgressBar
+@onready var hud:               CanvasLayer      = $HUD
+@onready var health_bar:        HealthBar        = $HUD/HealthBar
+@onready var skin                                = $Skin
+@onready var hit_box:           player_HitBox    = %player_HitBox
+@onready var defense_label:     Label            = $HUD/HealthBar/Deffense/Label
+@onready var death_menu:        Control          = $HUD/DeathMenu
+@onready var effect_display_ui: EffectDisplayUI  = $HUD/EffectDisplayUI
+@onready var _hand:             Node2D           = $Skin/Body/Hand
+@onready var _head_anim:        AnimationPlayer  = $Skin/Body/Head/AnimationPlayer
+@onready var _head_timer:       Timer            = $Skin/Body/Head/Timer
+@onready var _hurt_col:         CollisionShape2D = $HurtBox/CollisionShape2D
+
+## Компонент пассивных эффектов оружия. Добавь ноду WeaponPassiveHandler в Player.
+@onready var weapon_passive: WeaponPassiveHandler = $WeaponPassiveHandler
+
+@export var BodyAnimator:  AnimationPlayer
+@export var HandAanimator: AnimationPlayer
+
+# ─────────────────────────────────────────
+var dir:       Vector2 = Vector2.ZERO
+var mouse_pos: Vector2 = Vector2.ZERO
+var is_attack: bool    = false
+var save_and_load      = SaveSystem.new()
+
+
+# ═════════════════════════════════════════
+func _ready() -> void:
+	super._ready()
+	Global.hotbar    = get_tree().get_first_node_in_group("Hotbar")    as Hotbar
+	Global.inventory = get_tree().get_first_node_in_group("Inventory") as Inventory
+	get_tree().get_first_node_in_group("DebugObject").update()
+
+	defense_label.text = str(clamp(Entity_stats.base_defense_modifier * 10, 0, 1))
+
+	save_and_load.load_player(self)
+	save_and_load.load_save(Global.player_name)
+
+	if Entity_stats.current_health <= 0:
+		Entity_stats.current_health = Entity_stats.max_health / 3.0
+		_on_health_changed(Entity_stats.current_health)
+
+	health_bar.set_hp(_hp_to_display(Entity_stats.current_health))
+	effect_display_ui.set_entity(self)
+	_register_commands()
+
+func _register_commands() -> void:
+	var c := Global.developer_console
+	c.register_command("set_speed",     _cmd_set_speed,                     "Set player speed: set_speed [value]")
+	c.register_command("tp",            _cmd_teleport,                      "Teleport: tp [x] [y]")
+	c.register_command("multiply",      _cmd_set_standart_multipilier_speed,"Default movement multiplier: multiply [value]")
+	c.register_command("slow_multiply", _cmd_set_slow_multipilier_speed,    "Slow multiplier: slow_multiply [value]")
+	c.register_command("dash_multiply", _cmd_set_dash_multipilier_speed,    "Dash multiplier: dash_multiply [value]")
+	c.register_command("scale",         _cmd_scale_change,                  "Player scale: scale [x] [y]")
+	c.register_command("unkillable",    _cmd_unkillable,                    "Toggle damage immunity")
+
+
+func _hp_to_display(hp: float) -> float:
+	if Entity_stats.max_health <= 0:
+		return 0.0
+	return clampf(hp / Entity_stats.max_health * 100.0, 0.0, 100.0)
+
+
+# ═════════════════════════════════════════
+func _physics_process(delta: float) -> void:
+	mouse_pos = get_global_mouse_position()
+
+	if is_alive:
+		_update_lunge(delta)   # рывок имеет приоритет над обычным движением
+		if not _is_lunging:
+			_movement(delta)
+		_animate()
+
+		if not is_attack:
+			hit_box.look_at(mouse_pos)
+
+		skin.scale.x = scale.x if mouse_pos.x > position.x else -scale.x
+
+	move_and_slide()
+
+
+# ═══════════════════════════════════════════════════════════════════
+#  LUNGE — рывок-атака
+# ═══════════════════════════════════════════════════════════════════
+
+## Запускает рывок. Вызывается из _input при нажатии LMB с lunge-оружием.
+func _start_lunge(equip: equip_data) -> void:
+	_is_lunging       = true
+	_lunge_timer      = equip.lunge_duration
+	_lunge_direction  = (mouse_pos - global_position).normalized()
+	_lunge_hit_bodies = []
+
+	# i-frames: отключаем HurtBox на время рывка
+	if equip.lunge_invincible:
+		_hurt_col.disabled = true
+
+	# Спавним шлейф, если назначен
+	if equip.lunge_trail_scene:
+		var trail := equip.lunge_trail_scene.instantiate()
+		get_parent().add_child(trail)
+		if trail.has_method("start"):
+			trail.start(self)
+
+	# Принудительно направляем hitbox в сторону рывка
+	hit_box.look_at(global_position + _lunge_direction)
+
+
+func _update_lunge(delta: float) -> void:
+	if not _is_lunging:
+		return
+
+	var equip := hit_box.equip as equip_data
+	if not equip:
+		_end_lunge()
+		return
+
+	_lunge_timer -= delta
+
+	# Движение рывка
+	var lunge_vel := _lunge_direction * equip.lunge_speed
+	velocity       = lunge_vel
+
+	# Наносим урон всем врагам на пути (через WeaponPassiveHandler)
+	var lunge_dmg := equip.Damage * equip.lunge_damage_multiplier
+	if weapon_passive:
+		weapon_passive.apply_lunge_damage(_lunge_hit_bodies, lunge_dmg)
+
+	if _lunge_timer <= 0.0:
+		_end_lunge()
+
+
+func _end_lunge() -> void:
+	_is_lunging      = false
+	_lunge_timer     = 0.0
+	_lunge_hit_bodies = []
+	# Сохраняем импульс рывка в _current_velocity для плавного продолжения
+	_current_velocity = velocity
+
+	# Возвращаем уязвимость
+	var equip := hit_box.equip as equip_data
+	if equip and equip.lunge_invincible:
+		_hurt_col.disabled = false
+
+
+# ═════════════════════════════════════════
+func _movement(delta: float) -> void:
+	# При открытом меню — плавно тормозим и выходим
+	if Global.is_opened_menu:
+		_current_velocity = _current_velocity.lerp(Vector2.ZERO, friction)
+		velocity = _current_velocity
+		return
+
+	dir = Input.get_vector("MoveLeft", "MoveRight", "MoveUp", "MoveDown").normalized()
+
+	var target_velocity := dir * Entity_stats.move_speed * standart_speed
+
+	if dir != Vector2.ZERO:
+		# Разгон: lerp к целевой скорости
+		_current_velocity = _current_velocity.lerp(target_velocity, acceleration)
+	else:
+		# Торможение: lerp к нулю
+		_current_velocity = _current_velocity.lerp(Vector2.ZERO, friction)
+
+	velocity = _current_velocity
+
+
+# ─── Анимация ─────────────────────────────────────────────────────────────────
+func _animate() -> void:
+	var looking_right   := mouse_pos.x > position.x
+	var moving_backward := (looking_right and velocity.x < 0) or (not looking_right and velocity.x > 0)
+
+	if velocity.x != 0 or velocity.y != 0:
+		var spd := -1.0 if moving_backward else 1.0
+		BodyAnimator.play("Walk", -1.0, spd)
+		if not is_attack:
+			HandAanimator.play("Walk", -1.0, spd)
+	else:
+		BodyAnimator.play("Idle")
+		if not is_attack:
+			HandAanimator.play("Idle")
+
+
+# ─── Ввод ─────────────────────────────────────────────────────────────────────
+func _input(event: InputEvent) -> void:
+	if not event.is_action_pressed("LMB") or is_attack or Global.is_opened_menu:
+		return
+
+	if hit_box.is_weapon and hit_box.equip is equip_data:
+		var equip := hit_box.equip as equip_data
+		hit_box.look_at(mouse_pos)
+		is_attack = true
+		HandAanimator.speed_scale = equip.Atk_speed
+		HandAanimator.play(equip.play_anim)
+
+		# ── Рывок-атака ───────────────────────────────────────────────────────
+		if equip.lunge_enabled and not _is_lunging:
+			_start_lunge(equip)
+
+		if equip.play_anim == "Attack":
+			call_deferred("_start_attack_cooldown", equip.one_shot_attack)
+		elif equip.play_anim == "Shoot":
+			_hand.look_at(mouse_pos)
+			call_deferred("_start_shot_cooldown", equip.one_shot_attack)
+
+	elif hit_box.equip is FoodData:
+		is_attack = true
+		HandAanimator.play(hit_box.equip.play_anim)
+		call_deferred("_start_eat_cooldown")
+
+	else:
+		is_attack = true
+		HandAanimator.play(hit_box.equip.play_anim)
+		call_deferred("_start_attack_cooldown", true)
+
+
+func _start_attack_cooldown(one_shot: bool) -> void:
+	await HandAanimator.animation_finished
+	is_attack = false
+	hit_box.look_at(mouse_pos)
+
+	if not one_shot and Input.is_action_pressed("LMB") \
+			and hit_box.is_weapon and hit_box.equip is equip_data:
+		var equip := hit_box.equip as equip_data
+		is_attack = true
+		HandAanimator.speed_scale = equip.Atk_speed
+		HandAanimator.play(hit_box.play_anim)
+		hit_box.look_at(mouse_pos)
+		# Повторный рывок при зажатой кнопке — только если прошлый уже закончился
+		if equip.lunge_enabled and not _is_lunging:
+			_start_lunge(equip)
+		call_deferred("_start_attack_cooldown", false)
+
+
+func _start_shot_cooldown(one_shot: bool) -> void:
+	await HandAanimator.animation_finished
+	is_attack = false
+	_hand.look_at(mouse_pos)
+	hit_box.look_at(mouse_pos)
+
+	if not one_shot and Input.is_action_pressed("LMB") \
+			and hit_box.is_weapon and hit_box.equip is equip_data:
+		var equip := hit_box.equip as equip_data
+		is_attack = true
+		HandAanimator.speed_scale = equip.Atk_speed
+		HandAanimator.play(hit_box.play_anim)
+		hit_box.look_at(mouse_pos)
+		call_deferred("_start_attack_cooldown", false)
+	else:
+		_hand.rotation = 0
+
+
+func _start_eat_cooldown() -> void:
+	await HandAanimator.animation_finished
+	is_attack = false
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Вызывается анимационным событием (Animation Call Method Track) в момент удара.
+# Применяет on-hit эффект к ближайшей задетой цели.
+# ─────────────────────────────────────────────────────────────────────────────
+func _on_weapon_hit(target: Node) -> void:
+	if weapon_passive:
+		weapon_passive.try_apply_on_hit_effect(target)
+
+
+func _shoot_projectile() -> void:
+	if not hit_box.equip.projectile:
+		return
+	var marker    := $player_HitBox/Marker2D
+	var bullet_dir = (get_global_mouse_position() - marker.global_position).normalized()
+	var bullet    = hit_box.equip.projectile.instantiate()
+	bullet.setup(marker.global_position, bullet_dir, hit_box.equip.Damage)
+	get_parent().add_child(bullet)
+
+
+func shoot() -> void:
+	var equip := hit_box.equip as equip_data
+	if not equip or not equip.projectile:
+		return
+	var marker   := $player_HitBox/Marker2D
+	var base_dir = (get_global_mouse_position() - marker.global_position).normalized()
+	for i in equip.num_projectiles:
+		var bullet := equip.projectile.instantiate() as Projectile
+		bullet.shot_target = "Ennemy"
+		bullet.setup(
+			marker.global_position,
+			base_dir.rotated((randf() - 0.5) * deg_to_rad(equip.spread_degrees)),
+			equip.Damage,
+			equip.projectile_speed,
+		)
+		get_parent().add_child(bullet)
+
+
+func save_game() -> void:
+	save_and_load.save_player(self)
+
+
+# ─── Сигналы ──────────────────────────────────────────────────────────────────
+func _on_timer_timeout() -> void:
+	_head_anim.play("Idle" + str(1 + randi() % 4))
+	_head_timer.wait_time = randf_range(3.0, 12.0)
+	_head_timer.start()
+
+func _on_health_changed(new_health: float) -> void:
+	health_bar.set_hp(_hp_to_display(new_health))
+
+func _on_died() -> void:
+	HandAanimator.stop()
+	BodyAnimator.play("Death")
+	death_menu.death()
+
+func respawn() -> void:
+	Entity_stats.current_health = Entity_stats.max_health / 3.0
+	_on_health_changed(Entity_stats.current_health)
+	_current_velocity = Vector2.ZERO
+	_is_lunging       = false
+	is_alive          = true
+
+
+# ═══════════════════════════════════════ КОМАНДЫ ══════════════════════════════
+func _cmd_set_speed(args: Array) -> String:
+	if args.size() == 1 and args[0].is_valid_float():
+		Entity_stats.move_speed = args[0].to_float()
+		return "Speed set to " + str(Entity_stats.move_speed)
+	return "Usage: set_speed [value]"
+
+func _cmd_set_standart_multipilier_speed(args: Array) -> String:
+	if args.size() == 1 and args[0].is_valid_float():
+		standart_speed = args[0].to_float()
+		return "Multiplier set to " + str(standart_speed)
+	return "Usage: multiply [value]"
+
+func _cmd_set_slow_multipilier_speed(args: Array) -> String:
+	if args.size() == 1 and args[0].is_valid_float():
+		slow_speed = args[0].to_float()
+		return "Slow multiplier set to " + str(slow_speed)
+	return "Usage: slow_multiply [value]"
+
+func _cmd_set_dash_multipilier_speed(args: Array) -> String:
+	if args.size() == 1 and args[0].is_valid_float():
+		dash_speed = args[0].to_float()
+		return "Dash multiplier set to " + str(dash_speed)
+	return "Usage: dash_multiply [value]"
+
+func _cmd_teleport(args: Array) -> String:
+	if args.size() == 2 and args[0].is_valid_float() and args[1].is_valid_float():
+		position = Vector2(args[0].to_float(), args[1].to_float())
+		return "Teleported to " + str(position)
+	return "Usage: tp [x] [y]"
+
+func _cmd_scale_change(args: Array) -> String:
+	if args.size() == 2 and args[0].is_valid_float() and args[1].is_valid_float():
+		scale = Vector2(args[0].to_float(), args[1].to_float())
+		return "Scale set to " + str(scale)
+	return "Usage: scale [x] [y]"
+
+func _cmd_unkillable(args: Array) -> String:
+	_hurt_col.disabled = not _hurt_col.disabled
+	return "Damage: " + ("OFF (unkillable)" if _hurt_col.disabled else "ON")

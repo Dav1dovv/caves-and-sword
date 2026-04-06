@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://dc6224o6es5o2"]
+
+[ext_resource type="Texture2D" uid="uid://0e258k1bemao" path="res://Assets/Textures/SpriteSheets/Camp.png" id="1_dumfu"]
+[ext_resource type="PackedScene" uid="uid://dwuqu7ba4rl1f" path="res://misc/Entity/Enemies/Rat.tscn" id="2_0u7hf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0u7hf"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gbsbb"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_egvxu"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_emoxc"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1d5v7"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_87v2m"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g1noe"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c1geu"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cnopa"]
+atlas = ExtResource("1_dumfu")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a52v3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0u7hf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gbsbb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_egvxu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_emoxc")
+}],
+"loop": true,
+"name": &"OFF",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1d5v7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_87v2m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g1noe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c1geu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cnopa")
+}],
+"loop": true,
+"name": &"ON",
+"speed": 8.0
+}]
+
+[node name="Camp" type="Node2D" unique_id=265569063]
+y_sort_enabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2036935548]
+position = Vector2(0, -15)
+sprite_frames = SubResource("SpriteFrames_a52v3")
+animation = &"ON"
+autoplay = "OFF"
+frame_progress = 0.61655325
+
+[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="AnimatedSprite2D" unique_id=1533745098]
+modulate = Color(0.6509804, 0.27058825, 0.015686275, 0.09411765)
+show_behind_parent = true
+position = Vector2(0.5, 20)
+scale = Vector2(0.96875, -0.46875)
+sprite_frames = SubResource("SpriteFrames_a52v3")
+animation = &"ON"
+autoplay = "OFF"
+frame_progress = 0.04536804
+
+[node name="Creature" parent="." unique_id=2111811093 instance=ExtResource("2_0u7hf")]
+position = Vector2(-28, 1)
+
+[node name="Creature2" parent="." unique_id=1223731706 instance=ExtResource("2_0u7hf")]
+position = Vector2(26, 8)
