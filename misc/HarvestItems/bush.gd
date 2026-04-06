@@ -8,8 +8,11 @@ func Harvest(hit_strenght : float, tool_lvl:int,is_weapon:bool):
 	if tool_lvl >= harvest_tool_lvl:
 		$Sprite2D.visible = false
 		
+		if $Sprite2D.frame == 0:
+			if randf() < 0.03:
+				Dropper_component.drop_bonus_heart()
 		# Обычные ягоды
-		if $Sprite2D.frame == 1:
+		elif $Sprite2D.frame == 1:
 			Dropper_component.drop_item[0] = BERRY
 			Dropper_component._drop_items()
 		elif $Sprite2D.frame == 2:

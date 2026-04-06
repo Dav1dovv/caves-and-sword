@@ -6,6 +6,8 @@ class_name Drop_items
 @export var max_drop : int
 @export var random_values : bool = false
 const DROP = preload("uid://drqvpabe55ide")
+const DROPED_HEART = preload("uid://ciane2i2vcc0q")
+
 
 
 func _drop_items() -> void:
@@ -40,3 +42,12 @@ func _drop_items() -> void:
 				randf_range(-10.0, 10.0)
 			)
 			root.call_deferred("add_child", new_drop)
+
+func drop_bonus_heart():
+	var root = get_tree().get_first_node_in_group("World")
+	var new_drop = DROP.instantiate()
+	new_drop.global_position = get_parent().global_position + Vector2(
+		randf_range(-10.0, 10.0),
+		randf_range(-10.0, 10.0)
+	)
+	root.call_deferred("add_child", new_drop)
