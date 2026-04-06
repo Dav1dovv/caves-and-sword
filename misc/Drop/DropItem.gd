@@ -45,7 +45,7 @@ func _drop_items() -> void:
 
 func drop_bonus_heart():
 	var root = get_tree().get_first_node_in_group("World")
-	var new_drop = DROP.instantiate()
+	var new_drop = DROPED_HEART.instantiate()
 	new_drop.global_position = get_parent().global_position + Vector2(
 		randf_range(-10.0, 10.0),
 		randf_range(-10.0, 10.0)

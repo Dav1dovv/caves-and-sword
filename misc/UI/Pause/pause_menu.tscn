@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dgpbrmp4fahb" path="res://misc/UI/Pause/pause_menu.gd" id="1_1h2e4"]
 [ext_resource type="Shader" uid="uid://cpqgkpo83gda7" path="res://Assets/Shader/Blur.gdshader" id="1_mjrbq"]
 [ext_resource type="PackedScene" uid="uid://gb7k36a7pc6o" path="res://scr/Misc/UIelements/button.tscn" id="3_u6emx"]
+[ext_resource type="PackedScene" uid="uid://b3xyfsgecbtas" path="res://misc/UI/OptionMenu/option_menu.tscn" id="4_ryahf"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1h2e4"]
 shader = ExtResource("1_mjrbq")
@@ -146,6 +147,9 @@ structured_text_bidi_override = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1331036989]
 libraries/ = SubResource("AnimationLibrary_u6emx")
+
+[node name="OptionMenu" parent="." unique_id=1619027941 instance=ExtResource("4_ryahf")]
+visible = false
 
 [connection signal="pressed" from="Panel/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/Options" to="." method="_on_options_pressed"]

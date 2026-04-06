@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("5_pybec")
 Generation_scene = ExtResource("4_0arv5")
-spawn_weight = 0.028
+spawn_weight = 0.001
 Generation_random_versions = Array[PackedScene]([ExtResource("1_3h2p7")])
 random_scales = {
 "Big": Vector2(1, 1),

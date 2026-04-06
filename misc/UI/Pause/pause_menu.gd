@@ -1,6 +1,7 @@
 extends Control
 
 var is_opened : bool = false
+@onready var option_menu: CanvasLayer = $OptionMenu
 
 func resume():
 	get_tree().paused = false
@@ -51,9 +52,9 @@ func _on_exit_pressed() -> void:
 	is_opened = false
 
 func _on_options_pressed() -> void:
-	#OptionsLayer.visible = true
+	option_menu.visible = true
 	Global.is_opened_menu = true
-	#Global.is_opened_menu = true
+	Global.is_opened_menu = true
 
 #func _notification(what):
 	#match what:

@@ -20,7 +20,7 @@ atlas = ExtResource("3_3m3n4")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nfhsv"]
-radius = 65.0077
+radius = 38.013157
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qbj5j"]
 radius = 6.0827627
@@ -141,6 +141,7 @@ stream_1/stream = ExtResource("6_0o6ud")
 [node name="Dropped Heart" type="CharacterBody2D" unique_id=344010950]
 z_index = 10
 script = ExtResource("1_wl450")
+metadata/_edit_vertical_guides_ = [-78.0]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1813599795]
 material = SubResource("ShaderMaterial_tvgdi")

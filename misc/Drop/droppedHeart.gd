@@ -73,12 +73,11 @@ func _on_pick_zone_body_entered(body: Node2D) -> void:
 
 func _on_pick_zone_body_exited(body: Node2D) -> void:
 	can_pick = false
-	player = null
 
 func _on_pick_area_entered(area: Area2D) -> void:
 	$SFX.play()
 	player.heal(10)
-	await animationPlayer.animation_finished
+	#await animationPlayer.animation_finished
 	queue_free()
 
 
