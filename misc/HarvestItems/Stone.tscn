@@ -54,7 +54,6 @@ shape = SubResource("RectangleShape2D_bhrl0")
 position = Vector2(0, -16)
 texture = SubResource("AtlasTexture_4xc2r")
 hframes = 3
-frame = 2
 script = ExtResource("3_ay5em")
 frame_weights = Array[float]([1.0, 1.0, 1.0])
 metadata/_custom_type_script = "uid://b7lfnqk6b5cdp"

@@ -42,7 +42,7 @@ boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 boot_splash/stretch_mode=0
 boot_splash/use_filter=false
-config/icon="uid://ceik26n1as6hs"
+config/icon="uid://b5k65cs4m2gea"
 
 [audio]
 
@@ -225,5 +225,3 @@ common/physics_interpolation=true
 
 textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"

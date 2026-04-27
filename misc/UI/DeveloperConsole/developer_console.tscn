@@ -10,12 +10,6 @@ bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.443137)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3u1hn"]
 bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.443137)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5i05f"]
-bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.443137)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k7coc"]
-bg_color = Color(0.0823529, 0.0823529, 0.0823529, 0.443137)
-
 [node name="DeveloperConsole" type="CanvasLayer" unique_id=2145731850]
 process_mode = 3
 script = ExtResource("1_k7coc")
@@ -40,8 +34,6 @@ theme_override_font_sizes/italics_font_size = 8
 theme_override_font_sizes/mono_font_size = 8
 theme_override_styles/normal = SubResource("StyleBoxFlat_7elpd")
 theme_override_styles/focus = SubResource("StyleBoxFlat_3u1hn")
-theme_override_styles/background = SubResource("StyleBoxFlat_5i05f")
-theme_override_styles/fill = SubResource("StyleBoxFlat_k7coc")
 bbcode_enabled = true
 scroll_following = true
 scroll_following_visible_characters = true

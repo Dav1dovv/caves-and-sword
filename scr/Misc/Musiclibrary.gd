@@ -6,8 +6,8 @@ class_name music_library
 func _ready() -> void:
 	music.tracks = {
 		"MainMenu":{
-			"day": [preload("uid://crcd5a2853toa")],
-			"night" :[preload("uid://crcd5a2853toa")]
+			"day": [preload("uid://cpju3p3nuruiu")],
+			"night" :[preload("uid://cpju3p3nuruiu")]
 		},
 		"World":{
 			"day" : [preload("uid://cthwe46akh770")],

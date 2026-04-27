@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ceik26n1as6hs"
-path="res://.godot/imported/ChatGPT Image 5 апр. 2026 г., 15_55_13.png-22dde6eec6aad0a74d9190b3c29af308.ctex"
+uid="uid://bsexb4ve63na1"
+path="res://.godot/imported/GrassAutoTile.png-60f871feddfadcd8c13b4b12d9022ba6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://ChatGPT Image 5 апр. 2026 г., 15_55_13.png"
-dest_files=["res://.godot/imported/ChatGPT Image 5 апр. 2026 г., 15_55_13.png-22dde6eec6aad0a74d9190b3c29af308.ctex"]
+source_file="res://Assets/Textures/TileMap/GrassAutoTile.png"
+dest_files=["res://.godot/imported/GrassAutoTile.png-60f871feddfadcd8c13b4b12d9022ba6.ctex"]
 
 [params]
 

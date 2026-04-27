@@ -25,4 +25,9 @@ func Harvest(hit_strenght: float, tool_lvl: int, is_weapon: bool):
 		VFX_component._hit_vfx($Sprite2D)
 		VFX_component._play_particles()
 	await VFX_component.paricles_finished
+	var gm := get_tree().get_first_node_in_group("World")
+	if gm and gm.has_method("register_harvested"):
+		var loc_key := get_tree().current_scene.scene_file_path
+		gm.register_harvested(loc_key, global_position)
+	emit_signal("collected")
 	queue_free()

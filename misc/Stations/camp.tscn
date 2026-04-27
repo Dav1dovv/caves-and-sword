@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://dc6224o6es5o2"]
 
 [ext_resource type="Texture2D" uid="uid://0e258k1bemao" path="res://Assets/Textures/SpriteSheets/Camp.png" id="1_dumfu"]
-[ext_resource type="PackedScene" uid="uid://dwuqu7ba4rl1f" path="res://misc/Entity/Enemies/Rat.tscn" id="2_0u7hf"]
+[ext_resource type="Texture2D" uid="uid://dsqxjnpk365qg" path="res://Assets/Textures/Light/Light.png" id="2_0u7hf"]
+[ext_resource type="Script" uid="uid://dbxsovdq7bbia" path="res://scr/Misc/Optimizer.gd" id="3_gbsbb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0u7hf"]
 atlas = ExtResource("1_dumfu")
@@ -86,21 +87,16 @@ y_sort_enabled = true
 position = Vector2(0, -15)
 sprite_frames = SubResource("SpriteFrames_a52v3")
 animation = &"ON"
-autoplay = "OFF"
-frame_progress = 0.61655325
+autoplay = "ON"
 
-[node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="AnimatedSprite2D" unique_id=1533745098]
-modulate = Color(0.6509804, 0.27058825, 0.015686275, 0.09411765)
-show_behind_parent = true
-position = Vector2(0.5, 20)
-scale = Vector2(0.96875, -0.46875)
-sprite_frames = SubResource("SpriteFrames_a52v3")
-animation = &"ON"
-autoplay = "OFF"
-frame_progress = 0.04536804
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=1173753225]
+position = Vector2(1, -9)
+color = Color(0.97340745, 0.9441534, 0, 1)
+texture = ExtResource("2_0u7hf")
+texture_scale = 9.88
 
-[node name="Creature" parent="." unique_id=2111811093 instance=ExtResource("2_0u7hf")]
-position = Vector2(-28, 1)
-
-[node name="Creature2" parent="." unique_id=1223731706 instance=ExtResource("2_0u7hf")]
-position = Vector2(26, 8)
+[node name="optimizer" type="VisibleOnScreenEnabler2D" parent="." unique_id=750335681 node_paths=PackedStringArray("hide_objects")]
+rect = Rect2(-24, -37, 50, 47)
+script = ExtResource("3_gbsbb")
+hide_objects = [NodePath("../AnimatedSprite2D"), NodePath("../PointLight2D")]
+metadata/_custom_type_script = "uid://dbxsovdq7bbia"

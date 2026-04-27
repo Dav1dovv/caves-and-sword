@@ -15,6 +15,14 @@ var day_night_cycle: DayNightCycle
 @export_range(50, 2000) var spawn_distance_max: float = 500.0
 @export var max_creatures: int = 50
 
+@export_group("Spawn Validation")
+## TileMapLayer с которым проверяем тайл под точкой спавна (обычно Island)
+@export var spawn_tilemap: TileMapLayer
+## Название Custom Data тайла которое разрешает спавн (например "spawnable")
+@export var spawn_custom_data: String = "spawnable"
+## Сколько попыток найти валидную точку спавна прежде чем сдаться
+@export_range(5, 50) var spawn_attempts: int = 20
+
 @export_group("Creature Pools")
 @export var creatures: Array[CreatureConfig] = []
 
@@ -48,6 +56,10 @@ var _despawn_timer: Timer
 var _offscreen_tracker: Dictionary = {}
 # Живые отслеживаемые существа
 var _tracked: Array[Node] = []
+# Счётчик живых существ — не сканируем группу каждый кадр
+var _alive_count: int = 0
+# Кеш камеры
+var _camera: Camera2D
 
 
 # ─────────────────────────────────────────────
@@ -85,6 +97,9 @@ func _ready() -> void:
 	if is_active:
 		_update_pool()
 		_restart_spawn_timer()
+
+	# Кешируем камеру один раз
+	_camera = get_viewport().get_camera_2d()
 
 
 func _make_timer(wait: float, autostart: bool, cb: Callable) -> Timer:
@@ -145,7 +160,6 @@ func _on_spawn_timer_timeout() -> void:
 		push_warning("CreatureSpawner: player не назначен!")
 		return
 
-	_update_pool()
 	if _current_pool.is_empty():
 		_restart_spawn_timer()
 		return
@@ -170,11 +184,14 @@ func _do_spawn(cfg: CreatureConfig) -> void:
 	instance.add_to_group("Creature")
 	get_tree().current_scene.add_child(instance)
 	_tracked.append(instance)
+	_alive_count += 1
 
 	# Счётчик вида
 	cfg._alive_count += 1
 	instance.tree_exiting.connect(func():
 		cfg._alive_count = maxi(cfg._alive_count - 1, 0)
+		_alive_count = maxi(_alive_count - 1, 0)
+		_offscreen_tracker.erase(instance)
 	)
 
 
@@ -191,9 +208,34 @@ func _pick_weighted(pool: Array[CreatureConfig]) -> CreatureConfig:
 
 
 func _random_spawn_pos() -> Vector2:
+	# Если tilemap не назначен — фоллбэк на старое поведение
+	if not is_instance_valid(spawn_tilemap) or spawn_custom_data.is_empty():
+		return _raw_spawn_pos()
+
+	for _i in spawn_attempts:
+		var candidate := _raw_spawn_pos()
+		if _is_valid_spawn_tile(candidate):
+			return candidate
+
+	# Все попытки исчерпаны — возвращаем последнюю кандидатуру
+	push_warning("CreatureSpawner: не нашли валидный тайл за %d попыток" % spawn_attempts)
+	return _raw_spawn_pos()
+
+
+func _raw_spawn_pos() -> Vector2:
 	var angle := randf() * TAU
 	var dist  := randf_range(spawn_distance_min, spawn_distance_max)
 	return player.global_position + Vector2(cos(angle), sin(angle)) * dist
+
+
+func _is_valid_spawn_tile(world_pos: Vector2) -> bool:
+	var tile_pos := spawn_tilemap.local_to_map(spawn_tilemap.to_local(world_pos))
+	var data := spawn_tilemap.get_cell_tile_data(tile_pos)
+	if data == null:
+		return false  # нет тайла вообще (за краем карты)
+	# Если custom data не задана на тайле — считаем false
+	var value = data.get_custom_data(spawn_custom_data)
+	return value == true
 
 
 func _restart_spawn_timer() -> void:
@@ -209,22 +251,15 @@ func _restart_spawn_timer() -> void:
 
 
 # ─────────────────────────────────────────────
-#  PHYSICS PROCESS
+#  PHYSICS PROCESS — только чистка мёртвых ссылок + _can_spawn
 # ─────────────────────────────────────────────
 func _physics_process(_delta: float) -> void:
-	# Чистим мёртвые ссылки
+	# Чистим мёртвые ссылки из _tracked
 	for i in range(_tracked.size() - 1, -1, -1):
 		if not is_instance_valid(_tracked[i]):
 			_tracked.remove_at(i)
 
-	# Обновляем видимость для деспавна
-	if despawn_enabled:
-		var now := Time.get_ticks_msec() / 1000.0
-		for creature in get_tree().get_nodes_in_group("Creature"):
-			if is_instance_valid(creature) and _is_on_screen(creature):
-				_offscreen_tracker[creature] = now
-
-	_can_spawn = _get_alive_count() < max_creatures
+	_can_spawn = _alive_count < max_creatures
 
 
 # ─────────────────────────────────────────────
@@ -232,6 +267,12 @@ func _physics_process(_delta: float) -> void:
 # ─────────────────────────────────────────────
 func _check_despawn() -> void:
 	var now := Time.get_ticks_msec() / 1000.0
+
+	# Обновляем видимость здесь — раз в despawn_check_interval, не каждый кадр
+	for creature in _tracked:
+		if is_instance_valid(creature) and _is_on_screen(creature):
+			_offscreen_tracker[creature] = now
+
 	var to_remove: Array[Node] = []
 
 	for creature in _offscreen_tracker.keys():
@@ -248,11 +289,12 @@ func _check_despawn() -> void:
 
 
 func _is_on_screen(node: Node2D) -> bool:
-	var camera := get_viewport().get_camera_2d()
-	if not camera:
-		return true
-	var screen_pos := camera.get_screen_center_position() + \
-		(node.global_position - camera.global_position) * camera.zoom
+	if not is_instance_valid(_camera):
+		_camera = get_viewport().get_camera_2d()
+		if not _camera:
+			return true
+	# Переводим мировую позицию в экранную через viewport transform
+	var screen_pos := get_viewport().get_canvas_transform() * node.global_position
 	return get_viewport().get_visible_rect().grow(offscreen_margin).has_point(screen_pos)
 
 
@@ -356,10 +398,7 @@ func _cmd_debug(_args: Array) -> String:
 #  УТИЛИТЫ
 # ─────────────────────────────────────────────
 func _get_alive_count() -> int:
-	var n := 0
-	for c in get_tree().get_nodes_in_group("Creature"):
-		if is_instance_valid(c): n += 1
-	return n
+	return _alive_count
 
 
 func _get_configuration_warnings() -> PackedStringArray:
@@ -370,6 +409,10 @@ func _get_configuration_warnings() -> PackedStringArray:
 		w.append("Нет ни одного CreatureConfig.")
 	if spawn_distance_min > spawn_distance_max:
 		w.append("spawn_distance_min > spawn_distance_max.")
+	if not spawn_tilemap:
+		w.append("spawn_tilemap не назначен — существа могут спавниться в воде!")
+	if spawn_tilemap and spawn_custom_data.is_empty():
+		w.append("spawn_custom_data пустой — проверка тайлов отключена.")
 	for cfg in creatures:
 		if not cfg or not cfg.creature_scene:
 			w.append("CreatureConfig без сцены!")

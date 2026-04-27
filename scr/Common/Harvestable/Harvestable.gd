@@ -38,15 +38,15 @@ func _ready() -> void:
 	# Получаем ShaderMaterial со спрайта
 	var sprite = $Sprite2D
 	print("[Tree] sprite found: ", sprite)
-	if sprite:
-		print("[Tree] material: ", sprite.material)
-		print("[Tree] material type: ", type_string(typeof(sprite.material)))
+	#if sprite:
+		#print("[Tree] material: ", sprite.material)
+		#print("[Tree] material type: ", type_string(typeof(sprite.material)))
 	if sprite and sprite.material is ShaderMaterial:
 		_shader_material = sprite.material
-		print("[Tree] shader_material assigned OK")
+		#print("[Tree] shader_material assigned OK")
 		_shader_material.set_shader_parameter("wind_offset", global_position.x)
-	else:
-		print("[Tree] ERROR: ShaderMaterial not found on Sprite2D")
+	#else:
+		#print("[Tree] ERROR: ShaderMaterial not found on Sprite2D")
 
 func _physics_process(_delta: float) -> void:
 	update_transparency()

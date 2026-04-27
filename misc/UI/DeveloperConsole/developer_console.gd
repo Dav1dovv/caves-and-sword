@@ -26,6 +26,7 @@ func _ready() -> void:
 	register_command("help", _cmd_help, "Показать список команд")
 	register_command("clear", _cmd_clear, "Очистить консоль")
 	register_command("reload", _cmd_reload_scene, "Перезагрузить текущую сцену")
+	register_command("clearGameData", _cmd_clear_data,"Удаляет все сохранение за все время")
 	# Можно добавить свои: register_command("give", _cmd_give, "give <item> <amount>")
 	
 	add_to_console("[color=aaaaaa]Добро пожаловать в игру! Используйте /help для списка команд, или нажмите ` чотбы закрыть консоль.[/color]")
@@ -164,6 +165,11 @@ func _cmd_clear(_args: Array) -> String:
 	console_output.clear()
 	add_to_console("[color=gray]Консоль очищена[/color]")
 	return ""
+
+func _cmd_clear_data(_args: Array) -> String:
+	var help_text = "[color=red]Game Data Cleared:[/color]"
+	get_parent().delete_game_data()
+	return help_text
 
 func _cmd_reload_scene(_args: Array) -> String:
 	get_tree().reload_current_scene()

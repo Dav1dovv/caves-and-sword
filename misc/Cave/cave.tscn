@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://cnidd0x3oq73e"]
 
 [ext_resource type="Texture2D" uid="uid://u3e55gux7xk2" path="res://Assets/Textures/BossCallers/Caller6.png" id="1_o1t6b"]
-[ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="2_jqaah"]
+[ext_resource type="Texture2D" uid="uid://5mfsuj35jbt7" path="res://Assets/Textures/Shadows/SquareShadow.png" id="2_o1t6b"]
 [ext_resource type="Script" uid="uid://bj528o0edtyfg" path="res://scr/Misc/Door.gd" id="3_yr2nm"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_5uilu"]
-radius = 12.0415945
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o1t6b"]
+size = Vector2(20, 14)
 
 [node name="Cave" type="Node2D" unique_id=1135860097]
 
@@ -13,7 +13,7 @@ radius = 12.0415945
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D" unique_id=1059652298]
 position = Vector2(0, -33)
-polygon = PackedVector2Array(12, -5.3999996, -6, -11.799999, -6, -8.799999, -13.799999, -1, -15.4, -1, -27.1, 32, -13, 32, -4, 8, 11, 8, 17, 32, 31, 32, 29, 16.7, 29, 15.200001, 21.5, 7.700001, 22, 6.299999, 22, 3, 12, -4)
+polygon = PackedVector2Array(-16, 12, -27.1, 32, -13, 32, -8, 18, 13, 17, 17, 32, 31, 32, 29, 16.7, 29, 15.200001, 17, 11)
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1140905156]
 position = Vector2(0, -33)
@@ -22,9 +22,9 @@ texture = ExtResource("1_o1t6b")
 [node name="Shadow" type="Sprite2D" parent="Sprite2D" unique_id=300759953]
 modulate = Color(0.09803922, 0.09803922, 0.09803922, 0.19215687)
 show_behind_parent = true
-position = Vector2(1.2499998, 31.5)
-scale = Vector2(3.46875, 1.0624999)
-texture = ExtResource("2_jqaah")
+position = Vector2(1.9999979, 37.5)
+scale = Vector2(0.84374994, 0.32812494)
+texture = ExtResource("2_o1t6b")
 
 [node name="Door" type="Area2D" parent="." unique_id=1793839801]
 collision_layer = 1024
@@ -34,5 +34,5 @@ go_to_scene = "Cave"
 metadata/_custom_type_script = "uid://bj528o0edtyfg"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door" unique_id=2098565621]
-position = Vector2(2, -10)
-shape = SubResource("CircleShape2D_5uilu")
+position = Vector2(2, -6)
+shape = SubResource("RectangleShape2D_o1t6b")

@@ -16,9 +16,9 @@ func _process(delta: float) -> void:
 	var fps = "FPS: " + str(Engine.get_frames_per_second()) + "/" + str(Engine.max_fps)
 	if player:
 		var player_info = "Player info: \n"+ "player_name: "+ Global.player_name + "\n | head_skin_index: "  + str(Global.player_skin_head_index) + " | body_skin_index: " + str(Global.player_skin_index)
-		label.text = fps + "\n" + str(Engine.get_physics_frames())+ "\n"  + player_info
+		label.text = fps + "\n"  + player_info
 	else:
-		label.text = fps + "\n" + str(Engine.get_physics_frames()) + "\n Current location: " + Global.current_location + "\n " 
+		label.text = fps + "\n" + "Current location: " + Global.current_location + "\n " 
 	if Input.is_action_just_pressed("ui_debug"):
 		visible = !visible
 		

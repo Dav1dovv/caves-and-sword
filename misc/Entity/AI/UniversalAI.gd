@@ -13,6 +13,16 @@ class_name UniversalAI
 @export var body_anim: AnimationPlayer
 @export var hand_anim: AnimationPlayer
 
+@export_group("🔥 Патруль у костра")
+## Нода костра (Camp или CampTexture). Если не задана — патруль отключён.
+@export var patrol_anchor: Node2D
+## Радиус круга патрулирования вокруг костра
+@export_range(40.0, 400.0, 10.0) var patrol_radius: float = 100.0
+## Скорость обхода круга (радиан/сек). Отрицательное = против часовой стрелки.
+@export_range(0.1, 3.0, 0.05) var patrol_angular_speed: float = 0.6
+## Дистанция "достаточно близко к костру" при возврате
+@export_range(10.0, 80.0, 5.0) var patrol_return_threshold: float = 30.0
+
 @onready var health_bar: ProgressBar = $HealthBar
 
 # ─────────────────────────────────────────────
@@ -28,11 +38,13 @@ enum State {
 	SCARED,
 	DEAD,
 	# Новые состояния
-	FUSING,      ## Камикадзе: детонирует
-	CHARGING,    ## Таран: разгоняется
-	RAMMING,     ## Таран: в ударе
-	RAM_RECOVER, ## Таран: откат
-	TOUCHING,    ## Контактный: касается игрока
+	FUSING,           ## Камикадзе: детонирует
+	CHARGING,         ## Таран: разгоняется
+	RAMMING,          ## Таран: в ударе
+	RAM_RECOVER,      ## Таран: откат
+	TOUCHING,         ## Контактный: касается игрока
+	PATROL,           ## Патруль: ходит по кругу вокруг костра
+	RETURN_TO_PATROL, ## Возвращается к костру после потери игрока
 }
 
 var state: State = State.IDLE
@@ -67,12 +79,19 @@ var _ram_direction: Vector2 = Vector2.ZERO
 var _ram_recover_timer: float = 0.0
 
 # Контактный
+var _calm_wander_pause_until: float = 0.0  ## когда закончится пауза (используется _calm_wander)
+
+# Контактный
 var _touch_timer: float = 0.0
 var _is_touching_player: bool = false
+
+# Патруль
+var _patrol_angle: float = 0.0  ## текущий угол на круге (радианы)
 
 # Внутренние ноды
 var _audio: AudioStreamPlayer2D
 var _hitbox: Area2D
+var _skin: Node2D        ## кеш $Skin — чтобы не делать has_node каждый кадр
 
 const MOVEMENT_THRESHOLD: float = 5.0
 
@@ -88,6 +107,8 @@ func _ready() -> void:
 		_hitbox = $HitBox
 	if has_node("SFX"):
 		_audio = $SFX
+	if has_node("Skin"):
+		_skin = $Skin
 
 	_init_health()
 
@@ -105,7 +126,13 @@ func _ready() -> void:
 	if config.creature_type == EntityConfig.CreatureType.TOUCH_ATTACKER:
 		_setup_touch_detection()
 
-	_set_state(State.WANDER)
+	# Инициализируем угол патруля по текущей позиции относительно якоря
+	if is_instance_valid(patrol_anchor):
+		var offset := global_position - patrol_anchor.global_position
+		_patrol_angle = offset.angle()
+		_set_state(State.PATROL)
+	else:
+		_set_state(State.WANDER)
 
 
 func _setup_groups() -> void:
@@ -186,7 +213,10 @@ func _process(delta: float) -> void:
 # ─────────────────────────────────────────────
 func _tick_melee(delta: float, dist: float) -> void:
 	if not _player_in_range(dist):
-		_do_wander(delta)
+		if is_instance_valid(patrol_anchor):
+			_tick_patrol(delta)
+		else:
+			_do_wander(delta)
 		return
 
 	_try_aggro()
@@ -214,7 +244,10 @@ func _tick_melee(delta: float, dist: float) -> void:
 # ─────────────────────────────────────────────
 func _tick_ranged(delta: float, dist: float) -> void:
 	if not _player_in_range(dist):
-		_do_wander(delta)
+		if is_instance_valid(patrol_anchor):
+			_tick_patrol(delta)
+		else:
+			_do_wander(delta)
 		return
 
 	_try_aggro()
@@ -464,14 +497,25 @@ func _tick_fleeing(delta: float, dist: float) -> void:
 
 
 func _calm_wander(delta: float) -> void:
-	if global_position.distance_to(_wander_target) < 30.0 or \
-	   _time_in_state > randf_range(5.0, 12.0):
-		if randf() < 0.45:
-			velocity = Vector2.ZERO
-			if _time_in_state > randf_range(2.0, 7.0):
+	var near_target := global_position.distance_to(_wander_target) < 30.0
+	var time_exceeded := _time_in_state > randf_range(5.0, 12.0)
+
+	if near_target or time_exceeded:
+		if _calm_wander_pause_until <= 0.0:
+			# Решаем один раз: стоять или идти
+			if randf() < 0.45:
+				_calm_wander_pause_until = Time.get_ticks_msec() / 1000.0 + randf_range(2.0, 7.0)
+			else:
 				_pick_wander_target()
-		else:
+
+	# Стоим на паузе
+	if _calm_wander_pause_until > 0.0:
+		if Time.get_ticks_msec() / 1000.0 >= _calm_wander_pause_until:
+			_calm_wander_pause_until = 0.0
 			_pick_wander_target()
+		else:
+			velocity = velocity.lerp(Vector2.ZERO, delta * 3.0)
+			return
 
 	if global_position.distance_to(_wander_target) >= 30.0:
 		velocity = global_position.direction_to(_wander_target) * \
@@ -493,6 +537,52 @@ func _tick_peaceful(delta: float, dist: float) -> void:
 
 
 # ─────────────────────────────────────────────
+#  ПАТРУЛЬ У КОСТРА 🔥
+#  PATROL        — идёт по кругу вокруг anchor
+#  RETURN_TO_PATROL — сначала возвращается к точке на круге ближайшей к текущей позиции
+# ─────────────────────────────────────────────
+func _tick_patrol(delta: float) -> void:
+	if not is_instance_valid(patrol_anchor):
+		_do_wander(delta)
+		return
+
+	match state:
+		State.RETURN_TO_PATROL:
+			# Идём к ближайшей точке на круге
+			var entry := patrol_anchor.global_position + \
+				Vector2(cos(_patrol_angle), sin(_patrol_angle)) * patrol_radius
+			var dist_to_entry := global_position.distance_to(entry)
+			var dir := global_position.direction_to(entry)
+			velocity = dir * Entity_stats.move_speed * config.wander_speed_mult
+			_play_body(config.anim_walk)
+			_play_hand(config.anim_walk)
+
+			if dist_to_entry <= patrol_return_threshold:
+				_set_state(State.PATROL)
+
+		_:  # PATROL и любое другое — начинаем / продолжаем круг
+			_set_state(State.PATROL)
+			_patrol_angle += patrol_angular_speed * delta
+
+			var target := patrol_anchor.global_position + \
+				Vector2(cos(_patrol_angle), sin(_patrol_angle)) * patrol_radius
+			var dir := global_position.direction_to(target)
+			velocity = dir * Entity_stats.move_speed * config.wander_speed_mult
+			_play_body(config.anim_walk)
+			_play_hand(config.anim_walk)
+
+
+## Вызывается когда враг теряет игрока — запускает возврат к костру
+func _start_return_to_patrol() -> void:
+	if not is_instance_valid(patrol_anchor):
+		return
+	# Вычисляем ближайший угол на круге к текущей позиции
+	var to_self := global_position - patrol_anchor.global_position
+	_patrol_angle = to_self.angle()
+	_set_state(State.RETURN_TO_PATROL)
+
+
+# ─────────────────────────────────────────────
 #  БЛУЖДАНИЕ (общее)
 # ─────────────────────────────────────────────
 func _do_wander(delta: float) -> void:
@@ -509,12 +599,12 @@ func _do_wander(delta: float) -> void:
 	if _is_wander_moving:
 		_play_body(config.anim_walk)
 		_play_hand(config.anim_walk)
-		position = position.move_toward(
-			global_position + _move_offset,
-			delta * Entity_stats.move_speed * config.wander_speed_mult)
+		var dir := global_position.direction_to(global_position + _move_offset)
+		velocity = dir * Entity_stats.move_speed * config.wander_speed_mult
 	else:
 		_play_body(config.anim_idle)
 		_play_hand(config.anim_idle)
+		velocity = velocity.lerp(Vector2.ZERO, delta * 5.0)
 
 
 # ─────────────────────────────────────────────
@@ -541,22 +631,33 @@ func _update_approach_offset(delta: float) -> void:
 
 func _move_toward_player(delta: float, speed_mult: float) -> void:
 	if not can_move or not player:
+		velocity = Vector2.ZERO
 		return
-	position = position.move_toward(
-		player.global_position + _move_offset,
-		delta * Entity_stats.move_speed * speed_mult)
+	var target := player.global_position + _move_offset
+	var dir := global_position.direction_to(target)
+	velocity = dir * Entity_stats.move_speed * speed_mult
 
 
 # ─────────────────────────────────────────────
 #  ХЕЛПЕРЫ ОБЩИЕ
 # ─────────────────────────────────────────────
 func _set_state(new_state: State) -> void:
-	if state != new_state:
-		state = new_state
+	if state == new_state:
+		return
+	# Когда уходим из CHASE и есть якорь — возвращаемся к патрулю
+	if state == State.CHASE and \
+	   new_state in [State.WANDER, State.IDLE] and \
+	   is_instance_valid(patrol_anchor):
+		state = State.RETURN_TO_PATROL
 		_time_in_state = 0.0
-		# Сбрасываем aggro-флаг при возврате в покой
-		if new_state == State.WANDER or new_state == State.IDLE:
-			_aggro_played = false
+		_aggro_played = false
+		return
+
+	state = new_state
+	_time_in_state = 0.0
+	if new_state == State.WANDER or new_state == State.IDLE or \
+	   new_state == State.PATROL or new_state == State.RETURN_TO_PATROL:
+		_aggro_played = false
 
 
 func _rotate_hitbox_toward(target_pos: Vector2, delta: float) -> void:
@@ -567,12 +668,13 @@ func _rotate_hitbox_toward(target_pos: Vector2, delta: float) -> void:
 
 
 func _update_flip() -> void:
-	if not has_node("Skin"):
+	if _skin == null:
 		return
 	if velocity.length() > MOVEMENT_THRESHOLD:
-		$Skin.scale.x = sign(velocity.x) if abs(velocity.x) > 10 else $Skin.scale.x
+		if abs(velocity.x) > 10:
+			_skin.scale.x = sign(velocity.x)
 	elif player:
-		$Skin.scale.x = 1 if global_position.x < player.global_position.x else -1
+		_skin.scale.x = 1 if global_position.x < player.global_position.x else -1
 
 
 func _pick_wander_target() -> void:
@@ -703,8 +805,7 @@ func _on_died() -> void:
 
 	_play_sound_event(config.death_sounds)
 
-	if has_node("Drop"):
-		$Drop._drop_items()
+	# Дроп уже вызван в Entity.die() — не дублируем
 
 	for box_name in ["HitBox", "HurtBox"]:
 		if has_node(box_name):

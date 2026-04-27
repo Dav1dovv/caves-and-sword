@@ -104,6 +104,31 @@ func save_last_data():
 	last_location = current_location
 	last_position = get_tree().get_first_node_in_group("Player").global_position
 
+func delete_game_data():
+	_delete_dir_recursive("user://Saves")
+	print("Save data deleted")
+
+func _delete_dir_recursive(path: String):
+	if not DirAccess.dir_exists_absolute(path):
+		return
+	
+	var dir = DirAccess.open(path)
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	
+	while file_name != "":
+		if file_name != "." and file_name != "..":
+			var full_path = path + "/" + file_name
+			if dir.current_is_dir():
+				_delete_dir_recursive(full_path)  # рекурсия для подпапок
+			else:
+				dir.remove(full_path)
+		file_name = dir.get_next()
+	
+	dir.list_dir_end()
+	DirAccess.remove_absolute(path)  # удаляем уже пустую папку
+	
+
 func hint(object : Node2D,message : String):
 		print("hint working")
 		var hint_instant = HINT.instantiate()

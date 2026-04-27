@@ -16,9 +16,9 @@ unique_name_in_owner = true
 [node name="SceneManager" parent="." unique_id=1678669278 instance=ExtResource("3_2p3co")]
 scenes = {
 "Cave": "res://Assets/Scenes/DemoTesting/room_generation_test.tscn",
-"Test_Scene": "res://Assets/Locations/WorlRoot.tscn",
-"World": "res://Assets/Scenes/Playable/WestForest.tscn",
-"oktavia": "res://Assets/Scenes/DemoTesting/Atlas.tscn"
+"Test_Scene": "res://Assets/Scenes/Playable/west_forest.scn",
+"World": "res://Assets/Scenes/Playable/west_forest.scn",
+"oktavia": "res://Assets/Scenes/Playable/west_forest.scn"
 }
 
 [node name="MusicManager" type="Node" parent="." unique_id=1081242722 groups=["MusicManager"]]

@@ -10,7 +10,8 @@
 [ext_resource type="Script" uid="uid://b286rq0s2stos" path="res://scr/Misc/VFX/DamageVFX.gd" id="8_dh3r4"]
 [ext_resource type="Texture2D" uid="uid://b62hrm50ou235" path="res://Assets/Textures/UI/UI.png" id="9_h6rqw"]
 
-[sub_resource type="Resource" id="Resource_gd51a"]
+[sub_resource type="Resource" id="Resource_h6rqw"]
+resource_local_to_scene = true
 script = ExtResource("2_dh3r4")
 detection_range = 180.0
 chase_speed_mult = 9.0
@@ -19,7 +20,7 @@ attack_cooldown = 1.2000000000000002
 drop_chance = 0.9
 metadata/_custom_type_script = "uid://sspi0cbw8oxn"
 
-[sub_resource type="Resource" id="Resource_gkipm"]
+[sub_resource type="Resource" id="Resource_4xexb"]
 resource_local_to_scene = true
 script = ExtResource("3_h6rqw")
 max_health = 45
@@ -1524,15 +1525,19 @@ texture = SubResource("AtlasTexture_po7el")
 modulate_color = Color(0, 0.99893016, 0.010634201, 1)
 
 [node name="Creature" unique_id=2111811093 node_paths=PackedStringArray("body_anim", "hand_anim", "Vfx") instance=ExtResource("1_owdma")]
-config = SubResource("Resource_gd51a")
+config = SubResource("Resource_h6rqw")
 body_anim = NodePath("Skin/Body/BodyAnim")
 hand_anim = NodePath("Skin/Body/Hand/AnimationPlayer")
-Entity_stats = SubResource("Resource_gkipm")
+patrol_radius = 100.0
+patrol_angular_speed = 0.6
+patrol_return_threshold = 30.0
+Entity_stats = SubResource("Resource_4xexb")
 Vfx = NodePath("VFX")
 screen_shake_strength = 0.2
 
 [node name="optimizer" parent="." index="0" unique_id=63861658 node_paths=PackedStringArray("hide_objects")]
-hide_objects = [NodePath("../Skin")]
+rect = Rect2(-10, -15, 21, 28)
+hide_objects = [NodePath("../Skin"), NodePath("../HitBox"), NodePath("../HurtBox")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" parent_id_path=PackedInt32Array(173476354) index="0" unique_id=472730195]
 position = Vector2(0, -10)

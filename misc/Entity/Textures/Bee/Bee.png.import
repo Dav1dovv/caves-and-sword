@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxvohsurih3li"
-path="res://.godot/imported/Bee.png-7e98c21051edb2e7820d93ae0851c8df.ctex"
+uid="uid://b13hbc37dqdjf"
+path="res://.godot/imported/Bee.png-62882b5fcb11309a333ff2bfa56d0c9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://misc/Entity/Textures/Bee.png"
-dest_files=["res://.godot/imported/Bee.png-7e98c21051edb2e7820d93ae0851c8df.ctex"]
+source_file="res://misc/Entity/Textures/Bee/Bee.png"
+dest_files=["res://.godot/imported/Bee.png-62882b5fcb11309a333ff2bfa56d0c9a.ctex"]
 
 [params]
 
