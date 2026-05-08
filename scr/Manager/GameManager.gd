@@ -4,6 +4,9 @@ signal world_ready
 
 @export var world_seed: String
 @export var max_activation_stations : int = 0
+@export var is_random_position : bool = false
+@export var map_size : Rect2
+
 
 var activated_stations : int = 0
 var last_saved_position: Array[Vector2]
@@ -21,6 +24,8 @@ func _ready() -> void:
 	_initialize_seed_system()
 	_load_harvested()
 	emit_signal("world_ready")
+	if is_random_position: $Player.position = Vector2(randf_range(-1599,673),randf_range(-842,553))
+
 func respawn():
 	player = get_tree().get_first_node_in_group("Player")
 	if last_saved_position.is_empty():

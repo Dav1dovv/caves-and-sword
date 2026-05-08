@@ -30,7 +30,7 @@
 [ext_resource type="Script" uid="uid://bol7bb0n3rim5" path="res://scr/Resources/effects/EffectdisplayUI.gd" id="29_q8wac"]
 [ext_resource type="PackedScene" uid="uid://bhugp3d5bopwb" path="res://misc/UI/Death/death_menu.tscn" id="30_a8s1h"]
 
-[sub_resource type="Resource" id="Resource_0qyuh"]
+[sub_resource type="Resource" id="Resource_deyxd"]
 resource_local_to_scene = true
 script = ExtResource("3_ipy58")
 base_move_speed = 6.0
@@ -1589,7 +1589,7 @@ acceleration = 0.83
 friction = 1.0
 BodyAnimator = NodePath("Skin/Body/BodyAnim")
 HandAanimator = NodePath("Skin/Body/Hand/AnimationPlayer")
-Entity_stats = SubResource("Resource_0qyuh")
+Entity_stats = SubResource("Resource_deyxd")
 Vfx = NodePath("VFX_damage")
 
 [node name="optimizer" parent="." index="0" unique_id=63861658 node_paths=PackedStringArray("hide_objects")]

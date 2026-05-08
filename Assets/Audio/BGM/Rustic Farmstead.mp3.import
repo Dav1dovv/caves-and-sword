@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dwrg1h3hyt51e"
+path="res://.godot/imported/Rustic Farmstead.mp3-48b419e9b8be9a12067660213ce3961a.mp3str"
+
+[deps]
+
+source_file="res://Assets/Audio/BGM/Rustic Farmstead.mp3"
+dest_files=["res://.godot/imported/Rustic Farmstead.mp3-48b419e9b8be9a12067660213ce3961a.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=117.35
+beat_count=323
+bar_beats=2

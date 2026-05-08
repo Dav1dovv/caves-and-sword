@@ -24,7 +24,7 @@ metadata/_custom_type_script = "uid://sspi0cbw8oxn"
 [sub_resource type="Resource" id="Resource_2a35p"]
 resource_local_to_scene = true
 script = ExtResource("3_2a35p")
-max_health = 40
+max_health = 20
 base_move_speed = 1.0
 base_defense_modifier = 0.1
 metadata/_custom_type_script = "uid://cpp05fs341abo"

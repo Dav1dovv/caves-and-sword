@@ -28,7 +28,6 @@ const MAIN_MENU := "res://Assets/Scenes/Menu/main_menu.tscn"
 @export var scenes: Dictionary = {
 	"Test_Scene" : "res://Assets/Locations/WorlRoot.tscn",
 	"World"      : "res://Assets/Scenes/Playable/world_root.tscn",
-	"oktavia"    : "res://Assets/Scenes/Playable/Planets/Oktavia.tscn",
 }
 
 ## Сообщения на экране загрузки

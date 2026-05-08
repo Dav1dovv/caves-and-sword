@@ -12,8 +12,8 @@ dest_files=["res://.godot/imported/Water Flowing (Quiet 8-Bit).mp3-7f2e3b0bc8be9
 
 [params]
 
-loop=false
-loop_offset=0
-bpm=0
-beat_count=0
+loop=true
+loop_offset=0.0
+bpm=120.0
+beat_count=55
 bar_beats=4

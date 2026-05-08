@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cekxfqpryag01"
+path="res://.godot/imported/Cozy Forest.mp3-a650d362602cbf76dc351b513774facf.mp3str"
+
+[deps]
+
+source_file="res://Assets/Audio/BGM/Cozy Forest.mp3"
+dest_files=["res://.godot/imported/Cozy Forest.mp3-a650d362602cbf76dc351b513774facf.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=110.0
+beat_count=176
+bar_beats=4

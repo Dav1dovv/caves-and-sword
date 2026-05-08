@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://b6si518suxk67"]
+[gd_scene format=3 uid="uid://nu807x71f1fp"]
 
 [ext_resource type="PackedScene" uid="uid://bny4sqh4i8i5v" path="res://misc/HarvestItems/Harvestable.tscn" id="1_lse0o"]
 [ext_resource type="Texture2D" uid="uid://dqaxq3iceubds" path="res://misc/HarvestItems/Textures/SandStone.png" id="2_lse0o"]
@@ -53,7 +53,6 @@ shape = SubResource("RectangleShape2D_bhrl0")
 position = Vector2(0, -16)
 texture = ExtResource("2_lse0o")
 hframes = 3
-frame = 1
 script = ExtResource("3_i7ruk")
 frame_weights = Array[float]([1.0, 1.0, 1.0])
 metadata/_custom_type_script = "uid://b7lfnqk6b5cdp"
@@ -65,15 +64,12 @@ position = Vector2(0, 13)
 scale = Vector2(2.625, 1.125)
 texture = ExtResource("4_fxiew")
 
-[node name="VFX" parent="." index="3" unique_id=508582770 node_paths=PackedStringArray("audio_player")]
-audio_player = NodePath("../SFX")
-
-[node name="optimizer" parent="." index="4" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" parent="." index="3" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
 position = Vector2(0, -13)
 rect = Rect2(-18, -14, 36, 28)
 hide_objects = [NodePath("../Sprite2D")]
 
-[node name="droper" parent="." index="5" unique_id=1465568748]
+[node name="droper" parent="." index="4" unique_id=1465568748]
 drop_item = Array[ExtResource("5_suxn6")]([ExtResource("6_hscks")])
 max_drop = 10
 random_values = true

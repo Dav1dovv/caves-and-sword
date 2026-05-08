@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://kd3fu15h8q6j"
+path="res://.godot/imported/Craftsman Village.mp3-787db60e9dd12e4803403e4c4a4083ef.mp3str"
+
+[deps]
+
+source_file="res://Assets/Audio/BGM/Craftsman Village.mp3"
+dest_files=["res://.godot/imported/Craftsman Village.mp3-787db60e9dd12e4803403e4c4a4083ef.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=120.0
+beat_count=182
+bar_beats=4

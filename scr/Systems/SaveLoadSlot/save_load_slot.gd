@@ -118,7 +118,7 @@ func _display_sorted_slots():
 
 func _on_save_slot_selected(slot_name: String):
 	if save_system.load_save(slot_name):
-		Global.scene_manager.change_scene("World", false, Vector2.ZERO)
+		Global.scene_manager.change_scene("Village", false, Vector2.ZERO)
 
 func _on_new_save_pressed():
 	$Panel/VBoxContainer.visible = false

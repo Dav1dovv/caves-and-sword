@@ -5,7 +5,8 @@ class_name Door
 enum data_action {load_data,save_data}
 
 @export var go_to_scene : String
-@export var new_player_position : Vector2 = Vector2.ZERO
+@export var player_spawn : String
+
 @export var action : data_action = data_action.save_data
 
 func _init() -> void:
@@ -18,11 +19,20 @@ func _init() -> void:
 func _move(body):
 	if action == data_action.save_data:
 		Global.save_last_data()
-		Global.scene_manager.change_scene(go_to_scene,true, new_player_position)
+		if !player_spawn.is_empty():
+			Global.scene_manager.change_scene(go_to_scene,true, player_spawn)
+		else:
+			Global.scene_manager.change_scene(go_to_scene,true, Vector2.ZERO)
 	elif action == data_action.load_data:
-		Global.scene_manager.change_scene(Global.last_location,true, Global.last_position)
+		if !player_spawn.is_empty():
+			Global.scene_manager.change_scene(go_to_scene,true, player_spawn)
+		else:
+			Global.scene_manager.change_scene(go_to_scene,true, Vector2.ZERO)
 	else:
 		print("trave")
-		Global.scene_manager.change_scene(go_to_scene,true, new_player_position)
+		if !player_spawn.is_empty():
+			Global.scene_manager.change_scene(go_to_scene,true, player_spawn)
+		else:
+			Global.scene_manager.change_scene(go_to_scene,true, Vector2.ZERO)
 	#Global.scene_manager.change_scene(go_to_scene,true, new_player_position)
 	

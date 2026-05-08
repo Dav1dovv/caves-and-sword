@@ -4,6 +4,9 @@ class_name Player
 const ANIM_SPEED_SCALE      := 1.5
 const HAND_ANIM_SPEED_SCALE := 1.0
 
+
+@export var is_in_world : bool = false
+
 # ─────────────────────────────────────────
 #  Скорость
 # ─────────────────────────────────────────
@@ -79,6 +82,9 @@ func _ready() -> void:
 	effect_display_ui.set_entity(self)
 	_register_commands()
 
+	if is_in_world: hud.visible = false
+
+
 func _register_commands() -> void:
 	var c := Global.developer_console
 	c.register_command("set_speed",     _cmd_set_speed,                     "Set player speed: set_speed [value]")
@@ -109,7 +115,8 @@ func _physics_process(delta: float) -> void:
 		if not is_attack:
 			hit_box.look_at(mouse_pos)
 
-		skin.scale.x = scale.x if mouse_pos.x > position.x else -scale.x
+		if velocity == Vector2.ZERO:
+			skin.scale.x = scale.x if mouse_pos.x > position.x else -scale.x
 
 	move_and_slide()
 
@@ -197,7 +204,10 @@ func _movement(delta: float) -> void:
 		_current_velocity = _current_velocity.lerp(Vector2.ZERO, friction)
 
 	velocity = _current_velocity
-
+	if dir.x > 0:
+		skin.scale.x = 1
+	elif dir.x < 0:
+		skin.scale.x = -1
 
 # ─── Анимация ─────────────────────────────────────────────────────────────────
 func _animate() -> void:
@@ -340,6 +350,7 @@ func _on_health_changed(new_health: float) -> void:
 	health_bar.set_hp(_hp_to_display(new_health))
 
 func _on_died() -> void:
+	Global.play_game_over()
 	HandAanimator.stop()
 	BodyAnimator.play("Death")
 	death_menu.death()
