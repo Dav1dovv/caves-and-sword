@@ -20,7 +20,9 @@ func _damage_vfx(new_character : Node2D):
 	var tween = create_tween()
 	tween.tween_property(character, "rotation", randf_range(-0.2, 0.2), 0.1)
 	await tween.tween_property(character, 'modulate', Color(1.219, 0.0, 0.0, 1.0), 0.1)
-	tween.tween_property(character, 'modulate', Color.WHITE, 0.3)
+	tween.tween_property(character, 'modulate', Color.WHITE, 0.2)
+	await tween.tween_property(character, 'modulate', Color(1.219, 0.0, 0.0, 1.0), 0.1)
+	tween.tween_property(character, 'modulate', Color.WHITE, 0.2)
 	tween.tween_property(character, "rotation", 0.0, 0.1).set_delay(0.1)
 
 

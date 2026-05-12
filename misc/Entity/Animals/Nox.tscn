@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://o4a6276bgxhx" path="res://misc/Entity/creature.tscn" id="1_qjck8"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="2_2lcvw"]
+[ext_resource type="Script" uid="uid://bk36fux275vc" path="res://misc/Entity/Animals/nox.gd" id="2_nfayc"]
 [ext_resource type="Texture2D" uid="uid://doi65iugoty8f" path="res://misc/Entity/Textures/Enemy.png" id="3_nfayc"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="3_wk8xf"]
 
@@ -580,7 +581,11 @@ _data = {
 &"Walk": SubResource("Animation_dtav1")
 }
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_wk8xf"]
+radius = 140.0
+
 [node name="Nox" unique_id=2111811093 node_paths=PackedStringArray("body_anim", "Vfx") instance=ExtResource("1_qjck8")]
+script = ExtResource("2_nfayc")
 behavior = -1.0
 can_flee = true
 flee_threshold = 0.959
@@ -643,3 +648,17 @@ autoplay = &"Idle"
 [node name="HealthBar" parent="." index="8" unique_id=1354189396]
 offset_top = 6.0
 offset_bottom = 8.0
+
+[node name="Fearzone" type="Area2D" parent="." index="10" unique_id=1395366776]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Fearzone" index="0" unique_id=501099923]
+position = Vector2(0, -12)
+shape = SubResource("CircleShape2D_wk8xf")
+
+[node name="Timer" type="Timer" parent="." index="11" unique_id=966960858]
+
+[connection signal="body_entered" from="Fearzone" to="." method="_on_fearzone_body_entered"]
+[connection signal="body_exited" from="Fearzone" to="." method="_on_fearzone_body_exited"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

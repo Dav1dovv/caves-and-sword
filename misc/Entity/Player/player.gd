@@ -45,8 +45,6 @@ var _lunge_hit_bodies:  Array   = []   # кого уже задели за эт�
 @onready var death_menu:        Control          = $HUD/DeathMenu
 @onready var effect_display_ui: EffectDisplayUI  = $HUD/EffectDisplayUI
 @onready var _hand:             Node2D           = $Skin/Body/Hand
-@onready var _head_anim:        AnimationPlayer  = $Skin/Body/Head/AnimationPlayer
-@onready var _head_timer:       Timer            = $Skin/Body/Head/Timer
 @onready var _hurt_col:         CollisionShape2D = $HurtBox/CollisionShape2D
 
 ## Компонент пассивных эффектов оружия. Добавь ноду WeaponPassiveHandler в Player.
@@ -341,11 +339,6 @@ func save_game() -> void:
 
 
 # ─── Сигналы ──────────────────────────────────────────────────────────────────
-func _on_timer_timeout() -> void:
-	_head_anim.play("Idle" + str(1 + randi() % 4))
-	_head_timer.wait_time = randf_range(3.0, 12.0)
-	_head_timer.start()
-
 func _on_health_changed(new_health: float) -> void:
 	health_bar.set_hp(_hp_to_display(new_health))
 

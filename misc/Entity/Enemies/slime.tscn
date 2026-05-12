@@ -7,8 +7,10 @@
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="4_0r3tc"]
 [ext_resource type="Texture2D" uid="uid://sv8kxdhgikfe" path="res://misc/Entity/Textures/Slime v2.png" id="4_2l84w"]
 [ext_resource type="AudioStream" uid="uid://cf4x7oqxioltd" path="res://Assets/Audio/SFX/Slime.mp3" id="5_ojvg7"]
+[ext_resource type="Script" uid="uid://wm1t8anytdyq" path="res://scr/Resources/ItemData/ItemData.gd" id="5_onooq"]
+[ext_resource type="Resource" uid="uid://dthgslbfnjeal" path="res://misc/Content/Items/Slime.tres" id="6_3sfyk"]
 
-[sub_resource type="Resource" id="Resource_0r3tc"]
+[sub_resource type="Resource" id="Resource_h4df7"]
 resource_local_to_scene = true
 resource_name = "Slime Stat"
 script = ExtResource("3_0r3tc")
@@ -277,7 +279,7 @@ ray_length = 60.0
 avoidance_strength = 2.0
 attack_radius = 0.0
 body_anim = NodePath("Skin/AnimationPlayer")
-Entity_stats = SubResource("Resource_0r3tc")
+Entity_stats = SubResource("Resource_h4df7")
 Vfx = NodePath("VFX")
 
 [node name="optimizer" parent="." index="0" unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
@@ -293,6 +295,10 @@ equip = SubResource("Resource_2l84w")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox" index="0" unique_id=2088439719]
 position = Vector2(0, -7)
 shape = SubResource("CircleShape2D_djix7")
+
+[node name="Drop" parent="." index="3" unique_id=1587885386]
+drop_item = Array[ExtResource("5_onooq")]([ExtResource("6_3sfyk")])
+max_drop = 5
 
 [node name="Skin" type="Node2D" parent="." index="9" unique_id=557302533]
 

@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://wflmgj2qexop" path="res://misc/Chest/Chest.gd" id="1_8dabs"]
 [ext_resource type="Script" uid="uid://btxho8sqg8tnx" path="res://scr/Systems/Interaction/Interaction.gd" id="2_yb1kq"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="4_uyyit"]
-[ext_resource type="Texture2D" uid="uid://ccsu05d4cl65i" path="res://misc/Chest/Simple Chest.png" id="6_f7t7j"]
+[ext_resource type="Texture2D" uid="uid://datsysl7u1w7" path="res://misc/Chest/Chest1.png" id="5_jct2l"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="9_2urs1"]
 [ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="10_a1p81"]
 [ext_resource type="Resource" uid="uid://x1lita8ofrji" path="res://misc/Content/Items/Magic Wand.tres" id="10_jct2l"]
@@ -378,7 +378,7 @@ shape = SubResource("CircleShape2D_dpjqc")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1456740653]
 position = Vector2(0.211052, -6.07981)
-texture = ExtResource("6_f7t7j")
+texture = ExtResource("5_jct2l")
 offset = Vector2(-0.211052, -5.03873)
 hframes = 2
 
