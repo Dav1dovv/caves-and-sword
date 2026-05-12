@@ -97,13 +97,13 @@ vertical_alignment = 1
 
 [node name="Message" type="Label" parent="CanvasLayer/ColorRect" unique_id=1959319250]
 layout_mode = 1
-anchors_preset = 4
+anchors_preset = 14
 anchor_top = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = 21.0
-offset_top = -63.0
-offset_right = 450.0
-offset_bottom = 39.0
+offset_top = -71.0
+offset_bottom = 71.0
+grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32
 text = "Message"

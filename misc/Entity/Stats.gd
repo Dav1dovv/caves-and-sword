@@ -2,8 +2,8 @@ extends Resource
 class_name stats
 
 # Основные характеристики
-@export var max_health: int = 100.0
-var current_health: float = 100.0
+@export var max_health: int = 100
+var current_health: float
 
 # Скорость
 @export var base_move_speed: float = 2.0

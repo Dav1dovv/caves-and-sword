@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://j1rdwpuf2v3y"]
 
 [ext_resource type="PackedScene" uid="uid://ddok5ai5dtxca" path="res://misc/Entity/entity.tscn" id="1_dl2cj"]
-[ext_resource type="Script" uid="uid://cu4mrajt8isay" path="res://misc/Entity/AI/BossAI.gd" id="2_a3npe"]
+[ext_resource type="Script" uid="uid://cu4mrajt8isay" path="res://misc/Entity/Scripts/BossAI.gd" id="2_a3npe"]
 [ext_resource type="PackedScene" uid="uid://u72aa5bych45" path="res://misc/Projectiles/Bullet.tscn" id="3_mlxco"]
-[ext_resource type="Script" uid="uid://cg0qrkg54iwle" path="res://misc/Entity/AI/BossConfig.gd" id="4_vvtuy"]
+[ext_resource type="Script" uid="uid://cg0qrkg54iwle" path="res://misc/Entity/Scripts/BossConfig.gd" id="4_vvtuy"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="5_gkbg4"]
 [ext_resource type="Texture2D" uid="uid://cicuii2y8it3v" path="res://misc/Entity/Textures/Bosses/Cursed Lord4.png" id="6_dl2cj"]
 [ext_resource type="Texture2D" path="res://Assets/Textures/SpriteSheets/weapons-Sheet.png" id="7_b0nj6"]

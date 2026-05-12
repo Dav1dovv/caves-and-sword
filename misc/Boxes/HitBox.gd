@@ -5,6 +5,6 @@ class_name HitBox
 
 func _init() -> void:
 	set_collision_layer_value(1,false)
-	set_collision_layer_value(4,true)
 	set_collision_mask_value(1,false)
+	set_collision_layer_value(4,true)
 	set_collision_mask_value(5,true)

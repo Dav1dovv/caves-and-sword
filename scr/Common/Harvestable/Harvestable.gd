@@ -37,7 +37,7 @@ func _ready() -> void:
 	
 	# Получаем ShaderMaterial со спрайта
 	var sprite = $Sprite2D
-	print("[Tree] sprite found: ", sprite)
+	#print("[Tree] sprite found: ", sprite)
 	#if sprite:
 		#print("[Tree] material: ", sprite.material)
 		#print("[Tree] material type: ", type_string(typeof(sprite.material)))

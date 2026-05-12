@@ -22,13 +22,11 @@
 [ext_resource type="PackedScene" uid="uid://cnidd0x3oq73e" path="res://misc/Cave/cave.tscn" id="20_e5ub0"]
 [ext_resource type="PackedScene" uid="uid://co6j4pqtskgmp" path="res://misc/Structures/TravelerTrader.tscn" id="21_7xbng"]
 [ext_resource type="Script" uid="uid://ddnj8bnyaj0w2" path="res://scr/Systems/Interaction/IslandInteraction.gd" id="22_ku0lu"]
-[ext_resource type="PackedScene" uid="uid://dc6224o6es5o2" path="res://misc/Stations/camp.tscn" id="23_n44xa"]
-[ext_resource type="PackedScene" uid="uid://h106lj2xe051" path="res://misc/Structures/ennemy_camp.tscn" id="24_vgt5r"]
 
 [sub_resource type="Resource" id="Resource_vl4o5"]
 script = ExtResource("5_y0p6k")
 
-[sub_resource type="Resource" id="Resource_wr7bm"]
+[sub_resource type="Resource" id="Resource_8w7ta"]
 resource_local_to_scene = true
 script = ExtResource("7_xl4jk")
 base_move_speed = 3.0
@@ -187,30 +185,6 @@ exclusion_radius = 100.0
 spawn_priority = 85
 metadata/_custom_type_script = "uid://cxixcs17bxicy"
 
-[sub_resource type="Resource" id="Resource_u0ieu"]
-script = ExtResource("11_yvqy0")
-Generation_scene = ExtResource("24_vgt5r")
-Generation_random_versions = Array[PackedScene]([ExtResource("23_n44xa")])
-random_scales = {
-"Big": Vector2(1, 1),
-"Middle": Vector2(1, 1),
-"Standart": Vector2(1, 1)
-}
-metadata/_custom_type_script = "uid://bwabf86cec2s5"
-
-[sub_resource type="Resource" id="Resource_xffoo"]
-script = ExtResource("19_drqfh")
-structure_name = "ennemy camp"
-structure_type = 2
-custom_type_name = "enemy camp"
-generation_item = SubResource("Resource_u0ieu")
-min_distance_from_player = 200.0
-min_distance_between_same_type = 180.0
-min_distance_between_any = 120.0
-exclusion_radius = 70.0
-spawn_priority = 100
-metadata/_custom_type_script = "uid://cxixcs17bxicy"
-
 [sub_resource type="LabelSettings" id="LabelSettings_olyyt"]
 font_size = 25
 
@@ -237,10 +211,10 @@ top_level = true
 position = Vector2(-910.08997, 398.99994)
 zoom = Vector2(0.6, 0.6)
 process_callback = 0
-limit_left = -1360
-limit_top = -1008
-limit_right = 1440
-limit_bottom = 992
+limit_left = -1328
+limit_top = -976
+limit_right = 1408
+limit_bottom = 960
 editor_draw_limits = true
 script = ExtResource("2_64bue")
 metadata/_custom_type_script = "uid://cx0477dq0nkws"
@@ -263,12 +237,13 @@ follow_damping = true
 follow_damping_value = Vector2(0.4, 0.4)
 draw_limits = true
 limit_target = NodePath("../Tiles/Ocean")
+limit_margin = Vector4i(32, 32, 32, 32)
 
 [node name="Player" parent="." unique_id=1150737309 instance=ExtResource("6_7owtg")]
 position = Vector2(-899.99994, 407.99994)
 scale = Vector2(0.8590361, 0.8590361)
 is_in_world = true
-Entity_stats = SubResource("Resource_wr7bm")
+Entity_stats = SubResource("Resource_8w7ta")
 
 [node name="Houses" type="Sprite2D" parent="." unique_id=1031389908]
 position = Vector2(-899.99994, 443.99997)
@@ -322,7 +297,7 @@ location_id = "World_Forest"
 spawn_shape = NodePath("Polygon2D")
 min_distance = 27.96
 noise_octaves = 1
-special_structures = Array[ExtResource("19_drqfh")]([SubResource("Resource_nso6r"), SubResource("Resource_xffoo")])
+special_structures = Array[ExtResource("19_drqfh")]([SubResource("Resource_nso6r")])
 metadata/_custom_type_script = "uid://loq3kip7ism3"
 
 [node name="Polygon2D" type="Polygon2D" parent="Forest" unique_id=1776690237]

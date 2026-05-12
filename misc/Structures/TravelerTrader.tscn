@@ -7,9 +7,5 @@
 
 [node name="Snail" parent="." unique_id=2111811093 instance=ExtResource("1_125rn")]
 
-[node name="Creature" parent="." unique_id=1718629020 node_paths=PackedStringArray("patrol_anchor") instance=ExtResource("2_4uibv")]
+[node name="Creature" parent="." unique_id=1718629020 instance=ExtResource("2_4uibv")]
 position = Vector2(-53, 4)
-patrol_anchor = NodePath("../Snail")
-patrol_radius = 230.0
-patrol_angular_speed = 0.7999999999999999
-patrol_return_threshold = 40.0

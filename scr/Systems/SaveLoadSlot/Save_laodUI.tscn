@@ -20,8 +20,8 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yghq4"]
 shader = ExtResource("4_63qnd")
-shader_parameter/blur_amount = 0.8440001350899999
-shader_parameter/mix_amount = 0.1410000066975
+shader_parameter/blur_amount = 2.8550002306125
+shader_parameter/mix_amount = 0.3430000162925
 shader_parameter/color_over = Color(0, 0, 0, 1)
 
 [sub_resource type="Animation" id="Animation_utbik"]
@@ -1224,25 +1224,34 @@ grow_vertical = 2
 alignment = 1
 
 [node name="Label" type="Label" parent="NewSavePanel" unique_id=913014593]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 text = "CREATE NEW CHARACTER"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Control" type="Control" parent="NewSavePanel" unique_id=452255884]
 custom_minimum_size = Vector2(0, 7)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="SkinCreator" type="Control" parent="NewSavePanel" unique_id=896466629]
-z_index = 3
-custom_minimum_size = Vector2(270, 74)
+[node name="LineEdit" type="LineEdit" parent="NewSavePanel" unique_id=1105312655]
+custom_minimum_size = Vector2(160, 5)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 9
+placeholder_text = "CHARACTER  NAME"
+max_length = 14
+
+[node name="SkinCreator" type="Control" parent="NewSavePanel" unique_id=896466629]
+z_index = 3
+custom_minimum_size = Vector2(475.1, 74)
+layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 
 [node name="Skin" type="Node2D" parent="NewSavePanel/SkinCreator" unique_id=1870768421 node_paths=PackedStringArray("player_sprites")]
-position = Vector2(139.00002, 74)
+position = Vector2(225.5, 74)
 scale = Vector2(2.3952951, 2.3952951)
 script = ExtResource("5_fleqo")
 player_skins = Array[Texture]([ExtResource("13_hvekn"), ExtResource("14_xvj08"), ExtResource("15_4x125"), ExtResource("9_h50x6"), ExtResource("10_lqclo"), ExtResource("11_af0if"), ExtResource("12_rjumb"), ExtResource("13_lqclo")])
@@ -1337,13 +1346,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -171.0
-offset_top = -9.0
-offset_right = 171.0
-offset_bottom = 9.0
+offset_left = -181.05
+offset_top = 4.0
+offset_right = 160.95
+offset_bottom = 22.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 64
+theme_override_constants/separation = 98
 
 [node name="HBoxContainer" type="HBoxContainer" parent="NewSavePanel/SkinCreator/HBoxContainer" unique_id=355603443]
 layout_mode = 2
@@ -1377,20 +1386,14 @@ text = "Body"
 layout_mode = 2
 icon = SubResource("AtlasTexture_lqclo")
 
-[node name="LineEdit" type="LineEdit" parent="NewSavePanel" unique_id=1105312655]
-custom_minimum_size = Vector2(20, 5)
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-placeholder_text = "CHARACTER  NAME"
-max_length = 14
-
 [node name="Control2" type="Control" parent="NewSavePanel" unique_id=1468163000]
-custom_minimum_size = Vector2(0, 25)
+custom_minimum_size = Vector2(0, 53.975)
 layout_mode = 2
 
 [node name="Create" parent="NewSavePanel" unique_id=581529071 instance=ExtResource("3_oxe6j")]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(150, 20)
 layout_mode = 2
+size_flags_horizontal = 4
 text = "Create Character"
 
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]

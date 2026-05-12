@@ -2,28 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://o4a6276bgxhx" path="res://misc/Entity/creature.tscn" id="1_qjck8"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="2_2lcvw"]
-[ext_resource type="Script" uid="uid://sspi0cbw8oxn" path="res://misc/Entity/AI/EntityConfig.gd" id="2_nfayc"]
 [ext_resource type="Texture2D" uid="uid://doi65iugoty8f" path="res://misc/Entity/Textures/Enemy.png" id="3_nfayc"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="3_wk8xf"]
-[ext_resource type="Script" uid="uid://b286rq0s2stos" path="res://scr/Misc/VFX/DamageVFX.gd" id="4_wk8xf"]
 
-[sub_resource type="Resource" id="Resource_wk8xf"]
-script = ExtResource("2_nfayc")
-creature_type = 5
-detection_range = 350.0
-close_range = 80.0
-chase_speed_mult = 10.5
-wander_speed_mult = 10.0
-flee_speed_mult = 20.0
-approach_offset = 70.0
-offset_change_interval = 2.5
-wander_interval = 4.0
-calm_down_time = 7.0
-rotation_speed = 3.0
-drop_chance = 1.0
-metadata/_custom_type_script = "uid://sspi0cbw8oxn"
-
-[sub_resource type="Resource" id="Resource_heu30"]
+[sub_resource type="Resource" id="Resource_2lcvw"]
+resource_local_to_scene = true
 script = ExtResource("3_wk8xf")
 max_health = 50
 base_move_speed = 8.0
@@ -597,24 +580,29 @@ _data = {
 &"Walk": SubResource("Animation_dtav1")
 }
 
-[node name="Nox" unique_id=2111811093 node_paths=PackedStringArray("body_anim") instance=ExtResource("1_qjck8")]
-config = SubResource("Resource_wk8xf")
+[node name="Nox" unique_id=2111811093 node_paths=PackedStringArray("body_anim", "Vfx") instance=ExtResource("1_qjck8")]
+behavior = -1.0
+can_flee = true
+flee_threshold = 0.959
+use_fear = true
+fear_per_damage = 0.5
+fear_proximity_radius = 200.0
+fear_proximity_rate = 1.0
+fear_flee_threshold = 0.034
+fear_calm_threshold = 0.015
+hear_radius = 200.0
+sight_radius = 200.0
 body_anim = NodePath("Skin/AnimationPlayer")
-patrol_radius = 100.0
-patrol_angular_speed = 0.6
-patrol_return_threshold = 30.0
-Entity_stats = SubResource("Resource_heu30")
+Entity_stats = SubResource("Resource_2lcvw")
+Vfx = NodePath("VFX")
 
-[node name="optimizer" parent="." index="0" unique_id=63861658 node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" parent="." index="0" unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
 rect = Rect2(-10, -15, 21, 25)
 hide_objects = [NodePath("../Skin")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" parent_id_path=PackedInt32Array(173476354) index="0" unique_id=2044203562]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" parent_id_path=PackedInt32Array(411889454) index="0" unique_id=2044203562]
 position = Vector2(1, -12)
 shape = SubResource("RectangleShape2D_nfayc")
-
-[node name="VFX" parent="." index="4" unique_id=1555286990]
-script = ExtResource("4_wk8xf")
 
 [node name="Skin" type="Node2D" parent="." index="7" unique_id=1802627106]
 
@@ -651,3 +639,7 @@ region_rect = Rect2(13, 115, 5, 8)
 root_node = NodePath("../..")
 libraries/ = SubResource("AnimationLibrary_pfeu0")
 autoplay = &"Idle"
+
+[node name="HealthBar" parent="." index="8" unique_id=1354189396]
+offset_top = 6.0
+offset_bottom = 8.0

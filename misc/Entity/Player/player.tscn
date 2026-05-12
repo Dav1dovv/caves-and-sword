@@ -32,6 +32,7 @@
 
 [sub_resource type="Resource" id="Resource_deyxd"]
 resource_local_to_scene = true
+resource_name = "Player Stat"
 script = ExtResource("3_ipy58")
 base_move_speed = 6.0
 base_armor = 10.0
@@ -1585,6 +1586,7 @@ _data = {
 collision_layer = 4
 collision_mask = 1025
 script = ExtResource("2_ipy58")
+is_in_world = false
 acceleration = 0.83
 friction = 1.0
 BodyAnimator = NodePath("Skin/Body/BodyAnim")

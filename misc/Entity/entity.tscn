@@ -13,5 +13,5 @@ metadata/_edit_group_ = true
 position = Vector2(0, -10)
 enable_node_path = NodePath("")
 script = ExtResource("2_q2g5j")
-hide_objects = [NodePath("")]
+hide_objects = [null]
 metadata/_custom_type_script = "uid://dbxsovdq7bbia"

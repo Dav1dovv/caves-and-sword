@@ -8,10 +8,10 @@ func _hit_vfx(new_character : Node2D) -> void:
 	else:
 		character = new_character
 	var tween = create_tween().set_parallel(true)
-	tween.tween_property(character, "rotation", randf_range(-0.2, 0.2), 0.1)
-	tween.tween_property(character, "scale", Vector2(1.1, 1.1), 0.1)
-	tween.tween_property(character, "rotation", 0.0, 0.1).set_delay(0.1)
-	tween.tween_property(character, "scale", Vector2(1.0, 1.0), 0.1).set_delay(0.1)
+	tween.tween_property(character, "rotation", randf_range(-0.2, 0.2), 0.01)
+	tween.tween_property(character, "scale", Vector2(1.1, 1.1), 0.01)
+	tween.tween_property(character, "rotation", 0.0, 0.1).set_delay(0.01)
+	tween.tween_property(character, "scale", Vector2(1.0, 1.0), 0.1).set_delay(0.01)
 	tween.tween_callback(vfx_finished.emit)
 
 

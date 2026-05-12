@@ -1,19 +1,14 @@
 [gd_scene format=3 uid="uid://cvj174hseymkm"]
 
 [ext_resource type="PackedScene" uid="uid://o4a6276bgxhx" path="res://misc/Entity/creature.tscn" id="1_u6aou"]
-[ext_resource type="Script" uid="uid://sspi0cbw8oxn" path="res://misc/Entity/AI/EntityConfig.gd" id="2_u2ukr"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="3_u8tvf"]
-[ext_resource type="Script" uid="uid://b286rq0s2stos" path="res://scr/Misc/VFX/DamageVFX.gd" id="4_63uh3"]
 [ext_resource type="Texture2D" uid="uid://d1hvsnflntt61" path="res://misc/Entity/Textures/Animals.png" id="5_ts747"]
 [ext_resource type="Texture2D" uid="uid://d0m52bcmbo0bp" path="res://Assets/Textures/Light/GradientLight.png" id="6_mwf7e"]
 
-[sub_resource type="Resource" id="Resource_j11yu"]
-script = ExtResource("2_u2ukr")
-creature_type = 5
-metadata/_custom_type_script = "uid://sspi0cbw8oxn"
-
-[sub_resource type="Resource" id="Resource_if8uu"]
+[sub_resource type="Resource" id="Resource_brkx7"]
+resource_local_to_scene = true
 script = ExtResource("3_u8tvf")
+base_move_speed = 1.0
 metadata/_custom_type_script = "uid://cpp05fs341abo"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_tfjqq"]
@@ -438,29 +433,25 @@ size = Vector2(42, 10)
 
 [node name="Snail" unique_id=2111811093 node_paths=PackedStringArray("body_anim", "Vfx") instance=ExtResource("1_u6aou")]
 position = Vector2(-1, 0)
-config = SubResource("Resource_j11yu")
+behavior = -0.78
+can_flee = true
+flee_threshold = 0.112
 body_anim = NodePath("Skin/AnimationPlayer")
-patrol_radius = 100.0
-patrol_angular_speed = 0.6
-patrol_return_threshold = 30.0
-Entity_stats = SubResource("Resource_if8uu")
+Entity_stats = SubResource("Resource_brkx7")
 Vfx = NodePath("VFX")
 
-[node name="optimizer" parent="." index="0" unique_id=63861658 node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" parent="." index="0" unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
 rect = Rect2(-25, -10, 45, 20)
 hide_objects = [NodePath("../Skin")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" parent_id_path=PackedInt32Array(173476354) index="0" unique_id=212448784]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox" parent_id_path=PackedInt32Array(411889454) index="0" unique_id=212448784]
 position = Vector2(-3, -10.5)
 shape = SubResource("RectangleShape2D_tfjqq")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox" parent_id_path=PackedInt32Array(2095800506) index="0" unique_id=2019077250]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitBox" parent_id_path=PackedInt32Array(1440497730) index="0" unique_id=2019077250]
 position = Vector2(-3, -10.5)
 shape = SubResource("RectangleShape2D_tfjqq")
 disabled = true
-
-[node name="VFX" parent="." index="4" unique_id=1555286990]
-script = ExtResource("4_63uh3")
 
 [node name="Skin" type="Node2D" parent="." index="7" unique_id=1451036635]
 
@@ -490,6 +481,12 @@ region_rect = Rect2(139, 62, 19, 17)
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Skin" index="1" unique_id=1101735219]
 libraries/ = SubResource("AnimationLibrary_d65i2")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="8" unique_id=707425210]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="." index="8" unique_id=707425210]
 position = Vector2(0, -5)
 shape = SubResource("RectangleShape2D_u6aou")
+
+[node name="HealthBar" parent="." index="9" unique_id=1354189396]
+offset_left = -23.0
+offset_top = 3.0
+offset_right = 23.0
+offset_bottom = 5.0

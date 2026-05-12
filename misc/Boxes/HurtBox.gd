@@ -2,18 +2,21 @@
 extends Area2D
 class_name HurtBox
 
-@export var Path_to_stat : Node2D
+# NodePath вместо Node2D — безопасно в @tool режиме
+@export var Path_to_stat : NodePath = NodePath("..")
 
 func _init() -> void:
-	set_collision_layer_value(1,false)
-	set_collision_layer_value(5,true)
-	set_collision_mask_value(1,false)
-	set_collision_mask_value(4,true)
+	set_collision_layer_value(1, false)
+	set_collision_layer_value(5, true)
+	set_collision_mask_value(1, false)
+	set_collision_mask_value(4, true)
 
 func _ready() -> void:
-	get_parent().connect("health_changed",damaged)
+	if Engine.is_editor_hint():
+		return
+	get_parent().connect("health_changed", damaged)
 
-func damaged(area):
+func damaged(area) -> void:
 	get_child(0).disabled = true
 	await get_tree().create_timer(1).timeout
 	get_child(0).disabled = false

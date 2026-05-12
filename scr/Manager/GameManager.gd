@@ -12,9 +12,6 @@ var activated_stations : int = 0
 var last_saved_position: Array[Vector2]
 var player
 
-const START = preload("uid://dmkfjbjyqud87")
-const QUEST_COMPLETE = preload("uid://b4t7q4o81hsi1")
-const ACTIVATED = preload("uid://dwl7yd8xi1g4i")
 
 func _ready() -> void:
 	#DialogueManager.show_dialogue_balloon(START)
@@ -313,11 +310,3 @@ func _load_harvested() -> void:
 	file.close()
 
 #endregion
-
-func activate_station():
-	if activated_stations == max_activation_stations:
-		DialogueManager.show_dialogue_balloon(QUEST_COMPLETE)
-	
-	if activated_stations < max_activation_stations:
-		activated_stations += 1
-		DialogueManager.show_dialogue_balloon(ACTIVATED)

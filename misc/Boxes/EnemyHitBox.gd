@@ -1,6 +1,8 @@
 extends HitBox
 class_name entity_HitBox
 
+signal attacked
+
 @export var equip_sprite : Sprite2D
 
 @export var random_weapons : Array[equip_data]
@@ -17,13 +19,11 @@ func _ready() -> void:
 	if equip_sprite: update_equip(equip)
 
 func hit(area:Area2D):
-	if is_weapon:
-		#if area.is_in_group("Harvestable"):
-			#area.Harvest(equip.Damage,equip.lvl,equip.is_weapon)
-		if area.is_in_group("Player"):
-			print("damaging to player")
-			area.get_parent().take_damage(equip.Damage,self)
-
+	if area.is_in_group("Player"):
+		print("damaging to player")
+		area.get_parent().take_damage(equip.Damage,self)
+		emit_signal("attacked")
+	
 func update_equip(new_equip : ItemData):
 	if equip_sprite == null:
 		return

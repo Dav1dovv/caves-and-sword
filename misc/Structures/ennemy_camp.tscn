@@ -2,38 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://dc6224o6es5o2" path="res://misc/Stations/camp.tscn" id="1_xtunk"]
 [ext_resource type="PackedScene" uid="uid://dwuqu7ba4rl1f" path="res://misc/Entity/Enemies/Rat.tscn" id="2_ndko2"]
-[ext_resource type="Script" uid="uid://sspi0cbw8oxn" path="res://misc/Entity/AI/EntityConfig.gd" id="3_hvh8g"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="4_tax3s"]
 
-[sub_resource type="Resource" id="Resource_xtunk"]
-resource_local_to_scene = true
-script = ExtResource("3_hvh8g")
-detection_range = 70.0
-chase_speed_mult = 9.0
-approach_offset = 85.0
-attack_cooldown = 1.2000000000000002
-drop_chance = 0.9
-metadata/_custom_type_script = "uid://sspi0cbw8oxn"
-
-[sub_resource type="Resource" id="Resource_ndko2"]
-resource_local_to_scene = true
-script = ExtResource("4_tax3s")
-max_health = 45
-base_armor = 10.0
-base_defense_modifier = 0.1
-metadata/_custom_type_script = "uid://cpp05fs341abo"
-
-[sub_resource type="Resource" id="Resource_hvh8g"]
-resource_local_to_scene = true
-script = ExtResource("3_hvh8g")
-detection_range = 70.0
-chase_speed_mult = 9.0
-approach_offset = 85.0
-attack_cooldown = 1.2000000000000002
-drop_chance = 0.9
-metadata/_custom_type_script = "uid://sspi0cbw8oxn"
-
-[sub_resource type="Resource" id="Resource_tax3s"]
+[sub_resource type="Resource" id="Resource_amfqk"]
 resource_local_to_scene = true
 script = ExtResource("4_tax3s")
 max_health = 45
@@ -45,16 +16,9 @@ metadata/_custom_type_script = "uid://cpp05fs341abo"
 
 [node name="Camp" parent="." unique_id=265569063 instance=ExtResource("1_xtunk")]
 
-[node name="Creature" parent="." unique_id=2111811093 node_paths=PackedStringArray("patrol_anchor") instance=ExtResource("2_ndko2")]
+[node name="Creature" parent="." unique_id=2111811093 instance=ExtResource("2_ndko2")]
 position = Vector2(-61, -1)
-config = SubResource("Resource_xtunk")
-patrol_anchor = NodePath("../Camp")
-patrol_radius = 200.0
-Entity_stats = SubResource("Resource_ndko2")
 
-[node name="Creature2" parent="." unique_id=1043371710 node_paths=PackedStringArray("patrol_anchor") instance=ExtResource("2_ndko2")]
+[node name="Creature2" parent="." unique_id=1043371710 instance=ExtResource("2_ndko2")]
 position = Vector2(66, 0)
-config = SubResource("Resource_hvh8g")
-patrol_anchor = NodePath("../Camp")
-patrol_radius = 200.0
-Entity_stats = SubResource("Resource_tax3s")
+Entity_stats = SubResource("Resource_amfqk")

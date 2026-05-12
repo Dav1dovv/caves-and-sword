@@ -34,13 +34,14 @@ var effect_manager: EffectManager
 var _entity_sprite: Node = null
 
 func _ready():
+	# КРИТИЧНО: дублируем Resource чтобы каждый инстанс имел свои Stats
+	Entity_stats = Entity_stats.duplicate()
 	Entity_stats.move_speed = Entity_stats.base_move_speed
+	Entity_stats.current_health = Entity_stats.max_health
 	effect_manager = EffectManager.new(self)
 	add_child(effect_manager)
 	effect_manager.effect_added.connect(_on_effect_added)
 	effect_manager.effect_removed.connect(_on_effect_removed)
-
-	# Ищем спрайт автоматически
 	_entity_sprite = _find_sprite(self)
 
 # ── ПОЛУЧЕНИЕ УРОНА ─────────────────────────────────────────────
@@ -189,10 +190,7 @@ func die() -> void:
 		effect_manager.clear_all_effects()
 	set_collision_layer_value(1, false)
 	set_collision_mask_value(1, false)
-	if $Drop:
-		$Drop._drop_items()
-	if is_in_group("Creature"):
-		remove_from_group("Creature")
+
 
 func heal(amount: float) -> void:
 	if !is_alive:

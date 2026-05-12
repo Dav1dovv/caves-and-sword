@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://be2h1sxenyt31"]
 
 [ext_resource type="PackedScene" uid="uid://ddok5ai5dtxca" path="res://misc/Entity/entity.tscn" id="1_c0o1h"]
-[ext_resource type="Script" uid="uid://cu4mrajt8isay" path="res://misc/Entity/AI/BossAI.gd" id="2_agbjq"]
+[ext_resource type="Script" uid="uid://cu4mrajt8isay" path="res://misc/Entity/Scripts/BossAI.gd" id="2_agbjq"]
 [ext_resource type="PackedScene" path="res://misc/Entity/Enemies/Worms/SandWorm.tscn" id="3_agbjq"]
 [ext_resource type="PackedScene" uid="uid://u72aa5bych45" path="res://misc/Projectiles/Bullet.tscn" id="3_s1125"]
-[ext_resource type="Script" uid="uid://cg0qrkg54iwle" path="res://misc/Entity/AI/BossConfig.gd" id="4_v706e"]
+[ext_resource type="Script" uid="uid://cg0qrkg54iwle" path="res://misc/Entity/Scripts/BossConfig.gd" id="4_v706e"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="5_0l42q"]
 [ext_resource type="Texture2D" uid="uid://cmufgb3l4np0" path="res://misc/Entity/Textures/Bosses/Cursed Lord2.png" id="6_eq6o3"]
 [ext_resource type="Shader" uid="uid://bave1i4dxbqt3" path="res://Assets/Shader/Wind Sway.gdshader" id="7_s1125"]
