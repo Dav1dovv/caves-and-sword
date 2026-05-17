@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="equip_data" format=3 uid="uid://c4pg6386wjik5"]
+
+[ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="1_5e15l"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="1_fo06i"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_80kg3"]
+atlas = ExtResource("1_fo06i")
+region = Rect2(112, 80, 16, 16)
+
+[resource]
+script = ExtResource("1_5e15l")
+equiped_weapon_sprite = SubResource("AtlasTexture_80kg3")
+icon = SubResource("AtlasTexture_80kg3")
+item_name = "Yellow hornet"
+metadata/_custom_type_script = "uid://b2ovoyoflp1gw"

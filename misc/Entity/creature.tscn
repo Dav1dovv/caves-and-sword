@@ -5,10 +5,8 @@
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="2_x812b"]
 [ext_resource type="Script" uid="uid://d2b3gchtl7jhb" path="res://misc/Boxes/HurtBox.gd" id="5_yi3og"]
 [ext_resource type="Script" uid="uid://c8gtsucgxp2ef" path="res://misc/Boxes/EnemyHitBox.gd" id="6_15r6q"]
-[ext_resource type="Script" uid="uid://ctm4b4v8txo1q" path="res://scr/Resources/WeightItem.gd" id="6_c6snw"]
 [ext_resource type="Script" uid="uid://c6tw2fkklnri5" path="res://misc/Drop/DropItem.gd" id="7_1dodm"]
 [ext_resource type="PackedScene" uid="uid://digbxx3ko1dgy" path="res://misc/Particles/BloodSplash.tscn" id="7_q2x7o"]
-[ext_resource type="Resource" uid="uid://y46y4iyhdm4g" path="res://misc/Content/Items/Gas.tres" id="7_x812b"]
 [ext_resource type="AudioStream" uid="uid://b7e11d7dloks2" path="res://Assets/Audio/SFX/Hurt.wav" id="8_hdtsf"]
 [ext_resource type="Script" uid="uid://b286rq0s2stos" path="res://scr/Misc/VFX/DamageVFX.gd" id="9_yi3og"]
 
@@ -16,16 +14,11 @@
 script = ExtResource("2_x812b")
 metadata/_custom_type_script = "uid://cpp05fs341abo"
 
-[sub_resource type="Resource" id="Resource_yi3og"]
-script = ExtResource("6_c6snw")
-item = ExtResource("7_x812b")
-weight = 0.1
-metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
-
-[node name="Creature" type="CharacterBody2D" unique_id=1251952136]
+[node name="Creature" type="CharacterBody2D" unique_id=1251952136 node_paths=PackedStringArray("Vfx")]
 script = ExtResource("1_x812b")
 wall_collision_mask = 2
 Entity_stats = SubResource("Resource_15r6q")
+Vfx = NodePath("VFX")
 metadata/_custom_type_script = "uid://dba47bfyot3vs"
 
 [node name="optimizer" type="VisibleOnScreenEnabler2D" parent="." unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
@@ -47,7 +40,6 @@ metadata/_custom_type_script = "uid://c8gtsucgxp2ef"
 
 [node name="Drop" type="Node" parent="." unique_id=1587885386]
 script = ExtResource("7_1dodm")
-unique_items = Array[ExtResource("6_c6snw")]([SubResource("Resource_yi3og")])
 metadata/_custom_type_script = "uid://c6tw2fkklnri5"
 
 [node name="VFX" type="Node" parent="." unique_id=304494227]

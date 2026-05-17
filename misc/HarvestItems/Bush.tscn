@@ -9,6 +9,56 @@
 [ext_resource type="PackedScene" uid="uid://dtmd2j03iu8sl" path="res://misc/Particles/BushSFX.tscn" id="8_tgede"]
 [ext_resource type="AudioStream" uid="uid://bd77ep2lty23k" path="res://misc/HarvestItems/SFX/Bush/BushHit.wav" id="9_ekenn"]
 
+[sub_resource type="Shader" id="Shader_tgede"]
+code = "shader_type canvas_item;
+
+// === Ветер ===
+uniform float wind_strength : hint_range(0.0, 20.0) = 4.0;
+uniform float wind_speed : hint_range(0.0, 10.0) = 1.8;
+uniform float wind_frequency : hint_range(0.0, 10.0) = 2.5;
+// Смещение по оси X для уникальности каждого дерева (передавай глобальную позицию)
+uniform float wind_offset : hint_range(0.0, 100.0) = 0.0;
+
+// === Прозрачность ===
+// 1.0 = полностью видим, 0.0 = полностью прозрачен
+uniform float fade_alpha : hint_range(0.0, 1.0) = 1.0;
+
+void vertex() {
+	// UV.y = 0 — верхушка спрайта, UV.y = 1 — низ (корни)
+	// Качание усиливается к верхушке (1.0 - UV.y)
+	float sway_factor = pow(1.0 - UV.y, 2.0);
+
+	float time_offset = TIME * wind_speed + wind_offset * 0.3;
+	
+	// Основная волна + маленькая быстрая рябь для органичности
+	float wave = sin(time_offset * wind_frequency) * 0.7
+			   + sin(time_offset * wind_frequency * 2.3 + 1.2) * 0.3;
+
+	VERTEX.x += wave * wind_strength * sway_factor;
+	
+	// Лёгкое сжатие по Y при максимальном отклонении (физичность)
+	VERTEX.y += abs(wave) * wind_strength * sway_factor * 0.15;
+}
+
+void fragment() {
+	vec4 tex = texture(TEXTURE, UV);
+	
+	// Применяем прозрачность только к непустым пикселям
+	tex.a *= fade_alpha;
+	
+	COLOR = tex;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ekenn"]
+resource_local_to_scene = true
+shader = SubResource("Shader_tgede")
+shader_parameter/wind_strength = 0.94800004503
+shader_parameter/wind_speed = 2.9790001415025
+shader_parameter/wind_frequency = 0.6490000308275
+shader_parameter/wind_offset = 44.1730020982175
+shader_parameter/fade_alpha = 1.0
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_pewux"]
 radius = 14.4668
 
@@ -16,6 +66,7 @@ radius = 14.4668
 script = ExtResource("2_tgede")
 durability = 2.0
 harvest_tool_lvl = 0
+max_distance = 10.0
 
 [node name="optimizer" parent="." index="1" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
 position = Vector2(-0.500001, -10.5)
@@ -27,11 +78,11 @@ drop_item = Array[ExtResource("7_ekenn")]([null])
 max_drop = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="4" unique_id=1204876300]
+material = SubResource("ShaderMaterial_ekenn")
 position = Vector2(0, -8)
 texture = ExtResource("4_tgede")
 offset = Vector2(0, -8)
 hframes = 3
-frame = 1
 script = ExtResource("3_7v7f5")
 frame_weights = Array[float]([1.0, 0.2, 0.2])
 metadata/_custom_type_script = "uid://b7lfnqk6b5cdp"

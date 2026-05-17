@@ -1,18 +1,20 @@
 [gd_scene format=3 uid="uid://cogckxwqu0m7n"]
 
 [ext_resource type="Script" uid="uid://bhikixmfqyo2d" path="res://scr/Systems/SaveLoadSlot/save_load_button.gd" id="1_fq7x7"]
-[ext_resource type="Texture2D" uid="uid://cuvgr3hf6orre" path="res://misc/Entity/Player/Textures/Skin14.png" id="9_ew20d"]
-[ext_resource type="Texture2D" uid="uid://b2inxslmbmu65" path="res://misc/Entity/Player/Textures/Skin8.png" id="9_t6mi7"]
-[ext_resource type="Texture2D" uid="uid://drjlnqg58dect" path="res://misc/Entity/Player/Textures/Skin9.png" id="10_kxodd"]
-[ext_resource type="Texture2D" uid="uid://7svi7rurwlda" path="res://misc/Entity/Player/Textures/Skin10.png" id="11_jdvgb"]
+[ext_resource type="Texture2D" uid="uid://duv7dkh763fec" path="res://misc/Entity/Player/Textures/Skin1.png" id="5_t6mi7"]
+[ext_resource type="Texture2D" uid="uid://dobdbv38qprsl" path="res://misc/Entity/Player/Textures/Skin2.png" id="6_kxodd"]
+[ext_resource type="Texture2D" uid="uid://btvrs73ifglv3" path="res://misc/Entity/Player/Textures/Skin3.png" id="7_jdvgb"]
+[ext_resource type="Texture2D" uid="uid://w3khdgsairjh" path="res://misc/Entity/Player/Textures/Skin4.png" id="8_5vpdw"]
+[ext_resource type="Texture2D" uid="uid://b6gtnls0f5qqg" path="res://misc/Entity/Player/Textures/Skin5.png" id="9_l2vfi"]
+[ext_resource type="Texture2D" uid="uid://cee8sykoffp27" path="res://misc/Entity/Player/Textures/Skin8.png" id="9_t6mi7"]
+[ext_resource type="Texture2D" uid="uid://dsplngg2gyp50" path="res://misc/Entity/Player/Textures/Skin9.png" id="10_kxodd"]
+[ext_resource type="Texture2D" uid="uid://ds6icwk1y3jq1" path="res://misc/Entity/Player/Textures/Skin6.png" id="10_pghls"]
+[ext_resource type="Texture2D" uid="uid://ce87nys0ld3kr" path="res://misc/Entity/Player/Textures/Skin10.png" id="11_jdvgb"]
+[ext_resource type="Texture2D" uid="uid://cqcradnom2smb" path="res://misc/Entity/Player/Textures/Skin7.png" id="11_wwx2f"]
 [ext_resource type="Script" uid="uid://8un4fxvacetp" path="res://misc/Entity/Player/skin.gd" id="12_ew20d"]
-[ext_resource type="Texture2D" uid="uid://bbwrlu36nxdg1" path="res://misc/Entity/Player/Textures/Eyes.png" id="13_2lycn"]
-[ext_resource type="Texture2D" uid="uid://bpsgo5ojse0tg" path="res://misc/Entity/Player/Textures/Skin11.png" id="13_kxodd"]
-[ext_resource type="Texture2D" uid="uid://bbiy8isa0iu0a" path="res://misc/Entity/Player/Textures/Skin12.png" id="14_jdvgb"]
+[ext_resource type="Texture2D" uid="uid://btck7ovd2kt5p" path="res://misc/Entity/Player/Textures/Skin11.png" id="13_kxodd"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="14_t6mi7"]
-[ext_resource type="Texture2D" uid="uid://qpi1yk2uge8s" path="res://misc/Entity/Player/Textures/Skin13.png" id="15_5vpdw"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="16_jdvgb"]
-[ext_resource type="Texture2D" uid="uid://60ugp1fvqcr1" path="res://misc/Entity/Player/Textures/Skin15.png" id="17_l2vfi"]
 [ext_resource type="Script" uid="uid://bttgnk3bb2a8i" path="res://addons/font_auto_size_labels/auto_size_label.gd" id="22_wwx2f"]
 [ext_resource type="PackedScene" uid="uid://gb7k36a7pc6o" path="res://scr/Misc/UIelements/button.tscn" id="23_b6csp"]
 [ext_resource type="Texture2D" uid="uid://b62hrm50ou235" path="res://Assets/Textures/UI/UI.png" id="24_uss3u"]
@@ -1287,7 +1289,6 @@ grow_horizontal = 2
 script = ExtResource("1_fq7x7")
 player_name_label = NodePath("HBoxContainer2/HBoxContainer/Charachter_name")
 date_label = NodePath("HBoxContainer2/HBoxContainer/Date")
-textures = Array[Texture2D]([ExtResource("9_t6mi7"), ExtResource("10_kxodd"), ExtResource("11_jdvgb"), ExtResource("13_kxodd"), ExtResource("14_jdvgb"), ExtResource("15_5vpdw"), ExtResource("17_l2vfi"), ExtResource("9_ew20d")])
 
 [node name="Delete" parent="." unique_id=53937464 instance=ExtResource("23_b6csp")]
 z_index = 5
@@ -1340,7 +1341,7 @@ y_sort_enabled = true
 position = Vector2(14, 35)
 scale = Vector2(1.4240557, 1.4240557)
 script = ExtResource("12_ew20d")
-player_skins = Array[Texture2D]([ExtResource("9_t6mi7"), ExtResource("10_kxodd"), ExtResource("11_jdvgb"), ExtResource("13_kxodd"), ExtResource("14_jdvgb"), ExtResource("15_5vpdw"), ExtResource("17_l2vfi"), ExtResource("9_ew20d")])
+player_skins = Array[Texture]([ExtResource("5_t6mi7"), ExtResource("6_kxodd"), ExtResource("7_jdvgb"), ExtResource("8_5vpdw"), ExtResource("9_l2vfi"), ExtResource("10_pghls"), ExtResource("11_wwx2f"), ExtResource("9_t6mi7"), ExtResource("10_kxodd"), ExtResource("11_jdvgb"), ExtResource("13_kxodd")])
 player_sprites = [NodePath("Body"), NodePath("Body/LeftLeg"), NodePath("Body/RightLeg"), NodePath("Body/Hand/LeftHand"), NodePath("Body/Hand/RightHand")]
 
 [node name="Body" type="Sprite2D" parent="HBoxContainer2/HBoxContainer/TextureRect/Skin" unique_id=448531435]
@@ -1373,7 +1374,6 @@ region_rect = Rect2(0, 0, 32, 19)
 
 [node name="Eyes" type="Sprite2D" parent="HBoxContainer2/HBoxContainer/TextureRect/Skin/Body/Head" unique_id=2097941114]
 position = Vector2(2.97591, -3.48196)
-texture = ExtResource("13_2lycn")
 
 [node name="Timer" type="Timer" parent="HBoxContainer2/HBoxContainer/TextureRect/Skin/Body/Head" unique_id=1905511597]
 wait_time = 6.0

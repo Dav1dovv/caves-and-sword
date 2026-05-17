@@ -5,24 +5,32 @@
 [ext_resource type="PackedScene" uid="uid://gb7k36a7pc6o" path="res://scr/Misc/UIelements/button.tscn" id="3_oxe6j"]
 [ext_resource type="Shader" uid="uid://cpqgkpo83gda7" path="res://Assets/Shader/Blur.gdshader" id="4_63qnd"]
 [ext_resource type="Script" uid="uid://8un4fxvacetp" path="res://misc/Entity/Player/skin.gd" id="5_fleqo"]
-[ext_resource type="Texture2D" uid="uid://bbwrlu36nxdg1" path="res://misc/Entity/Player/Textures/Eyes.png" id="6_fleqo"]
+[ext_resource type="Texture2D" uid="uid://duv7dkh763fec" path="res://misc/Entity/Player/Textures/Skin1.png" id="6_rjumb"]
+[ext_resource type="Texture2D" uid="uid://dobdbv38qprsl" path="res://misc/Entity/Player/Textures/Skin2.png" id="7_e20lw"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="7_p2nwc"]
-[ext_resource type="Texture2D" uid="uid://bpsgo5ojse0tg" path="res://misc/Entity/Player/Textures/Skin11.png" id="9_h50x6"]
+[ext_resource type="Texture2D" uid="uid://btvrs73ifglv3" path="res://misc/Entity/Player/Textures/Skin3.png" id="8_d86rs"]
+[ext_resource type="Texture2D" uid="uid://btck7ovd2kt5p" path="res://misc/Entity/Player/Textures/Skin11.png" id="9_h50x6"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="9_hkjfi"]
+[ext_resource type="Texture2D" uid="uid://w3khdgsairjh" path="res://misc/Entity/Player/Textures/Skin4.png" id="9_l0nxe"]
+[ext_resource type="Texture2D" uid="uid://b6gtnls0f5qqg" path="res://misc/Entity/Player/Textures/Skin5.png" id="10_gaae2"]
 [ext_resource type="Texture2D" uid="uid://b62hrm50ou235" path="res://Assets/Textures/UI/UI.png" id="10_kp1yt"]
-[ext_resource type="Texture2D" uid="uid://bbiy8isa0iu0a" path="res://misc/Entity/Player/Textures/Skin12.png" id="10_lqclo"]
-[ext_resource type="Texture2D" uid="uid://qpi1yk2uge8s" path="res://misc/Entity/Player/Textures/Skin13.png" id="11_af0if"]
-[ext_resource type="Texture2D" uid="uid://60ugp1fvqcr1" path="res://misc/Entity/Player/Textures/Skin15.png" id="12_rjumb"]
-[ext_resource type="Texture2D" uid="uid://b2inxslmbmu65" path="res://misc/Entity/Player/Textures/Skin8.png" id="13_hvekn"]
-[ext_resource type="Texture2D" uid="uid://cuvgr3hf6orre" path="res://misc/Entity/Player/Textures/Skin14.png" id="13_lqclo"]
-[ext_resource type="Texture2D" uid="uid://drjlnqg58dect" path="res://misc/Entity/Player/Textures/Skin9.png" id="14_xvj08"]
-[ext_resource type="Texture2D" uid="uid://7svi7rurwlda" path="res://misc/Entity/Player/Textures/Skin10.png" id="15_4x125"]
+[ext_resource type="Texture2D" uid="uid://ds6icwk1y3jq1" path="res://misc/Entity/Player/Textures/Skin6.png" id="11_mnx7f"]
+[ext_resource type="Texture2D" uid="uid://cqcradnom2smb" path="res://misc/Entity/Player/Textures/Skin7.png" id="12_8usr8"]
+[ext_resource type="Texture2D" uid="uid://cee8sykoffp27" path="res://misc/Entity/Player/Textures/Skin8.png" id="13_hvekn"]
+[ext_resource type="Texture2D" uid="uid://dsplngg2gyp50" path="res://misc/Entity/Player/Textures/Skin9.png" id="14_xvj08"]
+[ext_resource type="Texture2D" uid="uid://ce87nys0ld3kr" path="res://misc/Entity/Player/Textures/Skin10.png" id="15_4x125"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yghq4"]
 shader = ExtResource("4_63qnd")
 shader_parameter/blur_amount = 2.8550002306125
 shader_parameter/mix_amount = 0.3430000162925
 shader_parameter/color_over = Color(0, 0, 0, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wyasg"]
+load_path = "res://.godot/imported/Skin9.png-4a443583cb3d54310db674038ffc8fee.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_hvekn"]
+load_path = "res://.godot/imported/Eyes.png-e3abbc257096c7211f3972b033706074.ctex"
 
 [sub_resource type="Animation" id="Animation_utbik"]
 resource_name = "Idle1"
@@ -1254,18 +1262,18 @@ mouse_filter = 2
 position = Vector2(225.5, 74)
 scale = Vector2(2.3952951, 2.3952951)
 script = ExtResource("5_fleqo")
-player_skins = Array[Texture]([ExtResource("13_hvekn"), ExtResource("14_xvj08"), ExtResource("15_4x125"), ExtResource("9_h50x6"), ExtResource("10_lqclo"), ExtResource("11_af0if"), ExtResource("12_rjumb"), ExtResource("13_lqclo")])
+player_skins = Array[Texture]([ExtResource("6_rjumb"), ExtResource("7_e20lw"), ExtResource("8_d86rs"), ExtResource("9_l0nxe"), ExtResource("10_gaae2"), ExtResource("11_mnx7f"), ExtResource("12_8usr8"), ExtResource("13_hvekn"), ExtResource("14_xvj08"), ExtResource("15_4x125"), ExtResource("9_h50x6")])
 player_sprites = [NodePath("Body"), NodePath("Body/LeftLeg"), NodePath("Body/RightLeg"), NodePath("Body/Hand/LeftHand"), NodePath("Body/Hand/RightHand")]
 
 [node name="Body" type="Sprite2D" parent="NewSavePanel/SkinCreator/Skin" unique_id=1231008062]
 position = Vector2(0, -8)
-texture = ExtResource("14_xvj08")
+texture = SubResource("CompressedTexture2D_wyasg")
 region_enabled = true
 region_rect = Rect2(12, 19, 7, 8)
 
 [node name="LeftLeg" type="Sprite2D" parent="NewSavePanel/SkinCreator/Skin/Body" unique_id=511039339]
 position = Vector2(-2, 4)
-texture = ExtResource("14_xvj08")
+texture = SubResource("CompressedTexture2D_wyasg")
 offset = Vector2(0, 2)
 region_enabled = true
 region_rect = Rect2(12, 27, 3, 4)
@@ -1273,21 +1281,21 @@ region_rect = Rect2(12, 27, 3, 4)
 [node name="RightLeg" type="Sprite2D" parent="NewSavePanel/SkinCreator/Skin/Body" unique_id=305406669]
 show_behind_parent = true
 position = Vector2(2, 4)
-texture = ExtResource("14_xvj08")
+texture = SubResource("CompressedTexture2D_wyasg")
 offset = Vector2(0, 2)
 region_enabled = true
 region_rect = Rect2(16, 27, 3, 4)
 
 [node name="Head" type="Sprite2D" parent="NewSavePanel/SkinCreator/Skin/Body" unique_id=1306466528]
 position = Vector2(-0.015625, -4.00781)
-texture = ExtResource("14_xvj08")
+texture = SubResource("CompressedTexture2D_wyasg")
 offset = Vector2(0.504, -9.387)
 region_enabled = true
 region_rect = Rect2(0, 0, 32, 19)
 
 [node name="Eyes" type="Sprite2D" parent="NewSavePanel/SkinCreator/Skin/Body/Head" unique_id=1324395194]
 position = Vector2(2.97591, -3.48196)
-texture = ExtResource("6_fleqo")
+texture = SubResource("CompressedTexture2D_hvekn")
 
 [node name="Timer" type="Timer" parent="NewSavePanel/SkinCreator/Skin/Body/Head" unique_id=391541452]
 wait_time = 6.0
@@ -1301,7 +1309,7 @@ libraries/ = SubResource("AnimationLibrary_x7qg1")
 
 [node name="LeftHand" type="Sprite2D" parent="NewSavePanel/SkinCreator/Skin/Body/Hand" unique_id=722938883]
 position = Vector2(-3.55887, -3.64698)
-texture = ExtResource("14_xvj08")
+texture = SubResource("CompressedTexture2D_wyasg")
 offset = Vector2(0, 3)
 region_enabled = true
 region_rect = Rect2(8, 20, 2, 6)
@@ -1318,7 +1326,7 @@ offset = Vector2(5.1, -3.66)
 self_modulate = Color(0.67069, 0.67069, 0.67069, 1)
 z_index = -1
 position = Vector2(3.50243, -3.64698)
-texture = ExtResource("14_xvj08")
+texture = SubResource("CompressedTexture2D_wyasg")
 offset = Vector2(0, 3)
 region_enabled = true
 region_rect = Rect2(8, 20, 2, 6)

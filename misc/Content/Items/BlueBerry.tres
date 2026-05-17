@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="FoodData" format=3 uid="uid://cek8v8e4qeq28"]
+
+[ext_resource type="AudioStream" uid="uid://c2shi73coycxl" path="res://Assets/Audio/SFX/Player/Eating.wav" id="1_e32a8"]
+[ext_resource type="Script" uid="uid://dj4umu6271nxr" path="res://scr/Resources/effects/EffectResource.gd" id="1_h66th"]
+[ext_resource type="Resource" uid="uid://bcr5ppm27mw0p" path="res://misc/Content/Effects/Health Restore.tres" id="2_fqgr6"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="2_pqe6c"]
+[ext_resource type="Script" uid="uid://ds5d4cljtsmfp" path="res://scr/Resources/ItemData/Food_item_data.gd" id="3_fqgr6"]
+[ext_resource type="Texture2D" uid="uid://b64un2hdo8wht" path="res://Assets/Textures/UI/Effects/Effect1.png" id="4_8ldkl"]
+[ext_resource type="PackedScene" uid="uid://bpj1sgib1xsqp" path="res://misc/Particles/Effect.tscn" id="5_q855q"]
+
+[sub_resource type="Resource" id="Resource_lbf4u"]
+script = ExtResource("1_h66th")
+effect_icon = ExtResource("4_8ldkl")
+effect_type = 1
+value = 3.0
+duration = 3.0
+particle_color = Color(0.39607844, 1, 0.2784314, 1)
+particle = ExtResource("5_q855q")
+display_name = "Speed Boost"
+metadata/_custom_type_script = "uid://dj4umu6271nxr"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xo0m3"]
+atlas = ExtResource("2_pqe6c")
+region = Rect2(96, 16, 16, 16)
+
+[resource]
+script = ExtResource("3_fqgr6")
+eat_sound = ExtResource("1_e32a8")
+effects = Array[ExtResource("1_h66th")]([ExtResource("2_fqgr6"), SubResource("Resource_lbf4u")])
+icon = SubResource("AtlasTexture_xo0m3")
+play_anim = "Eating"
+item_name = "BlurBerry"
+metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

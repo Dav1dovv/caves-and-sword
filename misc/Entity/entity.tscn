@@ -9,9 +9,8 @@ script = ExtResource("1_281gg")
 metadata/_custom_type_script = "uid://dsd2vkq83udix"
 metadata/_edit_group_ = true
 
-[node name="optimizer" type="VisibleOnScreenEnabler2D" parent="." unique_id=63861658 node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" type="VisibleOnScreenEnabler2D" parent="." unique_id=63861658]
 position = Vector2(0, -10)
 enable_node_path = NodePath("")
 script = ExtResource("2_q2g5j")
-hide_objects = [null]
 metadata/_custom_type_script = "uid://dbxsovdq7bbia"

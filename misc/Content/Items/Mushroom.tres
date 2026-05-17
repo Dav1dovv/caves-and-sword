@@ -13,12 +13,12 @@ metadata/_custom_type_script = "uid://dj4umu6271nxr"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bgefe"]
 atlas = ExtResource("2_epnts")
-region = Rect2(16, 80, 16, 16)
+region = Rect2(48, 16, 16, 16)
 
 [resource]
 script = ExtResource("2_1v76e")
 effects = Array[ExtResource("1_f4mjo")]([SubResource("Resource_nobfn")])
 icon = SubResource("AtlasTexture_bgefe")
 play_anim = "Eating"
-item_name = "Glow Mushroom"
+item_name = "Mushroom"
 metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

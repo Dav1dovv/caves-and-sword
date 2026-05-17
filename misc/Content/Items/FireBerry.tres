@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="FoodData" format=3 uid="uid://6hlrr5ew3nqw"]
+
+[ext_resource type="Script" uid="uid://dj4umu6271nxr" path="res://scr/Resources/effects/EffectResource.gd" id="1_537n0"]
+[ext_resource type="Resource" uid="uid://cwxguvwvt0kvq" path="res://misc/Content/Effects/Defense Boost.tres" id="2_2h8de"]
+[ext_resource type="Script" uid="uid://ds5d4cljtsmfp" path="res://scr/Resources/ItemData/Food_item_data.gd" id="2_7jutx"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="2_yfpmf"]
+[ext_resource type="Resource" uid="uid://crr3682hbf6k5" path="res://misc/Content/Effects/Speed Boost.tres" id="3_lqm2p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2h8de"]
+atlas = ExtResource("2_yfpmf")
+region = Rect2(64, 16, 16, 16)
+
+[resource]
+script = ExtResource("2_7jutx")
+effects = Array[ExtResource("1_537n0")]([ExtResource("2_2h8de"), ExtResource("3_lqm2p")])
+icon = SubResource("AtlasTexture_2h8de")
+item_name = "Fireberry"
+metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

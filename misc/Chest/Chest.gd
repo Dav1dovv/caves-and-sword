@@ -1,6 +1,6 @@
 extends Node2D
 
-const need_tool = preload("uid://xyck3q0gr12o")
+const need_tool = preload("uid://j25kj8dnkym6")
 
 
 @onready var interaction : interaction_area = $interaction_area

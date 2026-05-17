@@ -1,5 +1,6 @@
 [gd_scene format=4 uid="uid://bkcr368nhfmwg"]
 
+[ext_resource type="Script" uid="uid://bdpkv7mxycsja" path="res://scr/Manager/GameManager.gd" id="1_efy06"]
 [ext_resource type="TileSet" uid="uid://dfbl1otmpel7t" path="res://scr/Resources/TileMap/TileMap.tres" id="1_m64qu"]
 [ext_resource type="Script" uid="uid://cx0477dq0nkws" path="res://scr/Misc/Blaze_camera.gd" id="2_64bue"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_8spfp"]
@@ -190,6 +191,7 @@ font_size = 25
 
 [node name="World" type="Node2D" unique_id=1573585931]
 y_sort_enabled = true
+script = ExtResource("1_efy06")
 metadata/_edit_horizontal_guides_ = [996.0, -1005.0]
 metadata/_edit_vertical_guides_ = [-1519.0, 1501.0]
 

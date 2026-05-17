@@ -6,13 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="4_uyyit"]
 [ext_resource type="Texture2D" uid="uid://datsysl7u1w7" path="res://misc/Chest/Chest1.png" id="5_jct2l"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="9_2urs1"]
-[ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="10_a1p81"]
-[ext_resource type="Resource" uid="uid://x1lita8ofrji" path="res://misc/Content/Items/Magic Wand.tres" id="10_jct2l"]
+[ext_resource type="Resource" uid="uid://dthgslbfnjeal" path="res://misc/Content/Items/Slime.tres" id="9_72dcn"]
 [ext_resource type="Script" uid="uid://c6tw2fkklnri5" path="res://misc/Drop/DropItem.gd" id="11_8f5ct"]
 [ext_resource type="Script" uid="uid://ctm4b4v8txo1q" path="res://scr/Resources/WeightItem.gd" id="13_rn3rj"]
-[ext_resource type="PackedScene" uid="uid://cwva7bwy2vvpl" path="res://misc/Projectiles/Plasma.tscn" id="14_xr131"]
-[ext_resource type="Resource" uid="uid://b64inqtvf3yh" path="res://misc/Content/Items/boomerang.tres" id="16_rmn11"]
-[ext_resource type="Resource" uid="uid://qla56cxkr8ij" path="res://misc/Content/Items/Speed Potion.tres" id="18_mb2eo"]
 [ext_resource type="AudioStream" uid="uid://e6mf5rd80uw8" path="res://misc/Chest/Chest close.wav" id="30_mcgxt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f7t7j"]
@@ -295,63 +291,8 @@ _data = {
 
 [sub_resource type="Resource" id="Resource_2urs1"]
 script = ExtResource("13_rn3rj")
-item = ExtResource("10_jct2l")
+item = ExtResource("9_72dcn")
 weight = 0.2
-metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
-
-[sub_resource type="Resource" id="Resource_a1p81"]
-script = ExtResource("13_rn3rj")
-item = ExtResource("16_rmn11")
-weight = 0.2
-metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
-
-[sub_resource type="Resource" id="Resource_0pqcv"]
-script = ExtResource("13_rn3rj")
-item = ExtResource("18_mb2eo")
-weight = 0.2
-metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xr131"]
-atlas = ExtResource("9_2urs1")
-region = Rect2(0, 112, 16, 16)
-
-[sub_resource type="Resource" id="Resource_lqs0i"]
-script = ExtResource("10_a1p81")
-max_durability = 200
-Damage = 22
-Atk_speed = 1.05
-equiped_weapon_sprite = SubResource("AtlasTexture_xr131")
-icon = SubResource("AtlasTexture_xr131")
-item_name = "Akarum"
-metadata/_custom_type_script = "uid://b2ovoyoflp1gw"
-
-[sub_resource type="Resource" id="Resource_f7t7j"]
-script = ExtResource("13_rn3rj")
-item = SubResource("Resource_lqs0i")
-weight = 0.08
-metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_g3pw7"]
-atlas = ExtResource("9_2urs1")
-region = Rect2(16, 128, 16, 16)
-
-[sub_resource type="Resource" id="Resource_rmn11"]
-script = ExtResource("10_a1p81")
-max_durability = 250
-Damage = 16
-equiped_weapon_sprite = SubResource("AtlasTexture_g3pw7")
-projectile = ExtResource("14_xr131")
-num_projectiles = 7
-spread_degrees = 20.0
-projectile_speed = 100.0
-icon = SubResource("AtlasTexture_g3pw7")
-item_name = "Sword of Kahlua"
-metadata/_custom_type_script = "uid://b2ovoyoflp1gw"
-
-[sub_resource type="Resource" id="Resource_btpx7"]
-script = ExtResource("13_rn3rj")
-item = SubResource("Resource_rmn11")
-weight = 0.1
 metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
 
 [node name="Chest" type="Node2D" unique_id=1524391707]
@@ -394,7 +335,7 @@ libraries/ = SubResource("AnimationLibrary_8dabs")
 
 [node name="Drop_items" type="Node" parent="." unique_id=1572889324]
 script = ExtResource("11_8f5ct")
-unique_items = Array[ExtResource("13_rn3rj")]([SubResource("Resource_2urs1"), SubResource("Resource_a1p81"), SubResource("Resource_0pqcv"), SubResource("Resource_f7t7j"), SubResource("Resource_btpx7")])
+unique_items = Array[ExtResource("13_rn3rj")]([SubResource("Resource_2urs1")])
 max_drop = 5
 random_values = true
 metadata/_custom_type_script = "uid://c6tw2fkklnri5"

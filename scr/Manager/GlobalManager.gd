@@ -89,8 +89,8 @@ func _try_add_to_container(container, item_data: ItemData, amount: int) -> bool:
 	return container.add_item(item_data, amount)
 
 func add_initial_items():
-	pickup_item(preload("uid://ch2r3sdjgisqa").duplicate(), 1)
-	pickup_item(preload("uid://prg8cq5chkl2").duplicate(), 1)
+	pickup_item(preload("uid://c1s20iq4dphos").duplicate(), 1)
+	pickup_item(preload("uid://bmdy0an5cjkjv").duplicate(), 1)
 	pass
 
 # Get full path to save file
