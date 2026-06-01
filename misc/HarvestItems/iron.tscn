@@ -12,9 +12,14 @@
 [ext_resource type="AudioStream" uid="uid://c5rjjykffa2ub" path="res://misc/HarvestItems/SFX/Mining/Destroy3.mp3" id="9_e6m8d"]
 [ext_resource type="AudioStream" uid="uid://dbbhice1grva3" path="res://misc/HarvestItems/SFX/Mining/Mineral1.mp3" id="10_pvkrq"]
 [ext_resource type="AudioStream" uid="uid://cwh1uo74lmus0" path="res://misc/HarvestItems/SFX/Mining/Mineral2.mp3" id="11_a56ye"]
+[ext_resource type="PackedScene" uid="uid://d4dhrx0cb6776" path="res://misc/Particles/SplashParticles.tscn" id="13_pvkrq"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="14_a56ye"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3dfft"]
 radius = 7.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ckdin"]
+radius = 15.4663
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_homfl"]
 atlas = ExtResource("3_ntuou")
@@ -33,30 +38,55 @@ streams_count = 2
 stream_0/stream = ExtResource("10_pvkrq")
 stream_1/stream = ExtResource("11_a56ye")
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_ckdin"]
-radius = 15.4663
+[sub_resource type="AtlasTexture" id="AtlasTexture_gaad7"]
+atlas = ExtResource("14_a56ye")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="Gradient" id="Gradient_7ae0e"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0nm72"]
+gradient = SubResource("Gradient_7ae0e")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_5rm5p"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 28.36
+angle_min = -86.399994
+angle_max = 37.00001
+inherit_velocity_ratio = 0.407
+direction = Vector3(0, -1, 0)
+spread = 25.0
+initial_velocity_min = 200.0
+initial_velocity_max = 400.0
+gravity = Vector3(0, 700, 0)
+damping_min = 100.0
+damping_max = 800.0
+scale_min = 0.5
+color_ramp = SubResource("GradientTexture1D_0nm72")
 
 [node name="Iron" unique_id=1037766192 instance=ExtResource("1_ckdin")]
 script = ExtResource("2_e6m8d")
 durability = 100.0
 harvest_tool_lvl = 3
 
-[node name="CollisionShape2D" parent="StaticBody2D" index="0"]
+[node name="CollisionShape2D" parent="StaticBody2D" parent_id_path=PackedInt32Array(1226065190) index="0" unique_id=605264910]
 position = Vector2(0, -7)
 rotation = -1.57079
 shape = SubResource("CapsuleShape2D_3dfft")
 
-[node name="VFX" parent="." index="1" node_paths=PackedStringArray("audio_player")]
-audio_player = NodePath("../SFX")
-
-[node name="optimizer" parent="." index="2" node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" parent="." index="1" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
 position = Vector2(-1, -11)
 scale = Vector2(1.9, 1.4)
 hide_objects = [NodePath("../Sprite2D"), NodePath("../Shadow")]
 
-[node name="droper" parent="." index="3"]
+[node name="droper" parent="." index="2" unique_id=1465568748]
 drop_item = Array[ExtResource("2_ntuou")]([ExtResource("4_l2vy5")])
 max_drop = 8
+
+[node name="CollisionShape2D" parent="." index="4" unique_id=1716306559]
+shape = SubResource("CircleShape2D_ckdin")
 
 [node name="Shadow" type="Sprite2D" parent="." index="5" unique_id=341842603]
 self_modulate = Color(0.0392157, 0.0705882, 0.2, 0.388235)
@@ -70,6 +100,7 @@ position = Vector2(0, -9)
 texture = SubResource("AtlasTexture_homfl")
 offset = Vector2(0, -6)
 hframes = 3
+frame = 1
 script = ExtResource("4_q1xnp")
 frame_weights = Array[float]([1.0, 1.0, 1.0])
 metadata/_custom_type_script = "uid://b7lfnqk6b5cdp"
@@ -80,5 +111,10 @@ stream = SubResource("AudioStreamRandomizer_gaad7")
 [node name="SFX" type="AudioStreamPlayer2D" parent="." index="8" unique_id=592545100]
 stream = SubResource("AudioStreamRandomizer_7ae0e")
 
-[node name="CollisionShape2D" parent="." index="9"]
-shape = SubResource("CircleShape2D_ckdin")
+[node name="VFX_damage" parent="." index="9" unique_id=2140509907 node_paths=PackedStringArray("audio_player", "particles")]
+audio_player = NodePath("../SFX")
+particles = NodePath("../GPUParticles2D")
+
+[node name="GPUParticles2D" parent="." index="10" unique_id=1130400609 instance=ExtResource("13_pvkrq")]
+texture = SubResource("AtlasTexture_gaad7")
+process_material = SubResource("ParticleProcessMaterial_5rm5p")

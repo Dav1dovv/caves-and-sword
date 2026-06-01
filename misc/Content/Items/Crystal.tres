@@ -11,4 +11,5 @@ region = Rect2(32, 0, 16, 16)
 script = ExtResource("2_kjuro")
 icon = SubResource("AtlasTexture_ry0fr")
 item_name = "Crystal"
+price = 55
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

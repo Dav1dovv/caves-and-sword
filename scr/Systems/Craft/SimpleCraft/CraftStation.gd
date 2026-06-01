@@ -1,256 +1,508 @@
+## CraftStation.gd
+## Универсальный экран крафта с тремя вкладками:
+##   • Крафт    — создание предметов из ресурсов
+##   • Ремонт   — починка сломанного предмета за ресурсы/золото
+##   • Разборка — получить ресурсы из ненужного предмета
+##
+## Разница между Кузнецом и домашним верстаком — только в is_smithy.
+## ─────────────────────────────────────────────────────────────────
 extends Control
 
-@onready var search_box: LineEdit = $Panel/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer/LineEdit
-@onready var category_filter: OptionButton = $Panel/MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer/OptionButton
-@onready var recipe_grid: GridContainer = $Panel/MarginContainer/HBoxContainer/VBoxContainer/ScrollContainer/GridContainer
-@onready var result_slot: InventorySlot = $Panel/MarginContainer/HBoxContainer/VBoxContainer2/Label/ResultSlot
-@onready var ingredients_list: GridContainer = $Panel/MarginContainer/HBoxContainer/VBoxContainer2/ScrollContainer/VBoxContainer
-@onready var craft_button: Button = $Panel/MarginContainer/HBoxContainer/VBoxContainer2/Button
-@onready var progress_bar: ProgressBar = $Panel/MarginContainer/HBoxContainer/VBoxContainer2/Button/ProgressBar
-@onready var craft_max_button: Button = $Panel/MarginContainer/HBoxContainer/VBoxContainer2/Label/ResultSlot/MaxCount
+# ─────────────────────────────────────────────────────────────────
+#  НОДЫ  — привяжи в сцене к своим путям
+# ─────────────────────────────────────────────────────────────────
 
-@export var all_recipes: Array[CraftRecipe] = []
-var filtered_recipes: Array[CraftRecipe] = []
+# Вкладки
+@onready var tab_craft:      Button = $Craft/TabBar/TabCraft
+@onready var tab_repair:     Button = $Craft/TabBar/TabRepair
+@onready var tab_disassemble: Button = $Craft/TabBar/TabDisassemble
+
+# Левая панель — список рецептов
+#@onready var search_box:      LineEdit     = $Craft/Body/Left/SearchBox
+@onready var category_filter: OptionButton = $Craft/Body/Left/CategoryFilter
+@onready var recipe_grid:     GridContainer = $Craft/Body/Left/Scroll/RecipeGrid
+
+# Правая панель — предпросмотр
+@onready var result_slot:      InventorySlot   = $Craft/Body/Right/ResultSlot
+@onready var ingredients_list: VBoxContainer   = $Craft/Body/Right/IngredientsList
+@onready var craft_button:     Button          = $Craft/Body/Right/CraftButton
+@onready var craft_max_button: Button          = $Craft/Body/Right/ResultSlot/MaxCount
+@onready var gold_label:       Label           = $Craft/Body/Right/GoldLabel
+
+# ─────────────────────────────────────────────────────────────────
+#  НАСТРОЙКИ
+# ─────────────────────────────────────────────────────────────────
+
+## true = Кузнец / false = домашний верстак
+@export var is_smithy: bool = true
+
+## Предмет "Золото" для проверки оплаты
+@export var gold_item: ItemData
+
+## Папка с рецептами
+@export var recipes_folder: String = "res://misc/Content/Recipes/Craft/"
+
+# ─────────────────────────────────────────────────────────────────
+#  СОСТОЯНИЕ
+# ─────────────────────────────────────────────────────────────────
+
+enum Tab { CRAFT, REPAIR, DISASSEMBLE }
+
+var current_tab:   Tab = Tab.CRAFT
+var all_recipes:   Array[CraftRecipe] = []
+var shown_recipes: Array[CraftRecipe] = []
 var selected_recipe: CraftRecipe = null
 var inventory: Inventory = null
-var is_crafting := false
+
+# ─────────────────────────────────────────────────────────────────
+#  ИНИЦИАЛИЗАЦИЯ
+# ─────────────────────────────────────────────────────────────────
 
 func _ready() -> void:
 	inventory = get_tree().get_first_node_in_group("Inventory")
 	var hotbar = get_tree().get_first_node_in_group("Hotbar")
-	
+
 	if inventory:
 		inventory.inventory_changed.connect(_refresh)
 	if hotbar:
 		hotbar.hotbar_changed.connect(_refresh)
-	
-	 #Загружаем все рецепты из папки
-	_load_all_recipes()
-	_setup_categories()
+
+	_load_recipes()
 	_refresh()
 
-	search_box.text_changed.connect(_on_search_changed)
+	#search_box.text_changed.connect(_on_search_changed)
 	category_filter.item_selected.connect(_on_category_changed)
-	#recipe_grid.item_selected.connect(_on_recipe_selected)
-	craft_button.pressed.connect(_on_craft_pressed)
-	craft_max_button.pressed.connect(_on_craft_max_pressed)
+	craft_button.pressed.connect(_on_action_pressed)
+	craft_max_button.pressed.connect(_on_action_max_pressed)
 
-func _load_all_recipes() -> void:
-	var dir = DirAccess.open("res://scr/Resources/Recipes/")
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if file_name.ends_with(".tres") or file_name.ends_with(".res"):
-				var recipe = load("res://scr/Resources/Recipes/" + file_name)
-				if recipe is CraftRecipe:
-					all_recipes.append(recipe)
-			file_name = dir.get_next()
+	# Вкладки
+	tab_craft.pressed.connect(func(): _switch_tab(Tab.CRAFT))
+	tab_repair.pressed.connect(func(): _switch_tab(Tab.REPAIR))
+	tab_disassemble.pressed.connect(func(): _switch_tab(Tab.DISASSEMBLE))
+
+	_update_tab_labels()
+
+# ─────────────────────────────────────────────────────────────────
+#  ЗАГРУЗКА РЕЦЕПТОВ
+# ─────────────────────────────────────────────────────────────────
+
+func _load_recipes() -> void:
+	all_recipes.clear()
+	var dir := DirAccess.open(recipes_folder)
+	if not dir:
+		push_error("CraftStation: папка рецептов не найдена: " + recipes_folder)
+		return
+
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if file_name.ends_with(".tres") or file_name.ends_with(".res"):
+			var res = load(recipes_folder + file_name)
+			if res is CraftRecipe:
+				all_recipes.append(res)
+		file_name = dir.get_next()
+
+	all_recipes.sort_custom(func(a, b): return a.category < b.category)
+
+# ─────────────────────────────────────────────────────────────────
+#  ВКЛАДКИ
+# ─────────────────────────────────────────────────────────────────
+
+func _switch_tab(tab: Tab) -> void:
+	current_tab = tab
+	selected_recipe = null
+	_update_tab_labels()
 	_refresh()
 
-func _setup_categories() -> void:
-	category_filter.add_item("Все", 0)
-	category_filter.add_item("Оружие", 1)
-	category_filter.add_item("Еда", 2)
-	category_filter.add_item("Материалы", 3)
-	category_filter.add_item("Аксессуары", 4)
+func _update_tab_labels() -> void:
+	# Кнопки вкладок — выдели активную (можно менять стиль через theme)
+	tab_craft.modulate      = Color.WHITE if current_tab == Tab.CRAFT else Color(0.6, 0.6, 0.6)
+	tab_repair.modulate     = Color.WHITE if current_tab == Tab.REPAIR else Color(0.6, 0.6, 0.6)
+	tab_disassemble.modulate = Color.WHITE if current_tab == Tab.DISASSEMBLE else Color(0.6, 0.6, 0.6)
+
+	# Подпись кнопки действия
+	match current_tab:
+		Tab.CRAFT:       craft_button.text = "Создать"
+		Tab.REPAIR:      craft_button.text = "Починить"
+		Tab.DISASSEMBLE: craft_button.text = "Разобрать"
+
+	# Кнопка "Макс" — только для крафта
+	craft_max_button.visible = (current_tab == Tab.CRAFT)
+
+# ─────────────────────────────────────────────────────────────────
+#  ФИЛЬТРАЦИЯ И ОБНОВЛЕНИЕ СЕТКИ
+# ─────────────────────────────────────────────────────────────────
 
 func _refresh() -> void:
-	var search_text = search_box.text.to_lower()
-	var category_id = category_filter.selected
-	
-	filtered_recipes.clear()
+	#var search_text := search_box.text.to_lower()
+	var category_id := category_filter.selected  # 0 = Все
+
+	shown_recipes.clear()
+
 	for recipe in all_recipes:
-		var matches_search = search_text.is_empty() or recipe.recipe_name.to_lower().contains(search_text)
-		var matches_category = category_id == 0 or _get_recipe_category(recipe) == category_id
-		if matches_search and matches_category:
-			filtered_recipes.append(recipe)
-	
-	_update_recipe_list()
+		# ── Фильтр по вкладке ──
+		match current_tab:
+			Tab.CRAFT:
+				if recipe.mode != CraftRecipe.Mode.CRAFT: continue
+			Tab.REPAIR:
+				if recipe.mode != CraftRecipe.Mode.REPAIR: continue
+			Tab.DISASSEMBLE:
+				if recipe.mode != CraftRecipe.Mode.DISASSEMBLE: continue
 
-func _get_recipe_category(recipe: CraftRecipe) -> int:
-	if recipe.result_item is equip_data:
-		return 1
-	if recipe.result_item is FoodData:
-		return 2
-	if recipe.result_item is AccessoryData:
-		return 4
-	return 3  # Материалы
+		# ── Фильтр по станции ──
+		if is_smithy and recipe.workbench_only: continue
+		if not is_smithy and recipe.smith_only: continue
 
-func _update_recipe_list() -> void:
-	# Очищаем старые кнопки
+		# ── Поиск по названию ──
+		#if not search_text.is_empty():
+			#if not recipe.recipe_name.to_lower().contains(search_text):
+				#continue
+
+		# ── Категория ──
+		if category_id > 0 and recipe.category != category_id - 1:
+			continue
+
+		shown_recipes.append(recipe)
+
+	_rebuild_grid()
+	_update_preview()
+
+func _rebuild_grid() -> void:
 	for child in recipe_grid.get_children():
 		child.queue_free()
-	
-	for recipe in filtered_recipes:
-		var button = TextureButton.new()
-		button.custom_minimum_size = Vector2(16, 16)
-		button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-		button.ignore_texture_size = true
-		
-		# Фон (опционально — рамка)
-		var panel = Panel.new()
-		panel.size = button.custom_minimum_size
-		panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		button.add_child(panel)
-		
-		# Иконка предмета
-		var icon = TextureRect.new()
-		icon.texture = recipe.result_item.icon
+
+	for recipe in shown_recipes:
+		recipe_grid.add_child(_make_recipe_button(recipe))
+
+func _make_recipe_button(recipe: CraftRecipe) -> Control:
+	var button := TextureButton.new()
+	button.custom_minimum_size = Vector2(24, 24)
+	button.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	button.ignore_texture_size = true
+
+	# Иконка
+	var target_item := _get_display_item(recipe)
+	if target_item:
+		var icon := TextureRect.new()
+		icon.texture = target_item.icon
 		icon.custom_minimum_size = Vector2(16, 16)
-		icon.position = Vector2(0, 0)
 		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(icon)
-		
-		## Название
-		var name_label = Label.new()
-		name_label.text = recipe.recipe_name
-		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		name_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-		name_label.position = Vector2(-20, 18)
-		name_label.size = Vector2(64, 20)
-		name_label.add_theme_font_size_override("font_size", 4)
-		name_label.clip_text = true
-		button.add_child(name_label)
-		
-		# Можно ли крафтить
-		var can_craft = recipe.can_craft(inventory)
-		if not can_craft:
-			button.modulate = Color(0.6, 0.6, 0.6, 0.8)
-		
-		# Подсказка
-		button.tooltip_text = recipe.description
-		
-		# Подключаем клик
-		button.pressed.connect(func():
-			selected_recipe = recipe
-			_update_preview()
-		)
-		
-		recipe_grid.add_child(button)
 
-func _on_search_changed(new_text: String) -> void:
-	_refresh()
+		var lbl := Label.new()
+		lbl.text = recipe.recipe_name
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.position = Vector2(-20, 18)
+		lbl.size = Vector2(64, 16)
+		lbl.add_theme_font_size_override("font_size", 4)
+		lbl.clip_text = true
+		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(lbl)
 
-func _on_category_changed(index: int) -> void:
-	_refresh()
+	# Доступность — серим если нельзя
+	var can := recipe.can_craft(inventory, gold_item)
+	button.modulate = Color.WHITE if can else Color(0.55, 0.55, 0.55, 0.9)
 
-func _on_recipe_selected(index: int) -> void:
-	selected_recipe = filtered_recipes[index]
-	_update_preview()
+	button.tooltip_text = _build_tooltip(recipe)
+	button.pressed.connect(func():
+		selected_recipe = recipe
+		_update_preview()
+	)
+	return button
+
+## Иконка для отображения в сетке рецептов
+func _get_display_item(recipe: CraftRecipe) -> ItemData:
+	match recipe.mode:
+		CraftRecipe.Mode.CRAFT, CraftRecipe.Mode.REPAIR:
+			return recipe.result_item
+		CraftRecipe.Mode.DISASSEMBLE:
+			return recipe.disassemble_target
+	return null
+
+# ─────────────────────────────────────────────────────────────────
+#  ПРЕДПРОСМОТР (правая панель)
+# ─────────────────────────────────────────────────────────────────
 
 func _update_preview() -> void:
 	for child in ingredients_list.get_children():
 		child.queue_free()
-	
+
 	if not selected_recipe:
-		result_slot.item = null
-		result_slot.update_ui()
+		_clear_preview()
 		return
-	
+
+	match selected_recipe.mode:
+		CraftRecipe.Mode.CRAFT:
+			_preview_craft()
+		CraftRecipe.Mode.REPAIR:
+			_preview_repair()
+		CraftRecipe.Mode.DISASSEMBLE:
+			_preview_disassemble()
+
+	var can := selected_recipe.can_craft(inventory, gold_item)
+	craft_button.disabled = not can
+
+func _clear_preview() -> void:
+	result_slot.item = null
+	result_slot.ammount = 0
+	result_slot.update_ui()
+	craft_button.disabled = true
+	if gold_label:
+		gold_label.text = ""
+
+# ── Крафт ────────────────────────────────────────────────────────
+
+func _preview_craft() -> void:
 	result_slot.item = selected_recipe.result_item
 	result_slot.ammount = selected_recipe.result_amount
 	result_slot.update_ui()
-	
-	for ing in selected_recipe.ingredients:
-		var hbox = HBoxContainer.new()
-		var icon = TextureRect.new()
-		icon.texture = ing.item.icon
-		icon.custom_minimum_size = Vector2(18, 18)
-		
-		var label = Label.new()
-		var have = inventory.get_total_item_count(ing.item)
-		label.text = "%d / %d" % [have, ing.amount]
-		label.add_theme_font_size_override("font_size", 8)
-		label.modulate = Color.GREEN if have >= ing.amount else Color.RED
-		
-		hbox.add_child(icon)
-		hbox.add_child(label)
-		ingredients_list.add_child(hbox)
-	
-	craft_button.disabled = not selected_recipe.can_craft(inventory) or is_crafting
 
-func _on_craft_pressed() -> void:
-	if not selected_recipe or is_crafting: return
-	if not selected_recipe.can_craft(inventory): return
-	
-	var timer = get_tree().create_timer(selected_recipe.crafting_time)
-	timer.timeout.connect(func():
-		# Убираем ингредиенты
-		for ing in selected_recipe.ingredients:
-			inventory.remove_from_total(ing.item, ing.amount)
-		
-		# Добавляем результат
-		inventory.add_item(selected_recipe.result_item.duplicate(), selected_recipe.result_amount)
-		
-		_refresh()
-		_update_preview()
+	for ing in selected_recipe.get_ingredients():
+		_add_row(ing["item"], ing["amount"])
+
+	if selected_recipe.gold_cost > 0 and gold_item:
+		_add_row(gold_item, selected_recipe.gold_cost, "Злт")
+
+# ── Ремонт ───────────────────────────────────────────────────────
+
+func _preview_repair() -> void:
+	# Показываем: что получится (починенный предмет)
+	result_slot.item = selected_recipe.result_item
+	result_slot.ammount = 1
+	result_slot.update_ui()
+
+	# Что нужно потратить
+	for ing in selected_recipe.get_ingredients():
+		_add_row(ing["item"], ing["amount"])
+
+	if selected_recipe.gold_cost > 0 and gold_item:
+		_add_row(gold_item, selected_recipe.gold_cost, "Злт")
+
+	# Подсказка о восстановлении прочности
+	if selected_recipe.repair_amount > 0 and gold_label:
+		gold_label.text = "+%d прочности" % selected_recipe.repair_amount
+	elif gold_label:
+		gold_label.text = "Полный ремонт"
+
+# ── Разборка ─────────────────────────────────────────────────────
+
+func _preview_disassemble() -> void:
+	# Показываем целевой предмет (что разбираем)
+	result_slot.item = selected_recipe.disassemble_target
+	result_slot.ammount = 1
+	result_slot.update_ui()
+
+	if gold_label:
+		gold_label.text = "Получишь:"
+
+	# Список того, что вернётся
+	for res in selected_recipe.get_salvage_results():
+		_add_row(res["item"], res["amount"], "", true)
+
+	# Предупреждение: есть ли предмет в инвентаре?
+	if selected_recipe.disassemble_target:
+		var have := inventory.get_total_item_count(selected_recipe.disassemble_target) if inventory else 0
+		if have == 0:
+			_add_warning_row("Предмет отсутствует в инвентаре")
+
+# ─────────────────────────────────────────────────────────────────
+#  СТРОКИ ИНГРЕДИЕНТОВ
+# ─────────────────────────────────────────────────────────────────
+
+## prefix — лейбл перед именем ("Злт", "" и т.д.)
+## is_output — зелёный цвет (это результат, не расход)
+func _add_row(item: ItemData, amount: int, prefix: String = "", is_output: bool = false) -> void:
+	var hbox := HBoxContainer.new()
+
+	var icon := TextureRect.new()
+	icon.texture = item.icon if item else null
+	icon.custom_minimum_size = Vector2(16, 16)
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+
+	var have := inventory.get_total_item_count(item) if inventory else 0
+	var enough := have >= amount
+
+	var lbl := Label.new()
+	var item_name := item.item_name if item else "?"
+	var display := prefix if prefix != "" else item_name
+	if is_output:
+		lbl.text = "%s × %d" % [item_name, amount]
+		lbl.modulate = Color(0.4, 1.0, 0.6)
+	else:
+		lbl.text = "%s: %d/%d" % [display, have, amount]
+		lbl.modulate = Color(0.2, 1.0, 0.4) if enough else Color(1.0, 0.35, 0.35)
+
+	lbl.add_theme_font_size_override("font_size", 7)
+
+	hbox.add_child(icon)
+	hbox.add_child(lbl)
+	ingredients_list.add_child(hbox)
+
+func _add_warning_row(text: String) -> void:
+	var lbl := Label.new()
+	lbl.text = "⚠ " + text
+	lbl.modulate = Color(1.0, 0.8, 0.2)
+	lbl.add_theme_font_size_override("font_size", 7)
+	ingredients_list.add_child(lbl)
+
+# ─────────────────────────────────────────────────────────────────
+#  ВЫПОЛНЕНИЕ ДЕЙСТВИЯ
+# ─────────────────────────────────────────────────────────────────
+
+func _on_action_pressed() -> void:
+	if not selected_recipe or not selected_recipe.can_craft(inventory, gold_item):
+		return
+	_execute(1)
+
+func _on_action_max_pressed() -> void:
+	if not selected_recipe: return
+	var max_count := selected_recipe.max_craftable(inventory, gold_item)
+	if max_count > 0:
+		_execute(max_count)
+
+func _execute(times: int) -> void:
+	if not selected_recipe or not inventory: return
+
+	match selected_recipe.mode:
+		CraftRecipe.Mode.CRAFT:
+			_do_craft(times)
+		CraftRecipe.Mode.REPAIR:
+			_do_repair()
+		CraftRecipe.Mode.DISASSEMBLE:
+			_do_disassemble()
+
+# ── Крафт ────────────────────────────────────────────────────────
+
+func _do_craft(times: int) -> void:
+	for ing in selected_recipe.get_ingredients():
+		inventory.remove_from_total(ing["item"], ing["amount"] * times)
+
+	if selected_recipe.gold_cost > 0 and gold_item:
+		inventory.remove_from_total(gold_item, selected_recipe.gold_cost * times)
+
+	inventory.add_item(
+		selected_recipe.result_item.duplicate(),
+		selected_recipe.result_amount * times
 	)
 
-func _on_craft_max_pressed() -> void:
-	if not selected_recipe or is_crafting:
-		return
-	
-	var max_possible = _get_max_craftable_amount(selected_recipe)
-	if max_possible <= 0:
-		return
-	
-	_perform_craft(max_possible)
-
-func _get_max_craftable_amount(recipe: CraftRecipe) -> int:
-	var max_amount = 9999  # теоретический максимум
-	
-	for ing in recipe.ingredients:
-		var available = inventory.get_total_item_count(ing.item)
-		var needed_per_craft = ing.amount
-		if needed_per_craft > 0:
-			var can_make = available / needed_per_craft
-			max_amount = mini(max_amount, can_make)
-	
-	return max_amount
-
-func _perform_craft(amount: int) -> void:
-	is_crafting = true
-	craft_button.disabled = true
-	craft_max_button.disabled = true
-	#progress_bar.visible = false  # уже не нужен
-	
-	# Снимаем ингредиенты
-	for ing in selected_recipe.ingredients:
-		inventory.remove_from_total(ing.item, ing.amount * amount)
-	
-	# Добавляем результат
-	inventory.add_item(selected_recipe.result_item.duplicate(), selected_recipe.result_amount * amount)
-	
-	is_crafting = false
-	craft_button.disabled = false
-	craft_max_button.disabled = false
-	
 	_refresh()
-	_update_preview()
 
+# ── Ремонт ───────────────────────────────────────────────────────
 
-#func _input(event: InputEvent) -> void:
-	#if Input.is_action_just_pressed("CallCrafting"):
-		#visible = !visible
-		#_update_recipe_list()
+func _do_repair() -> void:
+	# Снимаем ресурсы
+	for ing in selected_recipe.get_ingredients():
+		inventory.remove_from_total(ing["item"], ing["amount"])
 
+	if selected_recipe.gold_cost > 0 and gold_item:
+		inventory.remove_from_total(gold_item, selected_recipe.gold_cost)
+
+	# Ищем сломанный предмет в инвентаре и чиним его
+	var target := selected_recipe.repair_target
+	if target:
+		_repair_item_in_inventory(target, selected_recipe.repair_amount)
+	else:
+		# Универсальный ремонт — чиним первый найденный предмет с прочностью < max
+		_repair_first_broken_item(selected_recipe.repair_amount)
+
+	_refresh()
+
+## Найти конкретный предмет в инвентаре и восстановить прочность
+func _repair_item_in_inventory(target: ItemData, repair_amt: int) -> void:
+	var all_slots: Array[InventorySlotData] = inventory.items.duplicate()
+	if inventory.hotbar:
+		all_slots.append_array(inventory.hotbar.slots)
+
+	for slot in all_slots:
+		if not slot.item: continue
+		if slot.item.item_name != target.item_name: continue
+		_apply_repair(slot.item, repair_amt)
+		slot.slot_node.update_ui()
+		return
+
+## Починить первый сломанный предмет (для универсального рецепта)
+func _repair_first_broken_item(repair_amt: int) -> void:
+	var all_slots: Array[InventorySlotData] = inventory.items.duplicate()
+	if inventory.hotbar:
+		all_slots.append_array(inventory.hotbar.slots)
+
+	for slot in all_slots:
+		if not slot.item: continue
+		if slot.item.has_method("get_durability") and slot.item.has_method("max_durability"):
+			var dur = slot.item.get_durability()
+			var max_d = slot.item.max_durability
+			if dur < max_d:
+				_apply_repair(slot.item, repair_amt)
+				slot.slot_node.update_ui()
+				return
+
+func _apply_repair(item: ItemData, repair_amt: int) -> void:
+	if item.has_method("get_durability") and "max_durability" in item:
+		if repair_amt <= 0:
+			# Полный ремонт
+			item.durability = item.max_durability
+		else:
+			item.durability = mini(
+				item.get_durability() + repair_amt,
+				item.max_durability
+			)
+
+# ── Разборка ─────────────────────────────────────────────────────
+
+func _do_disassemble() -> void:
+	if not selected_recipe.disassemble_target: return
+
+	# Убираем один предмет
+	inventory.remove_from_total(selected_recipe.disassemble_target, 1)
+
+	# Добавляем компоненты
+	for res in selected_recipe.get_salvage_results():
+		if res["item"]:
+			inventory.add_item(res["item"].duplicate(), res["amount"])
+
+	_refresh()
+
+# ─────────────────────────────────────────────────────────────────
+#  ТУЛТИП
+# ─────────────────────────────────────────────────────────────────
+
+func _build_tooltip(recipe: CraftRecipe) -> String:
+	if not recipe: return ""
+	var lines: PackedStringArray = [recipe.recipe_name]
+	if recipe.description != "":
+		lines.append(recipe.description)
+	lines.append("──────────")
+
+	match recipe.mode:
+		CraftRecipe.Mode.CRAFT, CraftRecipe.Mode.REPAIR:
+			for ing in recipe.get_ingredients():
+				lines.append("• %s × %d" % [ing["item"].item_name if ing["item"] else "?", ing["amount"]])
+			if recipe.gold_cost > 0:
+				lines.append("• Золото × %d" % recipe.gold_cost)
+
+		CraftRecipe.Mode.DISASSEMBLE:
+			lines.append("Разобрать: %s" % (recipe.disassemble_target.item_name if recipe.disassemble_target else "?"))
+			lines.append("Получишь:")
+			for res in recipe.get_salvage_results():
+				lines.append("  + %s × %d" % [res["item"].item_name if res["item"] else "?", res["amount"]])
+
+	return "\n".join(lines)
+
+# ─────────────────────────────────────────────────────────────────
+#  СИГНАЛЫ ФИЛЬТРОВ И ЗАКРЫТИЕ
+# ─────────────────────────────────────────────────────────────────
+
+func _on_search_changed(_text: String)   -> void: _refresh()
+func _on_category_changed(_index: int)  -> void: _refresh()
+
+# Кнопки-теги категорий (если есть в сцене)
+func _on_sword_tag_pressed()   -> void: category_filter.selected = 1; _refresh()
+func _on_pickaxe_tag_pressed() -> void: category_filter.selected = 2; _refresh()
+func _on_food_tag_pressed()    -> void: category_filter.selected = 3; _refresh()
+func _on_items_tag_pressed()   -> void: category_filter.selected = 4; _refresh()
 
 func _on_close_pressed() -> void:
 	get_parent().get_parent().uncall_craft()
 	Global.is_opened_menu = false
-	Cursor.detection_mode( false)
-
-
-func _on_sword_tag_pressed() -> void:
-	category_filter.selected = 1
-	_refresh()
-
-
-func _on_pickaxa_tag_pressed() -> void:
-	pass # Replace with function body.
-
-
-func _on_items_tag_pressed() -> void:
-	category_filter.selected = 3
-	_refresh()
+	Cursor.detection_mode(false)

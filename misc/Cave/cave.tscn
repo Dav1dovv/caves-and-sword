@@ -32,7 +32,7 @@ collision_layer = 1024
 collision_mask = 4
 script = ExtResource("3_yr2nm")
 go_to_scene = "Cave"
-player_spawn = null
+move_direction = "Up"
 metadata/_custom_type_script = "uid://bj528o0edtyfg"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door" unique_id=2098565621]

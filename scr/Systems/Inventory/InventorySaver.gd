@@ -1,81 +1,106 @@
-# InventorySaver.gd — с поддержкой прочности оружия
+# InventorySaver.gd — с поддержкой прочности оружия и слотов брони
 extends Node
 
 @export var inventory_node: Inventory
 @export var hotbar_node:    Hotbar
 
-@onready var inventory: Inventory = inventory_node
-@onready var hotbar:    Hotbar    = hotbar_node
-
 func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute("user://Saves/" + Global.player_name)
-	call_deferred("load_game")
+	# Ждём один полный кадр — все slot._ready() гарантированно выполнены
+	await get_tree().process_frame
+	await get_tree().process_frame
+	load_game()
+
+var inventory: Inventory:
+	get: return inventory_node
+var hotbar: Hotbar:
+	get: return hotbar_node
 
 func save_game() -> void:
-	var save_data = {
-		"version"   : 6,   # ← версия повышена (добавлена прочность)
+	var armor_data: Array = []
+	for slot_type in [ArmorData.SlotType.HEAD, ArmorData.SlotType.CHEST,
+					   ArmorData.SlotType.LEGS, ArmorData.SlotType.BOOTS]:
+		var slot_node := inventory.get_armor_slot(slot_type)
+		if slot_node and slot_node.equipped_item:
+			armor_data.append(_pack_armor_entry(slot_node.equipped_item, slot_type))
+		else:
+			armor_data.append(null)
+
+	var save_data := {
+		"version"   : 7,
 		"inventory" : _pack_container(inventory.items),
-		"hotbar"    : _pack_container(hotbar.slots)
+		"hotbar"    : _pack_container(hotbar.slots),
+		"armor"     : armor_data
 	}
-	
-	var path = "user://Saves/%s/inventory.save" % Global.player_name
-	
-	var file = FileAccess.open(path, FileAccess.WRITE)
+
+	var path := "user://Saves/%s/inventory.save" % Global.player_name
+	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file:
-		var json_text = JSON.stringify(save_data, "    ", false)
-		file.store_string(json_text)
+		file.store_string(JSON.stringify(save_data, "    ", false))
 		file.close()
 		print("Инвентарь сохранён → ", path)
 	else:
-		push_error("Не удалось сохранить!")
+		push_error("Не удалось сохранить инвентарь!")
 
 func load_game() -> void:
-	var path = "user://Saves/%s/inventory.save" % Global.player_name
-	if !FileAccess.file_exists(path):
+	var path := "user://Saves/%s/inventory.save" % Global.player_name
+	if not FileAccess.file_exists(path):
 		print("Нет сохранения → стартовые предметы")
 		Global.add_initial_items()
 		return
-	
-	var file = FileAccess.open(path, FileAccess.READ)
-	if !file:
-		push_error("Не открыть файл")
+
+	var file := FileAccess.open(path, FileAccess.READ)
+	if not file:
+		push_error("Не удалось открыть файл сохранения")
 		return
-	
-	var json_text = file.get_as_text()
+
+	var json_text := file.get_as_text()
 	file.close()
-	
-	var json = JSON.new()
-	var err = json.parse(json_text)
+
+	var json := JSON.new()
+	var err := json.parse(json_text)
 	if err != OK:
-		push_error("Ошибка JSON: ", json.get_error_message())
+		push_error("Ошибка JSON: " + json.get_error_message())
 		return
-	
+
 	var data = json.data
-	# Версии 5 и 6 совместимы (6 просто добавляет durability)
-	if data.get("version", 1) < 5:
-		print("Старое сохранение → сброс")
+	var version: int = data.get("version", 1)
+	# Версии 5-7 совместимы
+	if version < 5:
+		print("Старое сохранение (v%d) → сброс" % version)
 		Global.add_initial_items()
 		return
-	
+
 	_clear_all()
 	_unpack_container(inventory.items, data.get("inventory", []))
 	_unpack_container(hotbar.slots,    data.get("hotbar", []))
-	
+
+	# Загружаем броню (версия 7+)
+	if version >= 7:
+		_unpack_armor(data.get("armor", []))
+
 	hotbar._recalculate_accessories()
 	hotbar.select_slot(hotbar.selected_index)
-	
+
 	inventory.emit_signal("inventory_changed")
 	hotbar.emit_signal("hotbar_changed")
-	print("Инвентарь и хотбар загружены!")
+	print("Инвентарь загружен (v%d)" % version)
 
 # ─────────────────────────────────────────────────────────────────────
 func _clear_all() -> void:
 	for slot_data in inventory.items + hotbar.slots:
 		slot_data.item = null
 		slot_data.amount = 0
-		slot_data.slot_node.item = null
+		slot_data.slot_node.item    = null
 		slot_data.slot_node.ammount = 0
 		slot_data.slot_node.update_ui()
+	# Снимаем броню
+	for slot_type in [ArmorData.SlotType.HEAD, ArmorData.SlotType.CHEST,
+					   ArmorData.SlotType.LEGS, ArmorData.SlotType.BOOTS]:
+		var slot_node := inventory.get_armor_slot(slot_type)
+		if slot_node and slot_node.equipped_item:
+			slot_node.equipped_item = null
+			slot_node._update_ui()
 
 func _pack_container(container: Array[InventorySlotData]) -> Array:
 	var packed = []
@@ -235,6 +260,40 @@ func _unpack_effects(arr: Array) -> Array[Effect]:
 		effects.append(e)
 	return effects
 
+func _pack_armor_entry(armor: ArmorData, slot_type: int) -> Dictionary:
+	return {
+		"slot_type"      : slot_type,
+		"item_name"      : armor.item_name,
+		"description"    : armor.description,
+		"defense"        : armor.defense,
+		"quality"        : armor.quality,
+		"durability"     : armor.get_durability() if armor.has_method("get_durability") else armor.max_durability,
+		"max_durability" : armor.max_durability,
+		"icon_data"      : _serialize_texture(armor.icon)
+	}
+
+func _unpack_armor(packed: Array) -> void:
+	for entry in packed:
+		if not entry:
+			continue
+		var armor := ArmorData.new()
+		armor.item_name      = entry.get("item_name", "")
+		armor.description    = entry.get("description", "")
+		armor.defense        = entry.get("defense", 0)
+		armor.quality        = entry.get("quality", 0)
+		armor.max_durability = entry.get("max_durability", 100)
+		if armor.has_method("set_durability"):
+			armor.set_durability(entry.get("durability", armor.max_durability))
+		else:
+			armor.durability = entry.get("durability", armor.max_durability)
+		armor.icon           = _deserialize_texture(entry.get("icon_data", {}))
+		armor.slot           = entry.get("slot_type", ArmorData.SlotType.CHEST)
+		var slot_node := inventory.get_armor_slot(armor.slot)
+		if slot_node:
+			slot_node.equipped_item = armor
+			slot_node._update_ui()
+			inventory.emit_signal("inventory_changed")
+
 func _serialize_texture(t: Texture2D) -> Dictionary:
 	if not t:
 		return {}
@@ -260,7 +319,7 @@ func _deserialize_texture(data: Dictionary) -> Texture2D:
 		return load(data.path)
 	
 	if data.get("type") == "atlas" and data.has("atlas_path") and ResourceLoader.exists(data.atlas_path):
-		var atlas = load(data.atlas_path)
+		var atlas: Texture2D = load(data.atlas_path)
 		var at = AtlasTexture.new()
 		at.atlas = atlas
 		if data.has("region"):

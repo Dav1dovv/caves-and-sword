@@ -11,4 +11,5 @@ region = Rect2(0, 32, 16, 16)
 script = ExtResource("1_l12a1")
 icon = SubResource("AtlasTexture_swfxu")
 item_name = "Emerald"
+price = 45
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

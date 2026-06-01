@@ -3,6 +3,7 @@ class_name VFX_damage
 
 func _hit_vfx(new_character : Node2D) -> void:
 	_play_audio()
+	_play_particles()
 	if new_character == null:
 		return
 	else:

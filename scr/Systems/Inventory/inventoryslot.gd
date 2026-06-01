@@ -1,4 +1,6 @@
 # inventoryslot.gd
+# Оригинальный файл + поддержка drag ArmorData → ArmorSlot
+# и запрет класть ArmorData/gold в обычные слоты (опционально)
 extends TextureButton
 class_name InventorySlot
 
@@ -12,349 +14,220 @@ var hotbar_index: int = -1
 var item: ItemData = null
 var ammount: int = 0
 
-# ── Глобальный курсор (один на всю игру) ─────────────────────────────────────
+# ── Глобальный курсор ────────────────────────────────────────────
 static var held_item:    ItemData = null
 static var held_amount:  int      = 0
 static var held_preview: Control  = null
-
-# Флаг: «в этом кадре был начат drag» — чтобы _gui_input не реагировал
-# на тот же клик, которым мы подняли предмет.
 static var _drag_started_this_frame: bool = false
 
+@onready var _icon_node:  TextureRect      = get_node_or_null("Icon")
+@onready var _count_node: Label            = get_node_or_null("Count")
+@onready var _dur_bar:    TextureProgressBar = get_node_or_null("DurabilityBar")
+@onready var _tip_node:   Node             = get_node_or_null("Tooltip")
+
+var _is_ready := false
+
 func _ready() -> void:
+	_is_ready = true
 	if get_parent() is Hotbar:
 		hotbar       = get_parent()
 		hotbar_index = get_index()
-	_ensure_durability_bar()
+	# Если данные были записаны до _ready — обновляем UI сейчас
+	if item != null or ammount > 0:
+		update_ui()
 
-# ── Durability bar ────────────────────────────────────────────────────────────
+# ── Durability bar ────────────────────────────────────────────────
 func _ensure_durability_bar() -> void:
-	var bar := get_node_or_null("DurabilityBar") as TextureProgressBar
-	if bar:
-		bar.visible = false
+	if _dur_bar:
+		_dur_bar.visible = false
 
 func _update_durability_bar() -> void:
-	var bar := get_node_or_null("DurabilityBar") as TextureProgressBar
+	var bar := _dur_bar
 	if not bar:
 		return
+	var has_dur := false
+	var cur     := 0.0
+	var maxd    := 1.0
 	if item is equip_data:
-		var current: float = float(item.get_durability())
-		var maximum: float = float(item.max_durability)
+		cur = float(item.get_durability()); maxd = float(item.max_durability); has_dur = true
+	elif item is ArmorData:
+		cur = float(item.get_durability()); maxd = float(item.max_durability); has_dur = true
+	if has_dur:
 		bar.min_value = 0.0
-		bar.max_value = maximum
+		bar.max_value = maxd
 		bar.visible   = true
-		bar.set_deferred("value", current)
-		var ratio: float = clampf(current / maximum, 0.0, 1.0) if maximum > 0.0 else 0.0
+		bar.set_deferred("value", cur)
+		var ratio := clampf(cur / maxd, 0.0, 1.0) if maxd > 0.0 else 0.0
 		if   ratio > 0.6: bar.tint_progress = Color(0.2, 0.85, 0.2)
 		elif ratio > 0.3: bar.tint_progress = Color(0.95, 0.75, 0.1)
 		else:             bar.tint_progress = Color(0.9, 0.15, 0.15)
-		$Icon.modulate = Color(0.45, 0.45, 0.45) if item.is_broken() else Color.WHITE
 	else:
-		bar.visible    = false
-		$Icon.modulate = Color.WHITE
+		bar.visible = false
 
-# ── Утилиты ───────────────────────────────────────────────────────────────────
-func get_container() -> Node:
-	if inventory: return inventory
-	if hotbar:    return hotbar
-	var p = get_parent()
-	while p:
-		if p is Inventory or p is Hotbar: return p
-		p = p.get_parent()
-	return null
-
-func get_slot_data() -> InventorySlotData:
-	var c = get_container()
-	if not c: return null
-	if c is Inventory: return c.get_slot_data_by_node(self)
-	if c is Hotbar:    return c.get_slot_data_by_node(self)
-	return null
-
+# ── UI ───────────────────────────────────────────────────────────
 func update_ui() -> void:
-	$Icon.texture = item.icon if item else null
-	$Count.text   = str(ammount) if ammount > 1 else ""
-	if item is AccessoryData:
-		$Border.visible  = true
-		$Border.modulate = (item as AccessoryData).ui_border_color
-	else:
-		$Border.visible = false
+	# Если нода ещё не прошла _ready — откладываем
+	if not _is_ready:
+		call_deferred("update_ui")
+		return
+
+	if _icon_node:
+		_icon_node.texture = item.icon if item else null
+
+	if _count_node:
+		_count_node.text = str(ammount) if (item and ammount > 1) else ""
+
 	_update_durability_bar()
+	_update_tooltip()
 
-func _sync_from_data(data: InventorySlotData) -> void:
-	if not data: item = null; ammount = 0
-	else:        item = data.item; ammount = data.amount
-	update_ui()
-
-func _emit_changed(container: Node) -> void:
-	if not container: return
-	if container is Inventory:
-		container.emit_signal("inventory_changed")
-	elif container is Hotbar:
-		container.emit_signal("hotbar_changed")
-		container._recalculate_accessories()
-
-# ── DRAG-AND-DROP GODOT — ПОЛНОСТЬЮ ОТКЛЮЧЁН ─────────────────────────────────
-# Возвращаем null — Godot не будет инициировать свой drag.
-# Вся логика перетаскивания идёт через held_item + _gui_input.
-func _get_drag_data(_pos: Vector2) -> Variant:
-	return null
-
-func _can_drop_data(_pos: Vector2, _data: Variant) -> bool:
-	return false
-
-# ── Основная логика ввода ─────────────────────────────────────────────────────
-func _gui_input(event: InputEvent) -> void:
-	if not (event is InputEventMouseButton and event.pressed):
+func _update_tooltip() -> void:
+	var tip := _tip_node
+	if not tip or not tip.has_method("set_data"):
 		return
-
-	var btn = event.button_index
-
-	# ═══════════════════════════════════════════════════════════════════
-	# ЛКМ
-	# ═══════════════════════════════════════════════════════════════════
-	if btn == MOUSE_BUTTON_LEFT:
-
-		# Shift+ЛКМ (курсор пуст) — быстрый перенос
-		if Input.is_key_pressed(KEY_SHIFT) and held_item == null:
-			accept_event()
-			_quick_transfer()
-			return
-
-		# Курсор пуст — ПОДНЯТЬ предмет из слота
-		if held_item == null:
-			if not item or ammount <= 0:
-				return
-			accept_event()
-
-			var pick_amount = ammount
-			if Input.is_key_pressed(KEY_CTRL):
-				pick_amount = 1
-			# Shift занят только для transfer, Ctrl — для 1 шт
-
-			var data = get_slot_data()
-			if not data: return
-
-			held_item   = data.item   # берём ссылку
-			held_amount = pick_amount
-
-			data.amount -= pick_amount
-			if data.amount <= 0:
-				data.item   = null
-				data.amount = 0
-			_sync_from_data(data)
-			_emit_changed(get_container())
-			_refresh_preview()
-
-		# Курсор занят — ПОЛОЖИТЬ предмет в слот
-		else:
-			accept_event()
-			_place_held_into_slot()
-
-	# ═══════════════════════════════════════════════════════════════════
-	# ПКМ
-	# ═══════════════════════════════════════════════════════════════════
-	elif btn == MOUSE_BUTTON_RIGHT:
-
-		# Курсор пуст + слот не пуст — взять половину
-		if held_item == null and item and ammount > 0:
-			accept_event()
-			var half = ceili(ammount / 2.0)
-			var data = get_slot_data()
-			if not data: return
-
-			held_item   = data.item
-			held_amount = half
-
-			data.amount -= half
-			if data.amount <= 0:
-				data.item   = null
-				data.amount = 0
-			_sync_from_data(data)
-			_emit_changed(get_container())
-			_refresh_preview()
-
-		# Курсор занят — положить 1 штуку в слот
-		elif held_item != null:
-			accept_event()
-			var data = get_slot_data()
-			if not data: return
-
-			# Слот пустой или совпадающий предмет
-			if data.item == null or is_same_item(data.item, held_item):
-				var max_c = held_item.max_count
-				var space = max_c - data.amount
-				if space > 0:
-					if data.item == null:
-						data.item = held_item
-					data.amount  += 1
-					held_amount  -= 1
-					if held_amount <= 0:
-						held_item   = null
-						held_amount = 0
-						_clear_preview()
-					else:
-						_refresh_preview()
-					_sync_from_data(data)
-					_emit_changed(get_container())
-
-# ── Положить held в текущий слот ─────────────────────────────────────────────
-func _place_held_into_slot() -> void:
-	var data = get_slot_data()
-	if not data: return
-
-	var container = get_container()
-
-	# Слот пустой — просто кладём
-	if data.item == null:
-		data.item   = held_item
-		data.amount = held_amount
-		held_item   = null
-		held_amount = 0
-		_clear_preview()
-		_sync_from_data(data)
-		_emit_changed(container)
-		return
-
-	# Тот же предмет — стакаем
-	if is_same_item(data.item, held_item) and held_item.stackable:
-		var space = held_item.max_count - data.amount
-		if space > 0:
-			var add      = min(held_amount, space)
-			data.amount += add
-			held_amount -= add
-			if held_amount <= 0:
-				held_item   = null
-				held_amount = 0
-				_clear_preview()
-			else:
-				_refresh_preview()
-			_sync_from_data(data)
-			_emit_changed(container)
-		# Нет места — ничего не делаем (предмет остаётся в курсоре)
-		return
-
-	# Разные предметы — свап
-	var tmp_item   = data.item
-	var tmp_amount = data.amount
-	data.item    = held_item
-	data.amount  = held_amount
-	held_item    = tmp_item
-	held_amount  = tmp_amount
-	_refresh_preview()
-	_sync_from_data(data)
-	_emit_changed(container)
-
-# ── Быстрый перенос Shift+ЛКМ ────────────────────────────────────────────────
-func _quick_transfer() -> void:
-	var container = get_container()
-	if not container or not item: return
-
-	var target: Node = null
-	if   container is Inventory and Global.hotbar:    target = Global.hotbar
-	elif container is Hotbar    and Global.inventory: target = Global.inventory
-	if not target: return
-
-	var data = get_slot_data()
-	if not data: return
-
-	var can_fit = _calc_can_fit(target, item, data.amount)
-	if can_fit <= 0: return
-
-	var xfer_item   = item
-	var xfer_amount = can_fit
-
-	if target.add_item(xfer_item, xfer_amount):
-		data.amount -= xfer_amount
-		if data.amount <= 0:
-			data.item   = null
-			data.amount = 0
-		_sync_from_data(data)
-		_emit_changed(container)
-
-func _calc_can_fit(target: Node, itm: ItemData, amount: int) -> int:
-	var remaining = amount
-	var slots_list: Array = []
-	if   target is Inventory: slots_list = target.items
-	elif target is Hotbar:    slots_list = target.slots
-
-	for sd in slots_list:
-		if remaining <= 0: break
-		if sd.item and is_same_item(sd.item, itm) and itm.stackable:
-			remaining -= min(remaining, itm.max_count - sd.amount)
-
-	for sd in slots_list:
-		if remaining <= 0: break
-		if sd.item == null:
-			remaining -= min(remaining, itm.max_count)
-
-	return amount - remaining
-
-# ── Превью предмета под курсором ──────────────────────────────────────────────
-func _process(_delta: float) -> void:
-	if held_preview and is_instance_valid(held_preview):
-		held_preview.global_position = get_global_mouse_position() + Vector2(10, -10)
-
-func _refresh_preview() -> void:
-	_clear_preview()
-	if not held_item: return
-
-	held_preview              = Control.new()
-	held_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-	var icon             = TextureRect.new()
-	icon.texture         = held_item.icon
-	icon.expand_mode     = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
-	icon.size            = Vector2(19, 19)
-	icon.position        = Vector2(-8, -8)
-	held_preview.add_child(icon)
-
-	if held_amount > 1:
-		var lbl = Label.new()
-		lbl.text                 = str(held_amount)
-		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		lbl.vertical_alignment   = VERTICAL_ALIGNMENT_BOTTOM
-		lbl.size                 = Vector2(16, 18)
-		lbl.add_theme_font_size_override("font_size", 8)
-		lbl.add_theme_color_override("font_color",         Color(1, 1, 1))
-		lbl.add_theme_constant_override("outline_size",    3)
-		lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0))
-		icon.add_child(lbl)
-
-	get_tree().get_first_node_in_group("Inventory").add_child(held_preview)
-	held_preview.global_position = get_global_mouse_position() + Vector2(10, -10)
-
-func _clear_preview() -> void:
-	if held_preview and is_instance_valid(held_preview):
-		held_preview.queue_free()
-	held_preview = null
-
-# ── Tooltip ───────────────────────────────────────────────────────────────────
-func _on_mouse_entered() -> void:
 	if item:
-		var desc = item.description
-		if item is equip_data:
-			var dur_text = "%d / %d" % [item.get_durability(), item.max_durability]
-			if item.is_broken(): dur_text += "  [СЛОМАНО]"
-			desc = "DMG: %s\nRange: %s\nSpeed: %s\nПрочность: %s" % [item.Damage, item.hit_distance, item.Atk_speed, dur_text]
-		elif item is FoodData:
-			desc += "\nEffects:"
-			for eff in item.effects:
-				desc += "\n- %s: +%s (%s sec)" % [eff.effect_type, eff.value, eff.duration]
-		$Tooltip.show_tooltip(item.item_name, desc)
+		tip.set_data(item)
+	else:
+		tip.clear()
 
-func _on_mouse_exited() -> void:
-	$Tooltip.hide_tooltip()
-
-# ── Подсветка хотбара ─────────────────────────────────────────────────────────
 func activate_slot() -> void:
 	texture_normal = active_slot
-
 func disable_slot() -> void:
 	texture_normal = unactive_slot
 
-# ── Сравнение предметов ───────────────────────────────────────────────────────
-static func is_same_item(a: ItemData, b: ItemData) -> bool:
-	if a == null or b == null: return false
-	if a.resource_path != "" and b.resource_path != "" and a.resource_path == b.resource_path:
-		return true
-	return a.item_name == b.item_name and a.get_class() == b.get_class()
+# ── Mouse events ─────────────────────────────────────────────────
+func _on_mouse_entered() -> void:
+	if _tip_node:
+		_tip_node.visible = (item != null)
+
+func _on_mouse_exited() -> void:
+	if _tip_node:
+		_tip_node.visible = false
+
+# ── Drag & Drop ──────────────────────────────────────────────────
+func _get_drag_data(_pos: Vector2) -> Variant:
+	if not item:
+		return null
+	_drag_started_this_frame = true
+	# Превью курсора
+	var preview := TextureRect.new()
+	preview.texture              = item.icon
+	preview.custom_minimum_size  = Vector2(16, 16)
+	preview.expand_mode          = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	set_drag_preview(preview)
+	# Данные для drop-таргетов
+	return {
+		"item":        item,
+		"amount":      ammount,
+		"source_slot": _get_slot_data(),
+	}
+
+func _get_slot_data() -> InventorySlotData:
+	if inventory:
+		return inventory.get_slot_data_by_node(self)
+	if hotbar:
+		return hotbar.get_slot_data_by_node(self)
+	return null
+
+func _can_drop_data(_pos: Vector2, data: Variant) -> bool:
+	if not data is Dictionary or not data.has("item"):
+		return false
+	return true          # Обычный слот принимает всё (броня тоже хранится в инвентаре)
+
+func _drop_data(_pos: Vector2, data: Variant) -> void:
+	if not data is Dictionary:
+		return
+	var src_slot: InventorySlotData = data.get("source_slot", null)
+	var drag_item: ItemData         = data.get("item", null)
+	var drag_amt: int               = data.get("amount", 1)
+	if not drag_item:
+		return
+
+	var dst_slot: InventorySlotData = _get_slot_data()
+	if not dst_slot:
+		return
+
+	# Если это тот же слот — ничего не делаем
+	if src_slot == dst_slot:
+		return
+
+	# Попытка стакнуть: dst уже имеет тот же предмет
+	var inv_ref := inventory if inventory else (hotbar.get_node_or_null("../..") as Inventory if hotbar else null)
+	if dst_slot.item and src_slot:
+		var same := false
+		if inv_ref and inv_ref.has_method("_is_same_item"):
+			same = inv_ref._is_same_item(dst_slot.item, drag_item)
+		elif dst_slot.item.item_name == drag_item.item_name:
+			same = true
+		if same and drag_item.stackable:
+			var space := drag_item.max_count - dst_slot.amount
+			if space > 0:
+				var moved: int = mini(drag_amt, space)
+				dst_slot.amount += moved
+				dst_slot.slot_node.ammount = dst_slot.amount
+				dst_slot.slot_node.update_ui()
+				src_slot.amount -= moved
+				if src_slot.amount <= 0:
+					src_slot.item = null
+					src_slot.amount = 0
+					src_slot.slot_node.item = null
+				src_slot.slot_node.ammount = src_slot.amount
+				src_slot.slot_node.update_ui()
+				_emit_changed_signals(src_slot, dst_slot)
+				return
+
+	# Обмен местами
+	var tmp_item   := dst_slot.item
+	var tmp_amount := dst_slot.amount
+
+	dst_slot.item   = drag_item
+	dst_slot.amount = drag_amt
+	dst_slot.slot_node.item    = drag_item
+	dst_slot.slot_node.ammount = drag_amt
+	dst_slot.slot_node.update_ui()
+
+	if src_slot:
+		src_slot.item   = tmp_item
+		src_slot.amount = tmp_amount
+		src_slot.slot_node.item    = tmp_item
+		src_slot.slot_node.ammount = tmp_amount
+		src_slot.slot_node.update_ui()
+
+	_emit_changed_signals(src_slot, dst_slot)
+
+func _on_gui_input(event: InputEvent) -> void:
+	if _drag_started_this_frame:
+		_drag_started_this_frame = false
+		return
+
+func _emit_changed_signals(src_slot: InventorySlotData, _dst_slot: InventorySlotData) -> void:
+	# dst всегда принадлежит self — смотрим на self
+	var dst_has_hotbar  := hotbar != null
+	var dst_has_inv     := inventory != null
+
+	# src может принадлежать другому контейнеру
+	var src_has_hotbar  := false
+	var src_has_inv     := false
+	if src_slot and src_slot.slot_node:
+		src_has_hotbar = src_slot.slot_node.hotbar != null
+		src_has_inv    = src_slot.slot_node.inventory != null
+
+	var need_inv := dst_has_inv or src_has_inv
+	var need_hb  := dst_has_hotbar or src_has_hotbar
+
+	# Шлём сигналы через правильные ноды
+	if need_inv:
+		var inv_node := inventory
+		if not inv_node and src_slot and src_slot.slot_node:
+			inv_node = src_slot.slot_node.inventory
+		if inv_node:
+			inv_node.emit_signal("inventory_changed")
+
+	if need_hb:
+		var hb_node := hotbar
+		if not hb_node and src_slot and src_slot.slot_node:
+			hb_node = src_slot.slot_node.hotbar
+		if hb_node:
+			hb_node.emit_signal("hotbar_changed")
+			hb_node._recalculate_accessories()
+			# Принудительно обновляем PlayerHitBox — предмет в руке
+			hb_node._update_equip()

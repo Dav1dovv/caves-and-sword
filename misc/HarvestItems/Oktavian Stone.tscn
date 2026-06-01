@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://nu807x71f1fp"]
 
 [ext_resource type="PackedScene" uid="uid://bny4sqh4i8i5v" path="res://misc/HarvestItems/Harvestable.tscn" id="1_lse0o"]
-[ext_resource type="Texture2D" uid="uid://dqaxq3iceubds" path="res://misc/HarvestItems/Textures/SandStone.png" id="2_lse0o"]
 [ext_resource type="Script" uid="uid://b7lfnqk6b5cdp" path="res://scr/Misc/RandomSprite.gd" id="3_i7ruk"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="4_fxiew"]
 [ext_resource type="Script" uid="uid://wm1t8anytdyq" path="res://scr/Resources/ItemData/ItemData.gd" id="5_suxn6"]
@@ -18,6 +17,9 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bhrl0"]
 size = Vector2(36, 27)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_75ykc"]
+load_path = "res://.godot/imported/SandStone.png-204ddc37c8484b919961710e878c5952.ctex"
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_bhrl0"]
 playback_mode = 1
@@ -51,8 +53,9 @@ shape = SubResource("RectangleShape2D_bhrl0")
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="2" unique_id=971498566]
 position = Vector2(0, -16)
-texture = ExtResource("2_lse0o")
+texture = SubResource("CompressedTexture2D_75ykc")
 hframes = 3
+frame = 1
 script = ExtResource("3_i7ruk")
 frame_weights = Array[float]([1.0, 1.0, 1.0])
 metadata/_custom_type_script = "uid://b7lfnqk6b5cdp"

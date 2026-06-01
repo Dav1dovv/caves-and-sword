@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://crdntcnp1cntm"]
 
-[ext_resource type="PackedScene" uid="uid://o4a6276bgxhx" path="res://misc/Entity/creature.tscn" id="1_qjck8"]
+[ext_resource type="PackedScene" uid="uid://o4a6276bgxhx" path="res://misc/Entity/MISC/creature.tscn" id="1_qjck8"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="2_2lcvw"]
 [ext_resource type="Script" uid="uid://bk36fux275vc" path="res://misc/Entity/Animals/nox.gd" id="2_nfayc"]
-[ext_resource type="Texture2D" uid="uid://doi65iugoty8f" path="res://misc/Entity/Textures/Enemy.png" id="3_nfayc"]
-[ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="3_wk8xf"]
+[ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="3_wk8xf"]
+[ext_resource type="Texture2D" uid="uid://c604sxdmtnh3w" path="res://misc/Entity/Textures/Creatures.png" id="5_nfayc"]
 
-[sub_resource type="Resource" id="Resource_2lcvw"]
+[sub_resource type="Resource" id="Resource_wk8xf"]
 resource_local_to_scene = true
 script = ExtResource("3_wk8xf")
 max_health = 50
@@ -584,7 +584,7 @@ _data = {
 [sub_resource type="CircleShape2D" id="CircleShape2D_wk8xf"]
 radius = 140.0
 
-[node name="Nox" unique_id=2111811093 node_paths=PackedStringArray("body_anim", "Vfx") instance=ExtResource("1_qjck8")]
+[node name="Nox" unique_id=2111811093 node_paths=PackedStringArray("body_anim") instance=ExtResource("1_qjck8")]
 script = ExtResource("2_nfayc")
 behavior = -1.0
 can_flee = true
@@ -598,8 +598,7 @@ fear_calm_threshold = 0.015
 hear_radius = 200.0
 sight_radius = 200.0
 body_anim = NodePath("Skin/AnimationPlayer")
-Entity_stats = SubResource("Resource_2lcvw")
-Vfx = NodePath("VFX")
+Entity_stats = SubResource("Resource_wk8xf")
 
 [node name="optimizer" parent="." index="0" unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
 rect = Rect2(-10, -15, 21, 25)
@@ -620,25 +619,25 @@ texture = ExtResource("2_2lcvw")
 
 [node name="Body" type="Sprite2D" parent="Skin" index="1" unique_id=44517667]
 position = Vector2(0, -8)
-texture = ExtResource("3_nfayc")
+texture = ExtResource("5_nfayc")
 offset = Vector2(0, -7)
 region_enabled = true
-region_rect = Rect2(0, 92, 17, 23)
+region_rect = Rect2(96, 0, 17, 23)
 
 [node name="Left leg" type="Sprite2D" parent="Skin/Body" index="0" unique_id=230594064]
 position = Vector2(-4, 0.23885009)
-texture = ExtResource("3_nfayc")
+texture = ExtResource("5_nfayc")
 offset = Vector2(0, 4)
 region_enabled = true
-region_rect = Rect2(1, 115, 5, 8)
+region_rect = Rect2(97, 23, 5, 8)
 
 [node name="Right leg" type="Sprite2D" parent="Skin/Body" index="1" unique_id=1986562116]
 show_behind_parent = true
 position = Vector2(6, 0.23885009)
-texture = ExtResource("3_nfayc")
+texture = ExtResource("5_nfayc")
 offset = Vector2(0, 4)
 region_enabled = true
-region_rect = Rect2(13, 115, 5, 8)
+region_rect = Rect2(109, 23, 5, 8)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Skin" index="2" unique_id=1072571754]
 root_node = NodePath("../..")

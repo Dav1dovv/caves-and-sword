@@ -180,7 +180,7 @@ func _try_spawn(pos: Vector2, spawned_positions: Array[Vector2]) -> void:
 	_apply_transform(obj, item)
 	call_deferred("add_child", obj)
 	spawned_positions.append(pos)
-	print("[DEBUG] is_harvested(%s, %s) = %s" % [get_tree().current_scene.scene_file_path, pos, _is_harvested(pos)])
+	#print("[DEBUG] is_harvested(%s, %s) = %s" % [get_tree().current_scene.scene_file_path, pos, _is_harvested(pos)])
 
 
 func _apply_transform(obj: Node, item: Generation) -> void:

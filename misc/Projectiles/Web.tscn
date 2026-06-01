@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://jl6w7073r4nv"]
 
 [ext_resource type="Script" uid="uid://b1l7sa4nobavs" path="res://misc/Projectiles/Projectile.gd" id="1_ocmba"]
-[ext_resource type="Texture2D" uid="uid://dqm1tvqyd7xrh" path="res://Assets/Textures/SpriteSheets/Porjectiles.png" id="2_ocmba"]
+[ext_resource type="Texture2D" uid="uid://c58wps8d412of" path="res://Assets/Textures/SpriteSheets/Porjectiles.png" id="2_ocmba"]
 [ext_resource type="AudioStream" uid="uid://cgigsrfyxuodb" path="res://Assets/Audio/SFX/Swing.wav" id="3_mg0kq"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="4_p4qcp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_njjya"]
-radius = 3.0
+radius = 4.0
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_njjya"]
 particle_flag_disable_z = true
@@ -52,15 +52,17 @@ color_ramp = SubResource("GradientTexture1D_fdh37")
 
 [node name="Web" type="CharacterBody2D" unique_id=211040281]
 script = ExtResource("1_ocmba")
-speed = 220.0
-lifetime = 10.0
-damage = 8.0
-max_travel_distance = 200.0
+speed = 160.0
+lifetime = 5.0
+damage = 4.0
+projectile_type = "normal"
+explode_on_hit = false
+max_travel_distance = 180.0
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=196098922]
 texture = ExtResource("2_ocmba")
 region_enabled = true
-region_rect = Rect2(16, 0, 16, 16)
+region_rect = Rect2(16, 0, 16, 12)
 
 [node name="LifetimeTimer" type="Timer" parent="." unique_id=163565797]
 one_shot = true

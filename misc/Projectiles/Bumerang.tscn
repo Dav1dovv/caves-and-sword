@@ -63,7 +63,7 @@ max_travel_distance = 30.0
 rotation = -0.7853982
 texture = ExtResource("4_aqrar")
 region_enabled = true
-region_rect = Rect2(48, 128, 16, 16)
+region_rect = Rect2(96, 96, 16, 16)
 
 [node name="LifetimeTimer" type="Timer" parent="." unique_id=1454724338]
 one_shot = true

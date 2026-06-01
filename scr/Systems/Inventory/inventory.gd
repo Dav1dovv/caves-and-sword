@@ -1,4 +1,5 @@
 # inventory.gd
+# Оригинальный + слоты брони (4 ArmorSlot) + слот золота (GoldSlot)
 extends Control
 class_name Inventory
 
@@ -6,19 +7,38 @@ signal inventory_changed
 
 @onready var grid_container: GridContainer = $HBoxContainer/Inventory/VBoxContainer/GridContainer
 @onready var hotbar: Hotbar = $HotBar
+
+#Menus
+@onready var inventory: Panel = $HBoxContainer/Inventory
+@onready var work_bench: Control = $HBoxContainer/WorkBench
+# ── Слоты брони ─────────────────────────────────────────────────
+# Добавь эти ноды в сцену: HBoxContainer/Inventory/VBoxContainer/EquipPanel/
+@onready var slot_head:  ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotHead
+@onready var slot_chest: ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotChest
+@onready var slot_legs:  ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotLegs
+@onready var slot_boots: ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotBoots
+
+# ── Слот золота ──────────────────────────────────────────────────
+# Добавь ноду: HBoxContainer/Inventory/VBoxContainer/GoldSlot
+@onready var gold_slot: GoldSlot = $HBoxContainer/Inventory/VBoxContainer/GridContainer/InventorySlot37
+
 var items: Array[InventorySlotData] = []
-var items_storage :Array[ItemData]
+var items_storage: Array[ItemData]
 
 func _init() -> void:
 	_load_all_items()
 
 func _ready() -> void:
 	_initialize_slots()
+	_initialize_armor_slots()
+	_initialize_gold_slot()
 	Global.inventory = self
 	Global.developer_console.register_command("all_items_list", _cmd_list, "List all items")
-	Global.developer_console.register_command("add_item",_cmd_add_item, "Usage: add_item [itm_indx] [count]")
-	#$InventorySaver.load_game()
+	Global.developer_console.register_command("add_item", _cmd_add_item, "Usage: add_item [itm_indx] [count]")
 
+# ─────────────────────────────────────────────────────────────────
+#  ИНИЦИАЛИЗАЦИЯ
+# ─────────────────────────────────────────────────────────────────
 func _load_all_items() -> void:
 	var dir = DirAccess.open("res://scr/Resources/Items/")
 	if dir:
@@ -26,18 +46,10 @@ func _load_all_items() -> void:
 		var file_name = dir.get_next()
 		while file_name != "":
 			if file_name.ends_with(".tres") or file_name.ends_with(".res"):
-				var itm = load("res://scr/Resources/Items/" + file_name)
+				var itm: Resource = load("res://scr/Resources/Items/" + file_name)
 				if itm is ItemData:
 					items_storage.append(itm)
 			file_name = dir.get_next()
-
-func _get_items_list() -> String:
-	var list = "all items list:\n"
-	for i in range(items_storage.size()):
-		var config = items_storage[i]
-		var itm = "EMPTY" if not config else config.item_name
-		list += "%d: %s\n" % [i, itm]
-	return list
 
 func _initialize_slots() -> void:
 	items.clear()
@@ -48,33 +60,95 @@ func _initialize_slots() -> void:
 			items.append(data)
 			child.inventory = self
 
+func _initialize_armor_slots() -> void:
+	# Передаём ссылку на инвентарь всем слотам брони
+	for s in [slot_head, slot_chest, slot_legs, slot_boots]:
+		if s:
+			s.inventory = self
+			# Подключаем сигнал чтобы броня применялась к игроку
+			if not s.armor_equipped.is_connected(_on_armor_equipped):
+				s.armor_equipped.connect(_on_armor_equipped)
+			if not s.armor_unequipped.is_connected(_on_armor_unequipped):
+				s.armor_unequipped.connect(_on_armor_unequipped)
+
+func _initialize_gold_slot() -> void:
+	if gold_slot:
+		gold_slot.inventory = self
+
+# ─────────────────────────────────────────────────────────────────
+#  БРОНЯ — применение к игроку
+# ─────────────────────────────────────────────────────────────────
+func _on_armor_equipped(armor: ArmorData) -> void:
+	var player: Node = get_tree().get_first_node_in_group("Player")
+	if player and player.has_method("apply_armor"):
+		player.apply_armor(armor)
+	emit_signal("inventory_changed")
+
+func _on_armor_unequipped(armor: ArmorData) -> void:
+	var player: Node = get_tree().get_first_node_in_group("Player")
+	if player and player.has_method("remove_armor"):
+		player.remove_armor(armor)
+	emit_signal("inventory_changed")
+
+## Суммарная защита всей надетой брони
+func get_total_defense() -> int:
+	var total := 0
+	for s in [slot_head, slot_chest, slot_legs, slot_boots]:
+		if s:
+			total += s.get_defense()
+	return total
+
+## Вернуть ArmorSlot по типу (HEAD/CHEST/LEGS/BOOTS)
+func get_armor_slot(slot_type: int) -> ArmorSlot:
+	match slot_type:
+		ArmorData.SlotType.HEAD:  return slot_head
+		ArmorData.SlotType.CHEST: return slot_chest
+		ArmorData.SlotType.LEGS:  return slot_legs
+		ArmorData.SlotType.BOOTS: return slot_boots
+	return null
+
+# ─────────────────────────────────────────────────────────────────
+#  ДОБАВЛЕНИЕ ПРЕДМЕТОВ
+# ─────────────────────────────────────────────────────────────────
 func add_item(item_data: ItemData, amount: int = 1) -> bool:
 	if not item_data or amount <= 0:
 		return false
 
-	var remaining = amount
+	# Если это броня — сначала пробуем надеть в слот экипировки
+	if item_data is ArmorData:
+		var armor := item_data as ArmorData
+		var armor_slot_node := get_armor_slot(armor.slot)
+		if armor_slot_node and armor_slot_node.equipped_item == null:
+			armor_slot_node.try_equip(armor)
+			emit_signal("inventory_changed")
+			return true
+		# Слот занят — кладём в обычный инвентарь ниже
 
-	# 1. Стакаем в существующие слоты с таким же предметом
+	var remaining := amount
+
+	# Стакаем в существующие слоты
 	for data in items:
-		if remaining <= 0: break
+		if remaining <= 0:
+			break
 		if data.item and _is_same_item(data.item, item_data) and item_data.stackable:
-			var space = item_data.max_count - data.amount
+			var space: int = item_data.max_count - data.amount
 			if space > 0:
-				var add = min(remaining, space)
+				var add: int = mini(remaining, space)
 				data.amount += add
-				data.slot_node.item   = data.item
+				data.slot_node.item    = data.item
 				data.slot_node.ammount = data.amount
 				data.slot_node.update_ui()
 				remaining -= add
 
-	# 2. Раскладываем остаток по пустым слотам
+	# Раскладываем по пустым слотам
 	for data in items:
-		if remaining <= 0: break
+		if remaining <= 0:
+			break
 		if data.item == null:
-			# Дублируем чтобы каждый слот имел свою копию ресурса
-			data.item = item_data.duplicate()
-			var add   = min(remaining, item_data.max_count)
-			data.amount = add
+			# Дублируем только стакаемые предметы; нестакаемые/броня — напрямую
+			data.item   = item_data.duplicate() if item_data.stackable else item_data
+			var add: int = mini(remaining, item_data.max_count)
+			data.amount  = add
 			data.slot_node.item    = data.item
 			data.slot_node.ammount = data.amount
 			data.slot_node.update_ui()
@@ -84,21 +158,20 @@ func add_item(item_data: ItemData, amount: int = 1) -> bool:
 		emit_signal("inventory_changed")
 		return true
 
-	print("Inventory full!")
+	push_warning("Inventory full! Could not add: %s" % item_data.item_name)
 	return false
 
+# ─────────────────────────────────────────────────────────────────
+#  УТИЛИТЫ (без изменений)
+# ─────────────────────────────────────────────────────────────────
 func _is_same_item(a: ItemData, b: ItemData) -> bool:
-	if a == null or b == null:
-		return false
-	if a.resource_path != "" and a.resource_path == b.resource_path:
-		return true
-	if a.item_name == b.item_name and a.get_class() == b.get_class():
-		return true
+	if a == null or b == null: return false
+	if a.resource_path != "" and a.resource_path == b.resource_path: return true
+	if a.item_name == b.item_name and a.get_class() == b.get_class(): return true
 	return false
 
 func get_total_item_count(search_item: ItemData) -> int:
-	if not search_item:
-		return 0
+	if not search_item: return 0
 	var total: int = 0
 	if hotbar and hotbar.slots:
 		for slot_data in hotbar.slots:
@@ -113,18 +186,15 @@ func has_total_item(search_item: ItemData, required_amount: int) -> bool:
 	return get_total_item_count(search_item) >= required_amount
 
 func remove_from_total(search_item: ItemData, amount: int) -> bool:
-	if amount <= 0 or not search_item:
-		return true
-
+	if amount <= 0 or not search_item: return true
 	var remaining: int = amount
 	var changed: bool = false
 
-	# Хотбар
 	if hotbar and hotbar.slots:
 		for slot_data in hotbar.slots:
 			if remaining <= 0: break
 			if _is_same_item(slot_data.item, search_item):
-				var remove_amt = min(remaining, slot_data.amount)
+				var remove_amt: int = mini(remaining, slot_data.amount)
 				slot_data.amount -= remove_amt
 				remaining -= remove_amt
 				changed = true
@@ -134,11 +204,10 @@ func remove_from_total(search_item: ItemData, amount: int) -> bool:
 				slot_data.slot_node.ammount = slot_data.amount
 				slot_data.slot_node.update_ui()
 
-	# Инвентарь
 	for slot_data in items:
 		if remaining <= 0: break
 		if _is_same_item(slot_data.item, search_item):
-			var remove_amt = min(remaining, slot_data.amount)
+			var remove_amt: int = mini(remaining, slot_data.amount)
 			slot_data.amount -= remove_amt
 			remaining -= remove_amt
 			changed = true
@@ -162,10 +231,36 @@ func get_slot_data_by_node(slot_node: InventorySlot) -> InventorySlotData:
 			return data
 	return null
 
+func can_add_item(item_data: ItemData, amount: int = 1) -> bool:
+	if amount <= 0:
+		return true
+	var remaining: int = amount
+	var all_slots: Array[InventorySlotData] = items.duplicate()
+	if hotbar and hotbar.slots:
+		all_slots.append_array(hotbar.slots)
+	# Считаем пространство в существующих стаках
+	for slot_data in all_slots:
+		if slot_data.item and _is_same_item(slot_data.item, item_data) and item_data.stackable:
+			var space: int = item_data.max_count - slot_data.amount
+			if space > 0:
+				remaining -= mini(remaining, space)
+				if remaining <= 0:
+					return true
+	# Считаем пустые слоты
+	for slot_data in all_slots:
+		if slot_data.item == null:
+			remaining -= item_data.max_count
+			if remaining <= 0:
+				return true
+	return false
+
 func get_save_path() -> String:
 	return "user://Saves/%s/inventory.save" % Global.player_name
 
-var is_opened : bool = false
+# ─────────────────────────────────────────────────────────────────
+#  ОТКРЫТИЕ / ЗАКРЫТИЕ
+# ─────────────────────────────────────────────────────────────────
+var is_opened: bool = false
 
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("CallInventory"):
@@ -174,30 +269,48 @@ func _input(event: InputEvent) -> void:
 func toggle_inv():
 	call_inventory()
 
-func can_add_item(item_data: ItemData, amount: int = 1) -> bool:
-	if amount <= 0:
-		return true
+func call_inventory():
+	if Global.is_opened_menu && !is_opened:
+		return
+	is_opened = !is_opened
+	Global.is_opened_menu = is_opened
+	$HBoxContainer.visible = is_opened
+	$HBoxContainer/Inventory.visible = true
+	Cursor.detection_mode(is_opened)
 
-	var remaining: int = amount
-	var all_slots: Array[InventorySlotData] = items.duplicate()
+func uncall_craft():
+	is_opened = false
+	Global.is_opened_menu = false
+	$HBoxContainer.visible = false
+	$HBoxContainer/Inventory.visible = false
+	$HBoxContainer/WorkBench.visible = false
+	Cursor.detection_mode(false)
 
-	if hotbar and hotbar.slots:
-		all_slots.append_array(hotbar.slots)
 
-	for slot_data in all_slots:
-		if slot_data.item and _is_same_item(slot_data.item, item_data) and item_data.stackable:
-			var space: int = item_data.max_count - slot_data.amount
-			if space > 0:
-				remaining -= min(remaining, space)
-				if remaining <= 0:
-					return true
 
-	if remaining > 0:
-		for slot_data in all_slots:
-			if slot_data.item == null:
-				return true
+func call_craft():
+	if Global.is_opened_menu && !is_opened:
+		return
+	is_opened = !is_opened
+	Global.is_opened_menu = is_opened
+	$HBoxContainer.visible = is_opened
+	$HBoxContainer/Inventory.visible = true
+	$HBoxContainer/WorkBench.visible = true
+	Cursor.detection_mode(is_opened)
+	if is_opened:
+		$HBoxContainer/WorkBench._refresh()
+		$HBoxContainer/WorkBench._update_preview()
 
-	return false
+# ─────────────────────────────────────────────────────────────────
+#  DEBUG КОМАНДЫ
+# ─────────────────────────────────────────────────────────────────
+func _get_items_list() -> String:
+	var list = "all items list:\n"
+	for i in range(items_storage.size()):
+		var config = items_storage[i]
+		var itm = "EMPTY" if not config else config.item_name
+		list += "%d: %s\n" % [i, itm]
+	return list
 
 func _cmd_list(_args: Array) -> String:
 	return _get_items_list()
@@ -205,8 +318,8 @@ func _cmd_list(_args: Array) -> String:
 func _cmd_add_item(args: Array) -> String:
 	if args.size() != 2:
 		return "Usage: add_item [itm_index] [count]"
-	var index = args[0] as int
-	var count = args[1] as int
+	var index = int(args[0])
+	var count = int(args[1])
 	if index < 0 or index >= items_storage.size():
 		return "Error: invalid item index (use /all_items_list to see indices)"
 	if count <= 0:
@@ -214,39 +327,3 @@ func _cmd_add_item(args: Array) -> String:
 	var item_data = items_storage[index]
 	Global.pickup_item(item_data, count)
 	return "Added %d × %s" % [count, item_data.item_name]
-
-func call_inventory():
-	if Global.is_opened_menu && !is_opened:
-		return
-
-	is_opened = !is_opened
-	Global.is_opened_menu = is_opened
-	$HBoxContainer.visible = is_opened
-	$HBoxContainer/Inventory.visible = true
-
-	Cursor.detection_mode(is_opened)
-
-func uncall_craft():
-	is_opened = !is_opened
-	Global.is_opened_menu = is_opened
-	$HBoxContainer.visible = is_opened
-	$HBoxContainer/Inventory.visible = false
-	$HBoxContainer/WorkBench.visible = false
-	$HBoxContainer/sciencist.visible = false
-func call_craft():
-	if Global.is_opened_menu && !is_opened:
-		return
-
-	is_opened = !is_opened
-	Global.is_opened_menu = is_opened
-	$HBoxContainer.visible = is_opened
-	$HBoxContainer/Inventory.visible = true
-	$HBoxContainer/WorkBench.visible = true
-	$HBoxContainer/WorkBench._refresh()
-	$HBoxContainer/WorkBench._update_preview()
-
-func call_sciensist():
-	$HBoxContainer/Inventory.visible = true
-	$HBoxContainer/sciencist.visible = true
-	$HBoxContainer/sciencist._refresh()
-	$HBoxContainer/sciencist._update_preview()

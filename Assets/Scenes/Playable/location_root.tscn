@@ -3,18 +3,28 @@
 [ext_resource type="Script" uid="uid://bdpkv7mxycsja" path="res://scr/Manager/GameManager.gd" id="1_8lo6w"]
 [ext_resource type="Script" uid="uid://loq3kip7ism3" path="res://scr/Systems/WorldGenerator/WorldGenerator.gd" id="2_8lo6w"]
 [ext_resource type="PackedScene" uid="uid://qc6y8v64442s" path="res://misc/Entity/Player/player.tscn" id="6_bd8m6"]
+[ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="7_1ds54"]
 [ext_resource type="Script" uid="uid://cx0477dq0nkws" path="res://scr/Misc/Blaze_camera.gd" id="7_2ifnd"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="8_1ds54"]
 [ext_resource type="Script" uid="uid://bl7jbpdad5e77" path="res://scr/Systems/Creature_Spawner/creature_spawner.gd" id="8_2ifnd"]
 [ext_resource type="Script" uid="uid://cspf06hgc8h0w" path="res://scr/Systems/Creature_Spawner/SpawnConfig.gd" id="9_1ds54"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="9_n55o3"]
-[ext_resource type="PackedScene" uid="uid://b2ufs68ns5a0i" path="res://misc/Entity/Enemies/slime.tscn" id="10_n55o3"]
+[ext_resource type="PackedScene" uid="uid://bu36h4hqr8fy5" path="res://misc/Entity/Enemies/slime.tscn" id="10_n55o3"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="10_q0jo5"]
 
 [sub_resource type="Resource" id="Resource_q0jo5"]
 script = ExtResource("9_1ds54")
 creature_scene = ExtResource("10_n55o3")
 metadata/_custom_type_script = "uid://cspf06hgc8h0w"
+
+[sub_resource type="Resource" id="Resource_n55o3"]
+resource_local_to_scene = true
+resource_name = "Player Stat"
+script = ExtResource("7_1ds54")
+base_move_speed = 6.0
+base_armor = 10.0
+base_defense_modifier = 0.2
+metadata/_custom_type_script = "uid://cpp05fs341abo"
 
 [sub_resource type="Resource" id="Resource_xe8ot"]
 script = ExtResource("10_q0jo5")
@@ -26,7 +36,6 @@ script = ExtResource("1_8lo6w")
 [node name="WorldGenerator" type="Node2D" parent="." unique_id=569046359]
 y_sort_enabled = true
 script = ExtResource("2_8lo6w")
-player_clear_radius = 100.0
 metadata/_custom_type_script = "uid://loq3kip7ism3"
 
 [node name="CreatureSpawner" type="Node2D" parent="." unique_id=2003484596]
@@ -35,6 +44,7 @@ creatures = Array[ExtResource("9_1ds54")]([SubResource("Resource_q0jo5")])
 metadata/_custom_type_script = "uid://bl7jbpdad5e77"
 
 [node name="Player" parent="." unique_id=1150737309 instance=ExtResource("6_bd8m6")]
+Entity_stats = SubResource("Resource_n55o3")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1490511306]
 physics_interpolation_mode = 1

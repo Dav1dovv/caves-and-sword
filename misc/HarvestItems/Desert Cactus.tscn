@@ -7,6 +7,7 @@
 [ext_resource type="Resource" uid="uid://dxg74nxb8uriw" path="res://misc/Content/Items/Cactus.tres" id="3_vkbtg"]
 [ext_resource type="Script" uid="uid://c8gtsucgxp2ef" path="res://misc/Boxes/EnemyHitBox.gd" id="4_kimx4"]
 [ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="5_lcvta"]
+[ext_resource type="PackedScene" uid="uid://d4dhrx0cb6776" path="res://misc/Particles/SplashParticles.tscn" id="8_vkbtg"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_wjwgw"]
 radius = 8.0
@@ -18,46 +19,84 @@ script = ExtResource("5_lcvta")
 Damage = 1.5
 metadata/_custom_type_script = "uid://b2ovoyoflp1gw"
 
-[node name="Cactus" instance=ExtResource("1_ulbfy")]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_p02fs"]
+load_path = "res://.godot/imported/Items-Sheet.png-aac78636ff9000301da0a84e0a143de0.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hwh8q"]
+atlas = SubResource("CompressedTexture2D_p02fs")
+region = Rect2(112, 0, 16, 16)
+
+[sub_resource type="Gradient" id="Gradient_6gt7c"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_150ax"]
+gradient = SubResource("Gradient_6gt7c")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_brdn6"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 28.36
+angle_min = -86.399994
+angle_max = 37.00001
+inherit_velocity_ratio = 0.407
+direction = Vector3(0, -1, 0)
+spread = 25.0
+initial_velocity_min = 200.0
+initial_velocity_max = 400.0
+gravity = Vector3(0, 700, 0)
+damping_min = 100.0
+damping_max = 800.0
+scale_min = 0.5
+color_ramp = SubResource("GradientTexture1D_150ax")
+
+[node name="Cactus" unique_id=909476742 instance=ExtResource("1_ulbfy")]
 durability = 18.0
 harvest_tool_lvl = 2
 
-[node name="CollisionShape2D" parent="StaticBody2D" index="0"]
+[node name="CollisionShape2D" parent="StaticBody2D" parent_id_path=PackedInt32Array(1226065190) index="0" unique_id=605264910]
 position = Vector2(-1, -7)
 rotation = -1.57079
 shape = SubResource("CircleShape2D_wjwgw")
 
-[node name="CollisionShape2D" parent="." index="1"]
-position = Vector2(0, -9)
-shape = SubResource("CircleShape2D_plvqm")
-
-[node name="optimizer" parent="." index="3" node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" parent="." index="1" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
 position = Vector2(-0.445925, -24.9051)
 scale = Vector2(1.56756, 2.69051)
 hide_objects = [NodePath("../Sprite2D"), NodePath("../Shadow")]
 
-[node name="droper" parent="." index="4"]
+[node name="droper" parent="." index="2" unique_id=1465568748]
 drop_item = Array[ExtResource("2_kimx4")]([ExtResource("3_vkbtg")])
 max_drop = 8
 
-[node name="Sprite2D" type="Sprite2D" parent="." index="5"]
+[node name="CollisionShape2D" parent="." index="4" unique_id=1716306559]
+position = Vector2(0, -9)
+shape = SubResource("CircleShape2D_plvqm")
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="5" unique_id=1959871860]
 position = Vector2(-2.11678, -24.0617)
 texture = ExtResource("2_4vhbo")
 offset = Vector2(3, -7)
 hframes = 4
 
-[node name="Shadow" type="Sprite2D" parent="." index="6"]
+[node name="Shadow" type="Sprite2D" parent="." index="6" unique_id=601478597]
 self_modulate = Color(0.0392157, 0.0705882, 0.2, 0.388235)
 z_index = -10
 position = Vector2(0, -3)
 scale = Vector2(1.8896, 0.739666)
 texture = ExtResource("3_lcvta")
 
-[node name="entity_HitBox" type="Area2D" parent="." index="7"]
+[node name="entity_HitBox" type="Area2D" parent="." index="7" unique_id=1331190255]
 script = ExtResource("4_kimx4")
 equip = SubResource("Resource_kimx4")
 metadata/_custom_type_script = "uid://c8gtsucgxp2ef"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="entity_HitBox" index="0"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="entity_HitBox" index="0" unique_id=1130002898]
 position = Vector2(0, -9)
 shape = SubResource("CircleShape2D_plvqm")
+
+[node name="VFX_damage" parent="." index="8" unique_id=2140509907 node_paths=PackedStringArray("particles")]
+particles = NodePath("../GPUParticles2D")
+
+[node name="GPUParticles2D" parent="." index="9" unique_id=1130400609 instance=ExtResource("8_vkbtg")]
+texture = SubResource("AtlasTexture_hwh8q")
+process_material = SubResource("ParticleProcessMaterial_brdn6")

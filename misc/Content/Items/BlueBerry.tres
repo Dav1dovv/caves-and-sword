@@ -30,4 +30,5 @@ effects = Array[ExtResource("1_h66th")]([ExtResource("2_fqgr6"), SubResource("Re
 icon = SubResource("AtlasTexture_xo0m3")
 play_anim = "Eating"
 item_name = "BlurBerry"
+price = 4
 metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

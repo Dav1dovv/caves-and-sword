@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ypff3r6dbpxy" path="res://Assets/Textures/TileMap/DungeonTileSet.png" id="1_t4raj"]
 [ext_resource type="Texture2D" uid="uid://cqo4btcwmrybu" path="res://Assets/Textures/TileMap/Wood.png" id="2_gk7dg"]
+[ext_resource type="Texture2D" uid="uid://b8bqiv14paqt8" path="res://Assets/Textures/TileMap/Walls.png" id="2_ygxou"]
 [ext_resource type="Texture2D" uid="uid://bsqrpbgoonw3f" path="res://Assets/Textures/TileMap/WorldTileSet.png" id="3_ygxou"]
 [ext_resource type="Texture2D" uid="uid://bsexb4ve63na1" path="res://Assets/Textures/TileMap/GrassAutoTile.png" id="4_kpjni"]
 [ext_resource type="Texture2D" uid="uid://nqtmxlsrasn6" path="res://Assets/Textures/TileMap/WaterAutoTile.png" id="5_ahfow"]
@@ -72,6 +73,33 @@ texture = ExtResource("1_t4raj")
 11:3/0 = 0
 12:3/0 = 0
 13:3/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kpjni"]
+texture = ExtResource("2_ygxou")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+1:1/0/z_index = 4
+2:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+0:3/0 = 0
+0:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:3/0 = 0
+1:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+2:3/0 = 0
+2:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+4:3/0 = 0
+5:3/0 = 0
+0:4/0 = 0
+0:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+1:4/0 = 0
+1:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+2:4/0 = 0
+2:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_a3r6a"]
 texture = ExtResource("2_gk7dg")
@@ -956,3 +984,4 @@ sources/3 = SubResource("TileSetAtlasSource_a3r6a")
 sources/4 = SubResource("TileSetAtlasSource_yfrdn")
 sources/6 = SubResource("TileSetAtlasSource_cu625")
 sources/7 = SubResource("TileSetAtlasSource_klk62")
+sources/1 = SubResource("TileSetAtlasSource_kpjni")

@@ -72,24 +72,23 @@ func load_save(slot_name: String) -> bool:
 	Global.player_name = save_data.get("player_name", "Player")
 	Global.player_skin_index = save_data.get("skin_index", 0)
 	Global.player_skin_head_index = save_data.get("head_index", 0)
-	Global.current_location = save_data.get("location","Land")
+	#Global.current_location = save_data.get("location","Land")
 	current_save_slot = slot_name
 	return true
 
 static func save_player(player: Node) -> bool:
-	var health_bar = player.get_node("HUD/HealthBar")
+	var health_bar = player.get_node("GUI/HUD/HealthBar")
 
 	var save_data = {
 		"stats": {
 			"hp":            player.Entity_stats.current_health,
 			"max_hp":        player.Entity_stats.max_health,
-			"heart_count":   health_bar.heart_count,
-			"location":      Global.current_location,
+			#"location":      Global.current_location,
 			"head_index":    player.get_node("Skin").head_inex,
 			"skin_index":    player.get_node("Skin").skin_index,
 		},
 		"equipment": {
-			"equipped_item": player.get_node("HUD/Inventory/HotBar").selected_index
+			"equipped_item": player.get_node("GUI/HUD/Inventory/HotBar").selected_index
 		},
 		"timestamp": Time.get_datetime_string_from_system()
 	}
@@ -136,33 +135,16 @@ static func load_player(player: Node) -> bool:
 	if save_data.has("stats"):
 		player.Entity_stats.current_health = save_data.stats.get("hp", player.Entity_stats.max_health)
 		player.Entity_stats.max_health = save_data.stats.get("max_hp", player.Entity_stats.max_health)
-		Global.current_location = save_data.stats.get("location",Global.current_location)
+		#Global.current_location = save_data.stats.get("location",Global.current_location)
 		Global.player_skin_index = save_data.get("skin_index",0)
 		Global.player_skin_head_index = save_data.get("head_index", 0)
-		player.get_node("HUD/Inventory/HotBar").selected_index = save_data.get("equipped_item",0)
+		player.get_node("GUI/HUD/Inventory/HotBar").selected_index = save_data.get("equipped_item",0)
 		#Global.player_skin_head_index =  save_data.get("head_index", 0) 
 		#Global.player_skin_index =save_data.get("skin_index",0)
 		#player.get_node("Skin").skin_index = save_data.get("skin_index",0)
 		#player.get_node("Skin").head_inex = save_data.get("head_index", 0) 
-		
-		# ── Обновляем HealthBar (новая система: 100 HP + heart_count) ──────────
-		var health_bar = player.get_node("HUD/HealthBar")
-
-		# Восстанавливаем количество сердец (дефолт 5, если файл старый)
-		var saved_hearts: int = save_data.stats.get("heart_count", 5)
-		health_bar.heart_count = saved_hearts
-
-		# Переводим реальный HP (0…max_health) в диапазон 0–100 для HealthBar
-		var display_hp: float = 100.0
-		if player.Entity_stats.max_health > 0:
-			display_hp = clampf(
-				player.Entity_stats.current_health / player.Entity_stats.max_health * 100.0,
-				0.0, 100.0
-			)
-		health_bar.set_hp(display_hp)
-
 		player.get_node("Skin").update_skin()
 		
-		print("current location changed " + save_data.stats.get("location",Global.current_location))
+		#print("current location changed " + save_data.stats.get("location",Global.current_location))
 		
 	return true

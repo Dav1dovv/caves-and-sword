@@ -1289,6 +1289,7 @@ grow_horizontal = 2
 script = ExtResource("1_fq7x7")
 player_name_label = NodePath("HBoxContainer2/HBoxContainer/Charachter_name")
 date_label = NodePath("HBoxContainer2/HBoxContainer/Date")
+textures = Array[Texture2D]([ExtResource("5_t6mi7"), ExtResource("6_kxodd"), ExtResource("7_jdvgb"), ExtResource("8_5vpdw"), ExtResource("9_l2vfi"), ExtResource("10_pghls"), ExtResource("11_wwx2f"), ExtResource("9_t6mi7"), ExtResource("10_kxodd"), ExtResource("11_jdvgb"), ExtResource("13_kxodd")])
 
 [node name="Delete" parent="." unique_id=53937464 instance=ExtResource("23_b6csp")]
 z_index = 5
@@ -1341,7 +1342,7 @@ y_sort_enabled = true
 position = Vector2(14, 35)
 scale = Vector2(1.4240557, 1.4240557)
 script = ExtResource("12_ew20d")
-player_skins = Array[Texture]([ExtResource("5_t6mi7"), ExtResource("6_kxodd"), ExtResource("7_jdvgb"), ExtResource("8_5vpdw"), ExtResource("9_l2vfi"), ExtResource("10_pghls"), ExtResource("11_wwx2f"), ExtResource("9_t6mi7"), ExtResource("10_kxodd"), ExtResource("11_jdvgb"), ExtResource("13_kxodd")])
+player_skins = Array[Texture2D]([ExtResource("5_t6mi7"), ExtResource("6_kxodd"), ExtResource("7_jdvgb"), ExtResource("8_5vpdw"), ExtResource("9_l2vfi"), ExtResource("10_pghls"), ExtResource("11_wwx2f"), ExtResource("9_t6mi7"), ExtResource("10_kxodd"), ExtResource("11_jdvgb"), ExtResource("13_kxodd")])
 player_sprites = [NodePath("Body"), NodePath("Body/LeftLeg"), NodePath("Body/RightLeg"), NodePath("Body/Hand/LeftHand"), NodePath("Body/Hand/RightHand")]
 
 [node name="Body" type="Sprite2D" parent="HBoxContainer2/HBoxContainer/TextureRect/Skin" unique_id=448531435]

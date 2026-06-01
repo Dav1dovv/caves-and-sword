@@ -11,4 +11,5 @@ region = Rect2(32, 16, 16, 16)
 script = ExtResource("1_kcgx6")
 icon = SubResource("AtlasTexture_bsw4f")
 item_name = "SandStone"
+price = 5
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

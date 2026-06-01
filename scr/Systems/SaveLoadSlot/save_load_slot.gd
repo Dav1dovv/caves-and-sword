@@ -17,6 +17,7 @@ var save_system: SaveSystem
 var current_slots = []  # Массив для хранения данных о слотах
 var sort_by_name_asc = true  # Сортировка по имени по возрастанию
 var sort_by_date_desc = true  # Сортировка по дате по убыванию (новые сверху)
+var MarkovNameGen : MarkovNameGenerator = MarkovNameGenerator.new()
 
 func _ready():
 	save_system = SaveSystem.new()
@@ -28,6 +29,7 @@ func _ready():
 	_display_sorted_slots()
 	update_save_slots()
 	new_save_panel.visible = false
+	MarkovNameGen._build_markov_chain()
 
 func update_save_slots():
 	# Очищаем текущие слоты
@@ -146,6 +148,10 @@ func _on_create_pressed() -> void:
 		$Panel/VBoxContainer.visible = true
 	else:
 		print("Ошибка создания сохранения")
+
+func _on_random_name_pressed() -> void:
+	player_name_input.text = MarkovNameGen._generate_random_name()
+
 
 #func _on_sort_name_pressed():
 	## Переключаем сортировку по имени

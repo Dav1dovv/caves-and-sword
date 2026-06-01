@@ -1,6 +1,7 @@
 extends Control
 
 var is_opened : bool = false
+var anotherMenuOpened : bool = false
 @onready var option_menu: CanvasLayer = $OptionMenu
 
 func resume():
@@ -23,7 +24,7 @@ func pause():
 	
 @warning_ignore("unused_parameter")
 func _input(event: InputEvent) -> void:
-	if Input.is_action_just_released("ui_escape"):
+	if Input.is_action_just_released("ui_escape") and !anotherMenuOpened:
 			print(is_opened)
 			if Global.is_opened_menu && !is_opened:
 				return  # Запрещаем открывать, если уже открыто другое меню
@@ -57,8 +58,9 @@ func _on_options_pressed() -> void:
 	Global.is_opened_menu = true
 
 func _notification(what):
-	match what:
-		#NOTIFICATION_APPLICATION_FOCUS_IN:
-			#resume()
-		NOTIFICATION_APPLICATION_FOCUS_OUT:
-			pause()
+	if !anotherMenuOpened:
+		match what:
+			#NOTIFICATION_APPLICATION_FOCUS_IN:
+				#resume()
+			NOTIFICATION_APPLICATION_FOCUS_OUT:
+				pause()

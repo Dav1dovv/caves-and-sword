@@ -25,6 +25,7 @@
 [ext_resource type="AudioStream" uid="uid://cxhnpqcdsusmm" path="res://Assets/Audio/BGM/Lullaby of the Cursed Family.mp3" id="24_sctrr"]
 [ext_resource type="AudioStream" uid="uid://clui1577iq124" path="res://Assets/Audio/BGM/Echoes of Deep.mp3" id="25_37e7n"]
 [ext_resource type="AudioStream" uid="uid://cmko4fph0k8k2" path="res://Assets/Audio/BGM/Subterranean Shadows.mp3" id="26_lu8gi"]
+[ext_resource type="PackedScene" uid="uid://cu0mowstbdnxm" path="res://scr/Systems/DayNightCycle/DayNight.tscn" id="28_qfbsq"]
 
 [sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_gmsqb"]
 clip_count = 23
@@ -99,7 +100,7 @@ clip_22/stream = ExtResource("20_yfr21")
 clip_22/auto_advance = 0
 _transitions = {
 Vector2i(-1, -1): {
-"fade_beats": 0.4,
+"fade_beats": 2.0,
 "fade_mode": 3,
 "from_time": 1,
 "to_time": 0
@@ -138,8 +139,9 @@ unique_name_in_owner = true
 
 [node name="SceneManager" parent="." unique_id=1678669278 instance=ExtResource("3_2p3co")]
 scenes = {
-"Cave": "res://Assets/Scenes/DemoTesting/room_generation_test.tscn",
+"Cave": "res://Assets/Scenes/Playable/Cave.tscn",
 "Land": "res://Assets/Scenes/Playable/west_forest.scn",
+"North Forest": "res://Assets/Scenes/Playable/Land.scn",
 "Test_Scene": "res://Assets/Scenes/Playable/west_forest.scn",
 "Village": "res://Assets/Scenes/Playable/Village.tscn",
 "World": "res://Assets/Scenes/Playable/world.tscn",
@@ -155,5 +157,10 @@ metadata/_custom_type_script = "uid://dm0fatudshy1s"
 stream = SubResource("AudioStreamInteractive_gmsqb")
 autoplay = true
 bus = &"BGM"
+
+[node name="DayNight" parent="." unique_id=1946741129 instance=ExtResource("28_qfbsq")]
+day_to_mid_minutes = 6.0
+mid_to_night_minutes = 2.0
+night_to_day_minutes = 6.0
 
 [connection signal="scene_change_finished" from="SceneManager" to="." method="_on_scene_manager_scene_change_finished"]

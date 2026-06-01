@@ -10,7 +10,17 @@ region = Rect2(96, 80, 16, 16)
 [resource]
 script = ExtResource("1_10pg7")
 lvl = 4
+max_durability = 220
+Damage = 8
+hit_distance = 8.0
+Atk_speed = 2.5
 equiped_weapon_sprite = SubResource("AtlasTexture_p7kcv")
+accuracy_radius = 6.0
+miss_chance_per_unit = 0.03
+critical_radius = 4.0
+critical_chance = 0.5
+critical_multiplier = 2.2
+one_shot_attack = false
 icon = SubResource("AtlasTexture_p7kcv")
 item_name = "Needle"
 stackable = false

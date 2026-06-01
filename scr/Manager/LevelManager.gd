@@ -95,7 +95,7 @@ func change_scene(scene_key: String, can_save: bool = false, spawn = Vector2.ZER
 		get_parent().save()
 
 	# ── Обновляем текущую локацию в Global ────────────────────────────────────
-	get_parent().current_location = scene_key
+	Global.current_location = scene_key
 
 	# ── Уведомляем подписчиков (музыка, UI) ───────────────────────────────────
 	get_tree().call_group("MusicManager", "on_scene_changed", scene_key)

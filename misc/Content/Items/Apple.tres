@@ -31,4 +31,5 @@ effects = Array[ExtResource("1_vrolc")]([SubResource("Resource_kssqq")])
 icon = SubResource("AtlasTexture_vrolc")
 play_anim = "Eating"
 item_name = "Apple"
+price = 8
 metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

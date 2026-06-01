@@ -4,14 +4,13 @@ signal world_ready
 
 @export var world_seed: String
 @export var max_activation_stations : int = 0
-@export var is_random_position : bool = false
-@export var map_size : Rect2
-
+@export var is_in_shaft : bool = false
+@export_enum("Land","Desert","Forest","Village","House","Tavern") 
+var music_theme : String = "Land"
 
 var activated_stations : int = 0
 var last_saved_position: Array[Vector2]
 var player
-
 
 func _ready() -> void:
 	#DialogueManager.show_dialogue_balloon(START)
@@ -21,25 +20,28 @@ func _ready() -> void:
 	_initialize_seed_system()
 	_load_harvested()
 	emit_signal("world_ready")
-	if is_random_position: $Player.position = Vector2(randf_range(-1599,673),randf_range(-842,553))
+	if is_in_shaft: Global.day_night.visible = false
+	else: Global.day_night.visible = true
+
 
 func respawn():
 	player = get_tree().get_first_node_in_group("Player")
 	if last_saved_position.is_empty():
-		player.save_and_load.load_player(player)
-		print(Global.current_location)
-		Global.scene_manager.change_scene(Global.current_location,false,Vector2.ZERO)
+		#player.save_and_load.load_player(player)
+		#print(Global.current_location)
+		Global.scene_manager.change_scene("Village",false,Vector2.ZERO)
 	else:
 		get_tree().call_group("Ennemy","queue_free")
 		Global.scene_manager.fade()
 		player.respawn()
 		player.position = last_saved_position.front()
 
+
 func set_spawn_point(save_position : Vector2):
 	last_saved_position.append(save_position)
 	print("Player saved at: "+ str(save_position))
 
-#region SEED SYStTEM
+#region Save Data
 # Главный сид мира
 var master_seed: int = 0
 
@@ -54,7 +56,6 @@ func get_world_seeds_path() -> String:
 	
 	var player_dir = Global.player_name.replace(" ", "_")
 	return "user://Saves/%s/worldsave/world_seeds.json" % player_dir
-
 
 
 # Инициализация системы сидов
@@ -151,8 +152,9 @@ func reset_all_location_seeds() -> void:
 	location_seeds.clear()
 	_save_location_seeds()
 	print("[GameManager] All location seeds reset")
-
+#endregion
 # ========== СОХРАНЕНИЕ И ЗАГРУЗКА СИДОВ ==========
+#region save data
 
 # Сохранение сидов в файл
 func _save_location_seeds() -> void:
@@ -254,6 +256,7 @@ func import_world_seed(seed_string: String) -> bool:
 	
 	return false
 
+#endregion
 
 #region HARVESTED SYSTEM
 

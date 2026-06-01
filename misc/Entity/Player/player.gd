@@ -4,9 +4,6 @@ class_name Player
 const ANIM_SPEED_SCALE      := 1.5
 const HAND_ANIM_SPEED_SCALE := 1.0
 
-
-@export var is_in_world : bool = false
-
 # ─────────────────────────────────────────
 #  Скорость
 # ─────────────────────────────────────────
@@ -25,6 +22,16 @@ var dash_speed:     float = 20.0
 var _current_velocity: Vector2 = Vector2.ZERO
 
 # ─────────────────────────────────────────
+#  EXIT WALK (автоход после перехода через дверь)
+# ─────────────────────────────────────────
+var _exit_walk_active:     bool    = false
+var _exit_walk_timer:      float   = 0.0
+var _exit_walk_direction:  Vector2 = Vector2.ZERO
+var _exit_walk_speed_mult: float   = 0.7
+
+# Данные хранятся в Global.pending_exit_walk и применяются в _ready()
+
+# ─────────────────────────────────────────
 #  LUNGE (рывок-атака)
 # ─────────────────────────────────────────
 # Состояние рывка
@@ -36,16 +43,16 @@ var _lunge_hit_bodies:  Array   = []   # кого уже задели за эт�
 # ─────────────────────────────────────────
 #  Нода-ссылки
 # ─────────────────────────────────────────
-@onready var progress_bar:      ProgressBar      = $HUD/ProgressBar
-@onready var hud:               CanvasLayer      = $HUD
-@onready var health_bar:        HealthBar        = $HUD/HealthBar
+@onready var gui: CanvasLayer = $GUI
+@onready var health_bar:        ProgressBar      = $GUI/HUD/HealthBar
 @onready var skin                                = $Skin
 @onready var hit_box:           player_HitBox    = %player_HitBox
-@onready var defense_label:     Label            = $HUD/HealthBar/Deffense/Label
+@onready var defense_label:     Label            = $HUD/HBoxContainer/Deffense/Label
 @onready var death_menu:        Control          = $HUD/DeathMenu
-@onready var effect_display_ui: EffectDisplayUI  = $HUD/EffectDisplayUI
+@onready var effect_display_ui: EffectDisplayUI  = $GUI/HUD/EffectDisplayUI
 @onready var _hand:             Node2D           = $Skin/Body/Hand
 @onready var _hurt_col:         CollisionShape2D = $HurtBox/CollisionShape2D
+@onready var curse_label: Label = $HUD/HealthBar/HBoxContainer/CurseIcon/CurseLabel
 
 ## Компонент пассивных эффектов оружия. Добавь ноду WeaponPassiveHandler в Player.
 @onready var weapon_passive: WeaponPassiveHandler = $WeaponPassiveHandler
@@ -63,25 +70,33 @@ var save_and_load      = SaveSystem.new()
 # ═════════════════════════════════════════
 func _ready() -> void:
 	super._ready()
+	
 	Global.hotbar    = get_tree().get_first_node_in_group("Hotbar")    as Hotbar
 	Global.inventory = get_tree().get_first_node_in_group("Inventory") as Inventory
 	get_tree().get_first_node_in_group("DebugObject").update()
-
-	defense_label.text = str(clamp(Entity_stats.base_defense_modifier * 10, 0, 1))
+	gui.player = self
 
 	save_and_load.load_player(self)
 	save_and_load.load_save(Global.player_name)
 
 	if Entity_stats.current_health <= 0:
-		Entity_stats.current_health = Entity_stats.max_health / 3.0
+		Entity_stats.current_health = Entity_stats.max_health
 		_on_health_changed(Entity_stats.current_health)
 
-	health_bar.set_hp(_hp_to_display(Entity_stats.current_health))
+	health_bar.value = Entity_stats.current_health
+	health_bar.max_value = Entity_stats.max_health
 	effect_display_ui.set_entity(self)
 	_register_commands()
 
-	if is_in_world: hud.visible = false
 
+	# ── Автоход после прохода через дверь ────────────────────────
+	if Global.get("pending_exit_walk") and Global.pending_exit_walk["active"]:
+		var d := Global.pending_exit_walk
+		_exit_walk_direction  = d["direction"]
+		_exit_walk_timer      = d["duration"]
+		_exit_walk_speed_mult = d["speed_mult"]
+		_exit_walk_active     = true
+		Global.pending_exit_walk["active"] = false   # сбрасываем чтобы не повторялось
 
 func _register_commands() -> void:
 	var c := Global.developer_console
@@ -94,12 +109,6 @@ func _register_commands() -> void:
 	c.register_command("unkillable",    _cmd_unkillable,                    "Toggle damage immunity")
 
 
-func _hp_to_display(hp: float) -> float:
-	if Entity_stats.max_health <= 0:
-		return 0.0
-	return clampf(hp / Entity_stats.max_health * 100.0, 0.0, 100.0)
-
-
 # ═════════════════════════════════════════
 func _physics_process(delta: float) -> void:
 	mouse_pos = get_global_mouse_position()
@@ -107,18 +116,22 @@ func _physics_process(delta: float) -> void:
 	if is_alive:
 		_update_lunge(delta)   # рывок имеет приоритет над обычным движением
 		if not _is_lunging:
-			_movement(delta)
+			if _exit_walk_active:
+				_update_exit_walk(delta)   # автоход после двери — блокирует ввод
+			else:
+				_movement(delta)
 		_animate()
 
 		if not is_attack:
 			hit_box.look_at(mouse_pos)
+			
 
-		if velocity == Vector2.ZERO:
+		if velocity.length_squared() <= 1.0 or is_attack:
 			skin.scale.x = scale.x if mouse_pos.x > position.x else -scale.x
 
 	move_and_slide()
 
-
+#region Lunge
 # ═══════════════════════════════════════════════════════════════════
 #  LUNGE — рывок-атака
 # ═══════════════════════════════════════════════════════════════════
@@ -144,7 +157,6 @@ func _start_lunge(equip: equip_data) -> void:
 	# Принудительно направляем hitbox в сторону рывка
 	hit_box.look_at(global_position + _lunge_direction)
 
-
 func _update_lunge(delta: float) -> void:
 	if not _is_lunging:
 		return
@@ -168,7 +180,6 @@ func _update_lunge(delta: float) -> void:
 	if _lunge_timer <= 0.0:
 		_end_lunge()
 
-
 func _end_lunge() -> void:
 	_is_lunging      = false
 	_lunge_timer     = 0.0
@@ -180,7 +191,7 @@ func _end_lunge() -> void:
 	var equip := hit_box.equip as equip_data
 	if equip and equip.lunge_invincible:
 		_hurt_col.disabled = false
-
+#endregion 
 
 # ═════════════════════════════════════════
 func _movement(delta: float) -> void:
@@ -202,7 +213,10 @@ func _movement(delta: float) -> void:
 		_current_velocity = _current_velocity.lerp(Vector2.ZERO, friction)
 
 	velocity = _current_velocity
-	if dir.x > 0:
+	# Во время атаки — смотрим в сторону мыши (атаки), а не движения
+	if is_attack:
+		skin.scale.x = scale.x if mouse_pos.x > position.x else -scale.x
+	elif dir.x > 0:
 		skin.scale.x = 1
 	elif dir.x < 0:
 		skin.scale.x = -1
@@ -212,7 +226,7 @@ func _animate() -> void:
 	var looking_right   := mouse_pos.x > position.x
 	var moving_backward := (looking_right and velocity.x < 0) or (not looking_right and velocity.x > 0)
 
-	if velocity.x != 0 or velocity.y != 0:
+	if velocity.length_squared() > 1.0:
 		var spd := -1.0 if moving_backward else 1.0
 		BodyAnimator.play("Walk", -1.0, spd)
 		if not is_attack:
@@ -255,7 +269,6 @@ func _input(event: InputEvent) -> void:
 		HandAanimator.play(hit_box.equip.play_anim)
 		call_deferred("_start_attack_cooldown", true)
 
-
 func _start_attack_cooldown(one_shot: bool) -> void:
 	await HandAanimator.animation_finished
 	is_attack = false
@@ -272,7 +285,6 @@ func _start_attack_cooldown(one_shot: bool) -> void:
 		if equip.lunge_enabled and not _is_lunging:
 			_start_lunge(equip)
 		call_deferred("_start_attack_cooldown", false)
-
 
 func _start_shot_cooldown(one_shot: bool) -> void:
 	await HandAanimator.animation_finished
@@ -291,20 +303,13 @@ func _start_shot_cooldown(one_shot: bool) -> void:
 	else:
 		_hand.rotation = 0
 
-
 func _start_eat_cooldown() -> void:
 	await HandAanimator.animation_finished
 	is_attack = false
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Вызывается анимационным событием (Animation Call Method Track) в момент удара.
-# Применяет on-hit эффект к ближайшей задетой цели.
-# ─────────────────────────────────────────────────────────────────────────────
 func _on_weapon_hit(target: Node) -> void:
 	if weapon_passive:
 		weapon_passive.try_apply_on_hit_effect(target)
-
 
 func _shoot_projectile() -> void:
 	if not hit_box.equip.projectile:
@@ -314,7 +319,6 @@ func _shoot_projectile() -> void:
 	var bullet    = hit_box.equip.projectile.instantiate()
 	bullet.setup(marker.global_position, bullet_dir, hit_box.equip.Damage)
 	get_parent().add_child(bullet)
-
 
 func shoot() -> void:
 	var equip := hit_box.equip as equip_data
@@ -333,20 +337,23 @@ func shoot() -> void:
 		)
 		get_parent().add_child(bullet)
 
+#func add_curse():
+	#curse += 10
+	#curse_label.text = str(curse)
 
 func save_game() -> void:
 	save_and_load.save_player(self)
 
-
+#region Singals
 # ─── Сигналы ──────────────────────────────────────────────────────────────────
 func _on_health_changed(new_health: float) -> void:
-	health_bar.set_hp(_hp_to_display(new_health))
+	health_bar.value = new_health
 
 func _on_died() -> void:
 	Global.play_game_over()
 	HandAanimator.stop()
 	BodyAnimator.play("Death")
-	death_menu.death()
+	gui.call_death()
 
 func respawn() -> void:
 	Entity_stats.current_health = Entity_stats.max_health / 3.0
@@ -355,7 +362,43 @@ func respawn() -> void:
 	_is_lunging       = false
 	is_alive          = true
 
+# ═════════════════════════════════════════
+#  EXIT WALK — автоход после прохода через дверь
+# ═════════════════════════════════════════
 
+## Вызывается из Door.gd перед сменой сцены.
+## Данные пишутся в Global — так они переживают пересоздание игрока.
+func queue_exit_walk(direction: Vector2, duration: float, speed_mult: float) -> void:
+	Global.pending_exit_walk = {
+		"active":     true,
+		"direction":  direction,
+		"duration":   duration,
+		"speed_mult": speed_mult,
+	}
+
+func _update_exit_walk(delta: float) -> void:
+	if not _exit_walk_active:
+		return
+
+	_exit_walk_timer -= delta
+	if _exit_walk_timer <= 0.0:
+		_exit_walk_active = false
+		return
+
+	# Принудительно двигаем игрока — обходим обычный _movement
+	var target_vel := _exit_walk_direction * Entity_stats.move_speed \
+		* standart_speed * _exit_walk_speed_mult
+	_current_velocity = _current_velocity.lerp(target_vel, acceleration)
+	velocity          = _current_velocity
+
+	# Отражаем спрайт
+	if _exit_walk_direction.x > 0:
+		skin.scale.x = 1
+	elif _exit_walk_direction.x < 0:
+		skin.scale.x = -1
+#endregion
+
+#region Commands
 # ═══════════════════════════════════════ КОМАНДЫ ══════════════════════════════
 func _cmd_set_speed(args: Array) -> String:
 	if args.size() == 1 and args[0].is_valid_float():
@@ -396,3 +439,4 @@ func _cmd_scale_change(args: Array) -> String:
 func _cmd_unkillable(args: Array) -> String:
 	_hurt_col.disabled = not _hurt_col.disabled
 	return "Damage: " + ("OFF (unkillable)" if _hurt_col.disabled else "ON")
+#endregion

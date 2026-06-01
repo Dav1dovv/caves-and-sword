@@ -11,6 +11,8 @@ var current_location : String = "Land"
 
 var last_location : String
 var last_position : Vector2
+var pending_exit_walk: Dictionary = { "active": false, "direction": Vector2.ZERO, "duration": 0.5, "speed_mult": 0.7 }
+
 #endregion
 
 #region UI controll
@@ -27,6 +29,7 @@ const HINT = preload("uid://wyeldfaexejh")
 @onready var scene_manager: SceneManager = $SceneManager
 @onready var BGM: AudioStreamPlayer = $AudioStreamPlayer
 @onready var setting_manager: SettingManager = $SettingManager
+@onready var day_night: DayNightCycle = $DayNight
 
 
 func _init() -> void:
@@ -89,8 +92,8 @@ func _try_add_to_container(container, item_data: ItemData, amount: int) -> bool:
 	return container.add_item(item_data, amount)
 
 func add_initial_items():
-	pickup_item(preload("uid://c1s20iq4dphos").duplicate(), 1)
-	pickup_item(preload("uid://bmdy0an5cjkjv").duplicate(), 1)
+	pickup_item(preload("uid://drk017uaofosr").duplicate(), 1)
+	pickup_item(preload("uid://cn4tj340q3fm3").duplicate(), 1)
 	pass
 
 # Get full path to save file
@@ -102,6 +105,7 @@ func get_save_path() -> String:
 
 func save_last_data():
 	last_location = current_location
+	print("saved Last Location: " + last_location)
 	last_position = get_tree().get_first_node_in_group("Player").global_position
 
 func delete_game_data():
@@ -181,3 +185,7 @@ func _on_scene_manager_scene_change_finished(scene_key: String) -> void:
 
 func play_game_over():
 	_switch_bgm(&"Game Over " + str(randi_range(1, 3)))
+
+
+func CraftMenu() -> void:
+	inventory.call_craft()

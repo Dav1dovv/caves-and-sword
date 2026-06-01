@@ -69,3 +69,11 @@ func _on_next_head_pressed() -> void:
 func _on_previus_head_pressed() -> void:
 	head_inex -= 1
 	update_skin()
+
+func randomSkin():
+	randomize()
+	skin_index = randi() % player_skins.size()
+	randomize()
+	head_inex = randi() % player_skins.size()
+	update_skin()
+	print("buttton pressed")

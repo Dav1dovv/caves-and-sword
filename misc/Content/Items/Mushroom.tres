@@ -21,4 +21,5 @@ effects = Array[ExtResource("1_f4mjo")]([SubResource("Resource_nobfn")])
 icon = SubResource("AtlasTexture_bgefe")
 play_anim = "Eating"
 item_name = "Mushroom"
+price = 8
 metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

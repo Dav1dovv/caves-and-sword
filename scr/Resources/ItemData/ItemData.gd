@@ -10,7 +10,9 @@ class_name ItemData
 @export var max_count : int = 64
 @export var stackable : bool = true
 ## 0:"common",1: "rare",2:"magic",3:"mythic",4:"epic",5:"legendary") 
+@export var price : int = 3
 @export var quality: int = 0  
+@export var energy : float = 1
 
 # Базовый метод для применения качества (переопределяй в подклассах)
 func apply_quality_multiplier(q: int) -> void:

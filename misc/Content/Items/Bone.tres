@@ -11,4 +11,5 @@ region = Rect2(0, 16, 16, 16)
 script = ExtResource("2_okwsi")
 icon = SubResource("AtlasTexture_2wcyv")
 item_name = "Bone"
+price = 9
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

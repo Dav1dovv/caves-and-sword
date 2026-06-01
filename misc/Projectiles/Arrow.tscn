@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bgoo5cwnuj0lj"]
 
 [ext_resource type="Script" uid="uid://b1l7sa4nobavs" path="res://misc/Projectiles/Projectile.gd" id="1_upmfm"]
-[ext_resource type="Texture2D" uid="uid://dqm1tvqyd7xrh" path="res://Assets/Textures/SpriteSheets/Porjectiles.png" id="2_mnwhk"]
+[ext_resource type="Texture2D" uid="uid://c58wps8d412of" path="res://Assets/Textures/SpriteSheets/Porjectiles.png" id="2_mnwhk"]
 [ext_resource type="AudioStream" uid="uid://cgigsrfyxuodb" path="res://Assets/Audio/SFX/Swing.wav" id="3_qvb12"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="4_1xum1"]
 
@@ -59,7 +59,7 @@ max_travel_distance = 400.0
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=136001303]
 texture = ExtResource("2_mnwhk")
 region_enabled = true
-region_rect = Rect2(96, 0, 16, 16)
+region_rect = Rect2(0, 0, 16, 12)
 
 [node name="LifetimeTimer" type="Timer" parent="." unique_id=531745298]
 one_shot = true

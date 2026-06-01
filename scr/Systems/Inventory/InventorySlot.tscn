@@ -78,6 +78,7 @@ offset_right = -2.0
 offset_bottom = -3.0
 
 [node name="DurabilityBar" type="TextureProgressBar" parent="." unique_id=481966937]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0

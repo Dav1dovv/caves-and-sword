@@ -11,17 +11,19 @@
 [ext_resource type="AudioStream" uid="uid://c5rjjykffa2ub" path="res://misc/HarvestItems/SFX/Mining/Destroy3.mp3" id="11_bhrl0"]
 [ext_resource type="AudioStream" uid="uid://d16cd8gkmveq0" path="res://misc/HarvestItems/SFX/Mining/Stone1.mp3" id="12_fma4y"]
 [ext_resource type="AudioStream" uid="uid://ck8tnuu1blxre" path="res://misc/HarvestItems/SFX/Mining/Stone2.mp3" id="13_s8fu3"]
+[ext_resource type="PackedScene" uid="uid://d4dhrx0cb6776" path="res://misc/Particles/SplashParticles.tscn" id="14_fma4y"]
 [ext_resource type="AudioStream" uid="uid://c158d8m1quj47" path="res://misc/HarvestItems/SFX/Mining/Stone3.mp3" id="14_g8djl"]
 [ext_resource type="AudioStream" uid="uid://imuayp8xcd7r" path="res://misc/HarvestItems/SFX/Mining/Stone4.mp3" id="15_35lnx"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="15_s8fu3"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bhrl0"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_bhrl0"]
-size = Vector2(36, 27)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4xc2r"]
 atlas = ExtResource("3_nlxki")
 region = Rect2(0, 0, 96, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fma4y"]
+size = Vector2(28.91896, 20)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_bhrl0"]
 playback_mode = 1
@@ -38,19 +40,43 @@ stream_1/stream = ExtResource("13_s8fu3")
 stream_2/stream = ExtResource("14_g8djl")
 stream_3/stream = ExtResource("15_35lnx")
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_g8djl"]
+atlas = ExtResource("15_s8fu3")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="Gradient" id="Gradient_uupl7"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_uupl7"]
+gradient = SubResource("Gradient_uupl7")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_35lnx"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 28.36
+angle_min = -86.399994
+angle_max = 37.00001
+inherit_velocity_ratio = 0.407
+direction = Vector3(0, -1, 0)
+spread = 25.0
+initial_velocity_min = 200.0
+initial_velocity_max = 400.0
+gravity = Vector3(0, 700, 0)
+damping_min = 100.0
+damping_max = 800.0
+scale_min = 0.5
+color_ramp = SubResource("GradientTexture1D_uupl7")
+
 [node name="HarvestItem" unique_id=1265135110 instance=ExtResource("1_7nexp")]
-durability = 20.0
+durability = 30.0
 harvest_tool_lvl = 0
 
 [node name="CollisionShape2D" parent="StaticBody2D" parent_id_path=PackedInt32Array(1226065190) index="0" unique_id=605264910]
 rotation = -1.5707941
 shape = SubResource("CapsuleShape2D_bhrl0")
 
-[node name="collisionshape2d" type="CollisionShape2D" parent="." index="1" unique_id=1701394381]
-position = Vector2(0, -13.5)
-shape = SubResource("RectangleShape2D_bhrl0")
-
-[node name="Sprite2D" type="Sprite2D" parent="." index="2" unique_id=971498566]
+[node name="Sprite2D" type="Sprite2D" parent="." index="1" unique_id=971498566]
 position = Vector2(0, -16)
 texture = SubResource("AtlasTexture_4xc2r")
 hframes = 3
@@ -65,23 +91,31 @@ position = Vector2(0, 13)
 scale = Vector2(2.625, 1.125)
 texture = ExtResource("5_4xc2r")
 
-[node name="optimizer" parent="." index="3" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
+[node name="optimizer" parent="." index="2" unique_id=2100972979 node_paths=PackedStringArray("hide_objects")]
 position = Vector2(0, -13)
 rect = Rect2(-18, -14, 36, 28)
 hide_objects = [NodePath("../Sprite2D")]
 
-[node name="droper" parent="." index="4" unique_id=1465568748]
+[node name="droper" parent="." index="3" unique_id=1465568748]
 drop_item = Array[ExtResource("8_s8fu3")]([ExtResource("6_bhrl0")])
 max_drop = 10
 
-[node name="Destroy" type="AudioStreamPlayer2D" parent="." index="7" unique_id=991282447]
+[node name="CollisionShape2D" parent="." index="5" unique_id=1716306559]
+shape = SubResource("RectangleShape2D_fma4y")
+
+[node name="Destroy" type="AudioStreamPlayer2D" parent="." index="6" unique_id=991282447]
 stream = SubResource("AudioStreamRandomizer_bhrl0")
 
-[node name="SFX" type="AudioStreamPlayer2D" parent="." index="8" unique_id=1550213720]
+[node name="SFX" type="AudioStreamPlayer2D" parent="." index="7" unique_id=1550213720]
 stream = SubResource("AudioStreamRandomizer_nlxki")
 max_polyphony = 4
 bus = &"SFX"
 playback_type = 2
 
-[node name="VFX_damage" parent="." index="9" unique_id=2140509907 node_paths=PackedStringArray("audio_player")]
+[node name="VFX_damage" parent="." index="8" unique_id=2140509907 node_paths=PackedStringArray("audio_player", "particles")]
 audio_player = NodePath("../SFX")
+particles = NodePath("../GPUParticles2D")
+
+[node name="GPUParticles2D" parent="." index="9" unique_id=1130400609 instance=ExtResource("14_fma4y")]
+texture = SubResource("AtlasTexture_g8djl")
+process_material = SubResource("ParticleProcessMaterial_35lnx")

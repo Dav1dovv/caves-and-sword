@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://h106lj2xe051"]
 
 [ext_resource type="PackedScene" uid="uid://dc6224o6es5o2" path="res://misc/Stations/camp.tscn" id="1_xtunk"]
-[ext_resource type="PackedScene" uid="uid://dwuqu7ba4rl1f" path="res://misc/Entity/Enemies/Rat.tscn" id="2_ndko2"]
-[ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Stats.gd" id="4_tax3s"]
+[ext_resource type="PackedScene" uid="uid://bhbw8mun1rxtv" path="res://misc/Entity/Enemies/Rat.tscn" id="2_ndko2"]
+[ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="4_tax3s"]
 
 [sub_resource type="Resource" id="Resource_amfqk"]
 resource_local_to_scene = true

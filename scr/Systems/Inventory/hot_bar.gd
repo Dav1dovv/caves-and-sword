@@ -35,20 +35,19 @@ func _input(event: InputEvent) -> void:
 		for i in range(1, 10):
 			if event.keycode == KEY_1 + i - 1:
 				select_slot(i - 1)
+				return
 
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			select_slot(wrapi(selected_index - 1, 0, SIZE))
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			select_slot(wrapi(selected_index + 1, 0, SIZE))
-	
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if equip_node and equip_node.has_method("use_current_item"):
-			equip_node.use_current_item()
 
 func select_slot(index: int) -> void:
-	if index == selected_index: return
-	selected_index = index
+	var clamped := clampi(index, 0, SIZE - 1)
+	if clamped == selected_index:
+		return
+	selected_index = clamped
 	_update_highlight()
 	_update_equip()
 	emit_signal("hotbar_changed")
@@ -64,44 +63,52 @@ func _update_highlight() -> void:
 
 func _update_equip() -> void:
 	if not equip_node: return
-	var item = slots[selected_index].item if selected_index < slots.size() else null
+	var item: ItemData = slots[selected_index].item if selected_index < slots.size() else null
 	equip_node.update_equip(item)
 
 func _on_slot_pressed(index: int) -> void:
 	select_slot(index)
 
+func _is_same_item(a: ItemData, b: ItemData) -> bool:
+	if a == null or b == null: return false
+	if a.resource_path != "" and a.resource_path == b.resource_path: return true
+	if a.item_name == b.item_name and a.get_class() == b.get_class(): return true
+	return false
+
 func add_item(item_data: ItemData, amount: int = 1) -> bool:
 	if amount <= 0: return false
-	
-	var added_any: bool = false
-	var remaining: int = amount
-	
+
+	var added_any := false
+	var remaining := amount
+
 	for slot_data in slots:
 		if remaining <= 0: break
-		
-		if slot_data.item and slot_data.item.item_name == item_data.item_name and item_data.stackable:
-			var space = item_data.max_count - slot_data.amount
+		if slot_data.item and _is_same_item(slot_data.item, item_data) and item_data.stackable:
+			var space := item_data.max_count - slot_data.amount
 			if space > 0:
-				var add = min(remaining, space)
+				var add: int = mini(remaining, space)
 				slot_data.amount += add
+				slot_data.slot_node.item   = slot_data.item
 				slot_data.slot_node.ammount = slot_data.amount
 				slot_data.slot_node.update_ui()
 				remaining -= add
 				added_any = true
-		
-		elif slot_data.item == null:
-			slot_data.item = item_data.duplicate()
-			var add = min(remaining, item_data.max_count)
+
+	for slot_data in slots:
+		if remaining <= 0: break
+		if slot_data.item == null:
+			slot_data.item = item_data.duplicate() if item_data.stackable else item_data
+			var add: int = mini(remaining, item_data.max_count)
 			slot_data.amount = add
-			slot_data.slot_node.item = slot_data.item
+			slot_data.slot_node.item    = slot_data.item
 			slot_data.slot_node.ammount = add
 			slot_data.slot_node.update_ui()
 			remaining -= add
 			added_any = true
-	
+
 	if added_any:
 		emit_signal("hotbar_changed")
-	
+
 	return added_any
 
 func _recalculate_accessories() -> void:

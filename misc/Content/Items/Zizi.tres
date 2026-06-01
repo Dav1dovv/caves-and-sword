@@ -52,4 +52,5 @@ eat_sound = ExtResource("1_st620")
 effects = Array[ExtResource("1_nm1up")]([SubResource("Resource_08nn1"), SubResource("Resource_4nyhy"), SubResource("Resource_a2gtu")])
 icon = SubResource("AtlasTexture_2hcp5")
 item_name = "Zizi"
+price = 35
 metadata/_custom_type_script = "uid://ds5d4cljtsmfp"
