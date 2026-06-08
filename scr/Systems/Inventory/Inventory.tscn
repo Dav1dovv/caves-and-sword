@@ -4,8 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://b62hrm50ou235" path="res://Assets/Textures/UI/UI.png" id="2_smraw"]
 [ext_resource type="Script" uid="uid://bxguvf402r2aw" path="res://scr/Systems/Inventory/TrashSlot.gd" id="3_08cpt"]
 [ext_resource type="PackedScene" uid="uid://bwaixuiwrerk5" path="res://scr/Systems/Inventory/InventorySlot.tscn" id="6_81ckb"]
-[ext_resource type="Script" uid="uid://4symdckgf27t" path="res://scr/Resources/ItemData/GoldSlot.gd" id="6_f8cid"]
-[ext_resource type="Resource" uid="uid://bn6updwt4oale" path="res://misc/Content/Items/Coin.tres" id="7_uh2ii"]
 [ext_resource type="Script" uid="uid://bggk28l7figbt" path="res://scr/Systems/Inventory/InventorySaver.gd" id="7_viqwy"]
 [ext_resource type="PackedScene" uid="uid://5nk644nw1v5k" path="res://scr/Systems/Craft/SimpleCraft/CraftStation.tscn" id="8_d17u8"]
 [ext_resource type="Script" uid="uid://c785sodtl7e0" path="res://scr/Systems/Inventory/hot_bar.gd" id="9_tp014"]
@@ -31,7 +29,6 @@ mouse_filter = 2
 script = ExtResource("1_w5r8t")
 
 [node name="HotBar" type="HBoxContainer" parent="." unique_id=1371309030 groups=["Hotbar", "Save"]]
-z_index = 55
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 7
@@ -55,9 +52,10 @@ texture_normal = SubResource("AtlasTexture_jhamk")
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot" unique_id=214195774]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "1"
 
@@ -67,9 +65,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot2" unique_id=582842423]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "2"
 
@@ -79,9 +78,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot3" unique_id=1697755844]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "3"
 
@@ -91,9 +91,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot4" unique_id=1544183629]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "4"
 
@@ -103,9 +104,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot5" unique_id=1770198894]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "5"
 
@@ -115,9 +117,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot6" unique_id=238617618]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "6"
 
@@ -127,9 +130,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot7" unique_id=377277378]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "7"
 
@@ -139,9 +143,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot8" unique_id=1478957580]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "8"
 
@@ -151,9 +156,10 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HotBar/InventorySlot9" unique_id=919083495]
 layout_mode = 0
-offset_left = 1.0
-offset_right = 41.0
-offset_bottom = 16.0
+offset_left = 2.62
+offset_top = 0.025
+offset_right = 42.62
+offset_bottom = 16.025
 theme_override_font_sizes/font_size = 5
 text = "9"
 
@@ -309,12 +315,6 @@ layout_mode = 2
 
 [node name="InventorySlot36" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=569572103 instance=ExtResource("6_81ckb")]
 layout_mode = 2
-
-[node name="InventorySlot37" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1448857901 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-script = ExtResource("6_f8cid")
-gold_item = ExtResource("7_uh2ii")
-max_stack = 9999
 
 [node name="TrashSlot" type="TextureRect" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=824992838]
 custom_minimum_size = Vector2(16, 16)

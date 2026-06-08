@@ -138,15 +138,6 @@ script = ExtResource("1_37aq7")
 unique_name_in_owner = true
 
 [node name="SceneManager" parent="." unique_id=1678669278 instance=ExtResource("3_2p3co")]
-scenes = {
-"Cave": "res://Assets/Scenes/Playable/Cave.tscn",
-"Land": "res://Assets/Scenes/Playable/west_forest.scn",
-"North Forest": "res://Assets/Scenes/Playable/Land.scn",
-"Test_Scene": "res://Assets/Scenes/Playable/west_forest.scn",
-"Village": "res://Assets/Scenes/Playable/Village.tscn",
-"World": "res://Assets/Scenes/Playable/world.tscn",
-"oktavia": "res://Assets/Scenes/Playable/west_forest.scn"
-}
 
 [node name="SettingManager" type="Node" parent="." unique_id=1512219625]
 unique_name_in_owner = true
@@ -160,7 +151,5 @@ bus = &"BGM"
 
 [node name="DayNight" parent="." unique_id=1946741129 instance=ExtResource("28_qfbsq")]
 day_to_mid_minutes = 6.0
-mid_to_night_minutes = 2.0
-night_to_day_minutes = 6.0
 
 [connection signal="scene_change_finished" from="SceneManager" to="." method="_on_scene_manager_scene_change_finished"]

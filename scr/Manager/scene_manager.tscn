@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cajofw8k5naam"]
 
 [ext_resource type="Script" uid="uid://dm3p1fw3o1vwv" path="res://scr/Manager/LevelManager.gd" id="1_3icio"]
+[ext_resource type="Resource" uid="uid://lw4x7f1p1hoe" path="res://scr/Manager/SceneRegistry.tres" id="2_m7nf5"]
 [ext_resource type="Script" uid="uid://bttgnk3bb2a8i" path="res://addons/font_auto_size_labels/auto_size_label.gd" id="2_wtyph"]
 
 [sub_resource type="Animation" id="Animation_agclx"]
@@ -56,13 +57,9 @@ _data = {
 }
 
 [node name="SceneManager" type="Node" unique_id=737168447]
+process_mode = 3
 script = ExtResource("1_3icio")
-scenes = {
-"TestScebe": "res://Assets/Scenes/Playable/WestForest.tscn",
-"Test_Scene": "res://Assets/Locations/WorlRoot.tscn",
-"World": "res://Assets/Scenes/Playable/world_root.tscn",
-"oktavia": "res://Assets/Scenes/Playable/Planets/Oktavia.tscn"
-}
+scene_registry = ExtResource("2_m7nf5")
 metadata/_custom_type_script = "uid://dm3p1fw3o1vwv"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=718572714]
@@ -91,6 +88,7 @@ offset_right = 37.5
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_font_sizes/font_size = 12
 text = "LOADING..."
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -105,14 +103,16 @@ offset_top = -71.0
 offset_bottom = 71.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 18
 text = "Message"
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 clip_text = true
 script = ExtResource("2_wtyph")
-_max_size = 32
-_current_font_size = 32
+_max_size = 18
+_min_size = 12
+_current_font_size = 18
 _editor_defaults_set = true
 metadata/_custom_type_script = "uid://bttgnk3bb2a8i"
 

@@ -1,315 +1,209 @@
-extends Node2D
+extends Node
+class_name GameManager
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  GameManager — состояние активного мира (сид, заражение, harvested, спавн)
+# ───────────────────────────────────────────────────────────────────────────────
+#  Добавляется в каждую игровую сцену (WorlRoot, world_root и т.п.)
+#  Состояние заражения берётся из SceneData при загрузке через SceneManager,
+#  но может меняться во время игры (добыча заражённых ресурсов и т.д.)
+# ═══════════════════════════════════════════════════════════════════════════════
 
 signal world_ready
 
-@export var world_seed: String
-@export var max_activation_stations : int = 0
-@export var is_in_shaft : bool = false
-@export_enum("Land","Desert","Forest","Village","House","Tavern") 
-var music_theme : String = "Land"
+@export var world_seed: String = ""
 
-var activated_stations : int = 0
+## Уровень заражения этой локации (0–3). Инициализируется из SceneData.
+@export_range(0, 3, 1) var corruption_level: int = 0
+
+## Находимся ли мы в шахте / под землёй
+@export var is_underground: bool = false
+
+## Биом / тип локации (для логики мира)
+@export_enum("Land", "Desert", "Forest", "Village", "House", "Tavern", "Cave", "Dungeon")
+var biome: String = "Land"
+
+
+var activated_stations: int = 0
 var last_saved_position: Array[Vector2]
-var player
+var player: Node2D
+
 
 func _ready() -> void:
-	#DialogueManager.show_dialogue_balloon(START)
 	world_seed = Global.player_name
 	add_to_group("World")
 	add_to_group("Save")
 	_initialize_seed_system()
 	_load_harvested()
 	emit_signal("world_ready")
-	if is_in_shaft: Global.day_night.visible = false
-	else: Global.day_night.visible = true
+	# Day/night управляется SceneManager через SceneData.is_underground,
+	# но на случай если сцена открывается напрямую — применяем локальный флаг
+	if Global.day_night:
+		Global.day_night.visible = not is_underground
+	player = find_child("Player")
 
 
-func respawn():
+# ─────────────────────────────────────────────────────────────────────────────
+#  Spawn / respawn
+# ─────────────────────────────────────────────────────────────────────────────
+#region Spawn
+func respawn() -> void:
 	player = get_tree().get_first_node_in_group("Player")
 	if last_saved_position.is_empty():
-		#player.save_and_load.load_player(player)
-		#print(Global.current_location)
-		Global.scene_manager.change_scene("Village",false,Vector2.ZERO)
+		Global.scene_manager.change_scene("Village", Vector2.ZERO)
 	else:
-		get_tree().call_group("Ennemy","queue_free")
+		get_tree().call_group("Ennemy", "queue_free")
 		Global.scene_manager.fade()
 		player.respawn()
 		player.position = last_saved_position.front()
 
 
-func set_spawn_point(save_position : Vector2):
+func set_spawn_point(save_position: Vector2) -> void:
 	last_saved_position.append(save_position)
-	print("Player saved at: "+ str(save_position))
+	print("Player saved at: " + str(save_position))
+#endregion
 
-#region Save Data
-# Главный сид мира
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Настройки мира — вызываются из SceneManager._apply_scene_settings()
+# ─────────────────────────────────────────────────────────────────────────────
+
+## Устанавливает уровень заражения локации (вызывается SceneManager при загрузке).
+func set_corruption_level(level: int) -> void:
+	corruption_level = clamp(level, 0, 3)
+
+
+## Изменить заражение на delta (положительное = больше заражения).
+## Возвращает новый уровень.
+func modify_corruption(delta: int) -> int:
+	corruption_level = clamp(corruption_level + delta, 0, 3)
+	# Синхронизируем с глобальным словарём заражения если он есть
+	if Global.corruption.has(biome):
+		Global.corruption[biome] = corruption_level
+	return corruption_level
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Система сидов
+# ─────────────────────────────────────────────────────────────────────────────
+#region SEED SYSTEM
 var master_seed: int = 0
-
-# Словарь всех сидов локаций: {"location_id": seed_value}
 var location_seeds: Dictionary = {}
 
-# Функция для получения пути к файлу сидов
-func get_world_seeds_path() -> String:
-	if not Global or Global.player_name.is_empty():
-		push_warning("[GameManager] Player name is empty, using default path")
-		return "user://world_seeds.json"
-	
-	var player_dir = Global.player_name.replace(" ", "_")
-	return "user://Saves/%s/worldsave/world_seeds.json" % player_dir
 
-
-# Инициализация системы сидов
 func _initialize_seed_system() -> void:
-	# Создаём директорию worldsave если её нет
-	_ensure_worldsave_directory()
-	
 	if not world_seed.is_empty():
-		# Используем заданный сид
 		master_seed = world_seed.hash()
 	else:
-		# Генерируем случайный сид
 		randomize()
 		master_seed = randi()
-		world_seed = str(master_seed)
-	
-	print("[GameManager] Master seed initialized: %d (from: '%s')" % [master_seed, world_seed])
-	
-	# Пытаемся загрузить существующие сиды локаций
+		world_seed  = str(master_seed)
+
+	print("[GameManager] Master seed: %d (from: '%s')" % [master_seed, world_seed])
 	_load_location_seeds()
 
-# Создание директории worldsave
-func _ensure_worldsave_directory() -> void:
-	if not Global or Global.player_name.is_empty():
-		push_warning("[GameManager] Cannot create worldsave directory - player name is empty")
-		return
-	
-	var player_dir = Global.player_name.replace(" ", "_")
-	var saves_dir = "user://Saves/%s" % player_dir
-	var worldsave_dir = "%s/worldsave" % saves_dir
-	
-	var dir = DirAccess.open("user://")
-	if dir:
-		# Создаём Saves если нет
-		if not dir.dir_exists("Saves"):
-			dir.make_dir("Saves")
-		
-		# Создаём папку игрока если нет
-		if not dir.dir_exists(saves_dir):
-			dir.make_dir_recursive(saves_dir)
-		
-		# Создаём папку worldsave если нет
-		if not dir.dir_exists(worldsave_dir):
-			dir.make_dir_recursive(worldsave_dir)
-			print("[GameManager] Created worldsave directory: %s" % worldsave_dir)
-	else:
-		push_error("[GameManager] Failed to access user:// directory")
-# ========== МЕТОДЫ РАБОТЫ С СИДАМИ ЛОКАЦИЙ ==========
 
-# Получить или создать сид для локации
 func get_or_create_location_seed(location_id: String) -> int:
-	# Если сид уже существует, возвращаем его
 	if location_seeds.has(location_id):
-		var existing_seed = location_seeds[location_id]
-		print("[GameManager] Using existing seed for '%s': %d" % [location_id, existing_seed])
-		return existing_seed
-	
-	# Создаём новый уникальный сид для локации
-	var new_seed = _generate_location_seed(location_id)
+		return location_seeds[location_id]
+	var new_seed := _generate_location_seed(location_id)
 	location_seeds[location_id] = new_seed
-	
-	print("[GameManager] Generated new seed for '%s': %d" % [location_id, new_seed])
-	
-	# Сохраняем обновлённый список сидов
 	_save_location_seeds()
-	
 	return new_seed
 
-# Генерация уникального сида для локации
-func _generate_location_seed(location_id: String) -> int:
-	# Комбинируем главный сид с ID локации для уникальности
-	var combined_string = str(master_seed) + "_" + location_id
-	return combined_string.hash()
 
-# Установить конкретный сид для локации (для отладки/читов)
+func _generate_location_seed(location_id: String) -> int:
+	return (str(master_seed) + "_" + location_id).hash()
+
+
 func set_location_seed(location_id: String, seed_value: int) -> void:
 	location_seeds[location_id] = seed_value
 	_save_location_seeds()
-	print("[GameManager] Set seed for '%s': %d" % [location_id, seed_value])
 
-# Получить все сиды локаций
+
 func get_all_location_seeds() -> Dictionary:
 	return location_seeds.duplicate()
 
-# Сброс сида конкретной локации (для регенерации)
+
 func reset_location_seed(location_id: String) -> void:
 	if location_seeds.has(location_id):
 		location_seeds.erase(location_id)
 		_save_location_seeds()
-		print("[GameManager] Reset seed for '%s'" % location_id)
 
-# Сброс всех сидов локаций
+
 func reset_all_location_seeds() -> void:
 	location_seeds.clear()
 	_save_location_seeds()
-	print("[GameManager] All location seeds reset")
-#endregion
-# ========== СОХРАНЕНИЕ И ЗАГРУЗКА СИДОВ ==========
-#region save data
 
-# Сохранение сидов в файл
+
 func _save_location_seeds() -> void:
-	var file_path = get_world_seeds_path()
-	
-	# Убеждаемся что директория существует
-	_ensure_worldsave_directory()
-	
-	var save_data = {
-		"master_seed": master_seed,
-		"world_seed": world_seed,
-		"location_seeds": location_seeds,
-		"player_name": Global.player_name if Global else "Unknown",
-		"version": "1.0"
-	}
-	
-	var json_string = JSON.stringify(save_data, "\t")
-	var file = FileAccess.open(file_path, FileAccess.WRITE)
-	
-	if file:
-		file.store_string(json_string)
-		file.close()
-		print("[GameManager] Location seeds saved to: %s" % file_path)
-	else:
-		push_error("[GameManager] Failed to save location seeds to: %s" % file_path)
+	SaveLoad.save_world_seeds(master_seed, world_seed, location_seeds)
 
-# Загрузка сидов из файла
+
 func _load_location_seeds() -> void:
-	var file_path = get_world_seeds_path()
-	
-	if not FileAccess.file_exists(file_path):
-		print("[GameManager] No saved location seeds found at: %s" % file_path)
+	var data := SaveLoad.load_world_seeds()
+	if data.is_empty():
 		print("[GameManager] Starting with fresh world seeds")
 		return
-	
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	if not file:
-		push_error("[GameManager] Failed to load location seeds from: %s" % file_path)
-		return
-	
-	var json_string = file.get_as_text()
-	file.close()
-	
-	var json = JSON.new()
-	var parse_result = json.parse(json_string)
-	
-	if parse_result != OK:
-		push_error("[GameManager] Failed to parse location seeds JSON!")
-		return
-	
-	var save_data = json.data
-	
-	# Загружаем данные
-	if save_data.has("master_seed"):
-		var saved_master_seed = save_data["master_seed"]
-		
-		# Проверяем, совпадает ли сохранённый мастер-сид с текущим
-		if saved_master_seed != master_seed:
-			push_warning("[GameManager] Master seed mismatch! Saved: %d, Current: %d" % [saved_master_seed, master_seed])
-			push_warning("[GameManager] This may result in different world generation.")
-	
-	if save_data.has("location_seeds"):
-		location_seeds = save_data["location_seeds"]
-		print("[GameManager] Loaded %d location seeds from: %s" % [location_seeds.size(), file_path])
-	
-	# Выводим все загруженные сиды
-	if location_seeds.size() > 0:
-		print("[GameManager] Location seeds:")
-		for loc_id in location_seeds.keys():
-			print("  - '%s': %d" % [loc_id, location_seeds[loc_id]])
 
-# Экспорт сидов в читаемом формате (для шаринга сидов между игроками)
+	if data.has("master_seed") and data["master_seed"] != master_seed:
+		push_warning("[GameManager] Master seed mismatch — world may differ")
+
+	if data.has("location_seeds"):
+		location_seeds = data["location_seeds"]
+		print("[GameManager] Loaded %d location seeds" % location_seeds.size())
+
+
 func export_world_seed_string() -> String:
-	var export_data = {
-		"world_seed": world_seed,
-		"master_seed": master_seed
-	}
-	return JSON.stringify(export_data)
+	return JSON.stringify({"world_seed": world_seed, "master_seed": master_seed})
 
-# Импорт мастер-сида из строки
+
 func import_world_seed(seed_string: String) -> bool:
-	var json = JSON.new()
-	var parse_result = json.parse(seed_string)
-	
-	if parse_result != OK:
-		push_error("[GameManager] Invalid seed string!")
+	var json := JSON.new()
+	if json.parse(seed_string) != OK:
+		push_error("[GameManager] Invalid seed string")
 		return false
-	
 	var data = json.data
 	if data.has("world_seed"):
-		world_seed = data["world_seed"]
+		world_seed  = data["world_seed"]
 		master_seed = world_seed.hash() if world_seed is String else data.get("master_seed", 0)
-		
-		# Очищаем старые сиды локаций при импорте нового мира
 		reset_all_location_seeds()
-		
-		print("[GameManager] Imported world seed: '%s' (master: %d)" % [world_seed, master_seed])
 		return true
-	
 	return false
-
 #endregion
 
-#region HARVESTED SYSTEM
 
-# Словарь добытых позиций: {"location_id": [{"x": float, "y": float}, ...]}
+# ─────────────────────────────────────────────────────────────────────────────
+#  Система добычи ресурсов (harvested)
+# ─────────────────────────────────────────────────────────────────────────────
+#region Harvested
 var harvested_positions: Dictionary = {}
 
-# Порог расстояния для сравнения позиций (в пикселях)
-const HARVEST_SNAP: float = 0
 
-func get_harvested_path() -> String:
-	if not Global or Global.player_name.is_empty():
-		return "user://harvested.json"
-	var player_dir = Global.player_name.replace(" ", "_")
-	return "user://Saves/%s/worldsave/harvested.json" % player_dir
+func register_harvested(loc_id: String, pos: Vector2, is_corrupted: bool) -> void:
+	if is_corrupted:
+		modify_corruption(-10)  # добыча снижает заражение...
+		player.curse(10)        # ...но проклинает игрока
+		print("[GameManager] Corruption now: %d" % corruption_level)
 
-# Вызывается из Harvestable при уничтожении ресурса
-func register_harvested(loc_id: String, pos: Vector2) -> void:
 	if not harvested_positions.has(loc_id):
 		harvested_positions[loc_id] = []
 	harvested_positions[loc_id].append({"x": pos.x, "y": pos.y})
-	_save_harvested()
-	print("[GameManager] Harvested registered at %s -> %s" % [loc_id, pos])
+	SaveLoad.save_harvested(harvested_positions)
 
-# Вызывается из WorldGenerator._is_harvested()
+
 func is_harvested(loc_id: String, pos: Vector2) -> bool:
 	if not harvested_positions.has(loc_id):
 		return false
 	for entry in harvested_positions[loc_id]:
-		var saved_pos := Vector2(entry["x"], entry["y"])
-		if pos.distance_to(saved_pos) <= HARVEST_SNAP:
+		if pos.distance_to(Vector2(entry["x"], entry["y"])) <= SaveLoad.HARVEST_SNAP:
 			return true
 	return false
 
-func _save_harvested() -> void:
-	_ensure_worldsave_directory()
-	var file = FileAccess.open(get_harvested_path(), FileAccess.WRITE)
-	if file:
-		file.store_string(JSON.stringify(harvested_positions, "\t"))
-		file.close()
-	else:
-		push_error("[GameManager] Failed to save harvested data")
 
 func _load_harvested() -> void:
-	var path = get_harvested_path()
-	if not FileAccess.file_exists(path):
-		return
-	var file = FileAccess.open(path, FileAccess.READ)
-	if not file:
-		return
-	var json = JSON.new()
-	if json.parse(file.get_as_text()) == OK:
-		harvested_positions = json.data
+	var data := SaveLoad.load_harvested()
+	if not data.is_empty():
+		harvested_positions = data
 		print("[GameManager] Loaded harvested positions for %d locations" % harvested_positions.size())
-	file.close()
-
 #endregion

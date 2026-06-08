@@ -20,7 +20,7 @@ signal inventory_changed
 
 # ── Слот золота ──────────────────────────────────────────────────
 # Добавь ноду: HBoxContainer/Inventory/VBoxContainer/GoldSlot
-@onready var gold_slot: GoldSlot = $HBoxContainer/Inventory/VBoxContainer/GridContainer/InventorySlot37
+@onready var gold_slot: GoldSlot
 
 var items: Array[InventorySlotData] = []
 var items_storage: Array[ItemData]
@@ -35,6 +35,7 @@ func _ready() -> void:
 	Global.inventory = self
 	Global.developer_console.register_command("all_items_list", _cmd_list, "List all items")
 	Global.developer_console.register_command("add_item", _cmd_add_item, "Usage: add_item [itm_indx] [count]")
+	gold_slot = get_tree().get_first_node_in_group("CoinSlot")
 
 # ─────────────────────────────────────────────────────────────────
 #  ИНИЦИАЛИЗАЦИЯ

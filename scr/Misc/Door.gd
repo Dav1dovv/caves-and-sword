@@ -4,7 +4,7 @@ class_name Door
 
 enum data_action {load_data, save_data}
 
-@export var go_to_scene   : String
+@export var scene_name   : String
 @export var player_spawn  : String
 @export var action        : data_action = data_action.save_data
 
@@ -82,14 +82,14 @@ func _trigger_transition() -> void:
 	# required_direction — это направление входа; выход — то же самое
 	var exit_dir := required_direction.normalized() if required_direction != Vector2.ZERO else Vector2.DOWN
 
-	# ── Сохранение и смена сцены ─────────────────────────────────
+	## ── Сохранение и смена сцены ─────────────────────────────────
 	if action == data_action.save_data:
 		Global.save_last_data()
-
-	var scene_key := go_to_scene
+		Global.save()
+	var scene_key := scene_name
 	var spawn     = player_spawn if not player_spawn.is_empty() else Vector2.ZERO
 
-	if go_to_scene == "Previous":
+	if scene_key == "Previous":
 		scene_key = Global.last_location
 		if action == data_action.load_data:
 			spawn = Global.last_position
@@ -98,4 +98,4 @@ func _trigger_transition() -> void:
 	if player and player.has_method("queue_exit_walk"):
 		player.queue_exit_walk(exit_dir, exit_walk_duration, exit_walk_speed_mult)
 
-	Global.scene_manager.change_scene(scene_key, action == data_action.save_data, spawn)
+	Global.scene_manager.change_scene(scene_key, spawn)

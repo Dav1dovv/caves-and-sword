@@ -80,6 +80,44 @@ animations = [{
 "speed": 8.0
 }]
 
+[sub_resource type="Animation" id="Animation_gbsbb"]
+resource_name = "Light"
+length = 1.5
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PointLight2D:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [9.88, 15.53]
+}
+
+[sub_resource type="Animation" id="Animation_egvxu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("PointLight2D:texture_scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [9.88]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_emoxc"]
+_data = {
+&"Light": SubResource("Animation_gbsbb"),
+&"RESET": SubResource("Animation_egvxu")
+}
+
 [node name="Camp" type="Node2D" unique_id=265569063]
 y_sort_enabled = true
 
@@ -100,3 +138,7 @@ rect = Rect2(-24, -37, 50, 47)
 script = ExtResource("3_gbsbb")
 hide_objects = [NodePath("../AnimatedSprite2D"), NodePath("../PointLight2D")]
 metadata/_custom_type_script = "uid://dbxsovdq7bbia"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=612410351]
+libraries/ = SubResource("AnimationLibrary_emoxc")
+autoplay = &"Light"

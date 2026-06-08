@@ -33,7 +33,7 @@ func _ready() -> void:
 	# Скрываем всё кроме главного меню
 	#mode_select_panel.visible = false
 	save_load_ui.visible      = false
-	lobby_ui.visible          = false
+	#lobby_ui.visible          = false
 
 	# Подключаем новые кнопки
 	solo_btn.pressed.connect(_on_solo_pressed)

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="SceneRegistry" format=3 uid="uid://lw4x7f1p1hoe"]
+
+[ext_resource type="Script" uid="uid://dahsqqqv7jj4q" path="res://scr/Resources/SceneController.gd" id="1_d63od"]
+[ext_resource type="Script" uid="uid://b7mb22r6p1vpu" path="res://scr/Systems/SceneRegistry.gd" id="2_bcnq4"]
+[ext_resource type="Resource" uid="uid://b1qwqqlv1y0wb" path="res://Assets/Scenes/Playable/Cave.tres" id="2_mo4km"]
+[ext_resource type="Resource" uid="uid://ftchfkohnlx" path="res://Assets/Scenes/Playable/Land0.tres" id="3_y5ktv"]
+[ext_resource type="Resource" uid="uid://dafxwk206hxby" path="res://Assets/Scenes/Playable/Land.tres" id="4_1tr3q"]
+[ext_resource type="Resource" uid="uid://dmxgvotci7h70" path="res://Assets/Scenes/Playable/Village.tres" id="5_j4hxn"]
+[ext_resource type="Resource" uid="uid://cce6y3v3qcm1b" path="res://Assets/Scenes/DemoTesting/House.tres" id="6_y5ktv"]
+
+[resource]
+script = ExtResource("2_bcnq4")
+scenes = Array[ExtResource("1_d63od")]([ExtResource("2_mo4km"), ExtResource("3_y5ktv"), ExtResource("4_1tr3q"), ExtResource("5_j4hxn"), ExtResource("6_y5ktv")])
+metadata/_custom_type_script = "uid://b7mb22r6p1vpu"

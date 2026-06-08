@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://uepsdmu57fgh"]
 
 [ext_resource type="PackedScene" uid="uid://o4a6276bgxhx" path="res://misc/Entity/MISC/creature.tscn" id="1_u8bf2"]
+[ext_resource type="Script" uid="uid://ce8ynq25uh3b" path="res://misc/Entity/NPC/NPC.gd" id="2_ausnv"]
 [ext_resource type="Texture2D" uid="uid://c604sxdmtnh3w" path="res://misc/Entity/Textures/Creatures.png" id="3_u8bf2"]
 [ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="4_145i3"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="5_wr7qe"]
@@ -1387,6 +1388,10 @@ radius = 5.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_wr7qe"]
 
 [node name="Trader" unique_id=2111811093 node_paths=PackedStringArray("body_anim", "hand_anim") instance=ExtResource("1_u8bf2")]
+script = ExtResource("2_ausnv")
+dialog_timeline = Array[String](["Test1"])
+awareness_radius = 80.0
+face_player_radius = 40.0
 wall_collision_mask = 1
 body_anim = NodePath("Skin/Body/BodyAnim")
 hand_anim = NodePath("Skin/Body/Hand/AnimationPlayer")

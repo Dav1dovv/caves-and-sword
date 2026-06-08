@@ -1151,20 +1151,14 @@ script = ExtResource("1_k8yma")
 new_save_panel = NodePath("NewSavePanel")
 player_name_input = NodePath("NewSavePanel/NameBox/LineEdit")
 skin_selector = NodePath("NewSavePanel/SkinCreator/Skin")
-create_button = NodePath("NewSavePanel/Create")
+create_button = NodePath("NewSavePanel/HBoxContainer/Create")
 save_slot_template = ExtResource("2_mhc1p")
 
 [node name="Panel" type="Panel" parent="." unique_id=1674953905]
 z_index = -1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.5
-offset_top = -125.5
-offset_right = 200.5
-offset_bottom = 125.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -1176,15 +1170,16 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -181.5
-offset_top = -115.0
-offset_right = 178.5
-offset_bottom = 112.0
+offset_left = -191.5
+offset_top = -120.5
+offset_right = 188.5
+offset_bottom = 117.5
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Label" type="Label" parent="Panel/VBoxContainer" unique_id=534385586]
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "your characters"
 horizontal_alignment = 1
 uppercase = true
@@ -1197,6 +1192,10 @@ layout_mode = 2
 custom_minimum_size = Vector2(371.8, 194.485)
 layout_mode = 2
 
+[node name="Control" type="Control" parent="Panel/VBoxContainer" unique_id=1361587648]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=1742851136]
 layout_mode = 2
 theme_override_constants/separation = 15
@@ -1205,14 +1204,17 @@ alignment = 1
 [node name="Back" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1903563568 instance=ExtResource("3_oxe6j")]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "Back"
 
 [node name="New Character" type="Button" parent="Panel/VBoxContainer/HBoxContainer" unique_id=759001353]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 12
 text = "New Character"
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=158068657]
+[node name="Blur" type="ColorRect" parent="." unique_id=158068657]
+unique_name_in_owner = true
 visible = false
 material = SubResource("ShaderMaterial_yghq4")
 anchors_preset = 15
@@ -1370,10 +1372,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -191.05
+offset_left = -201.55
 offset_top = -31.0
-offset_right = 170.95
-offset_bottom = 57.0
+offset_right = 181.45
+offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 23
@@ -1426,18 +1428,35 @@ custom_minimum_size = Vector2(0, 48.695)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Create" parent="NewSavePanel" unique_id=581529071 instance=ExtResource("3_oxe6j")]
+[node name="HBoxContainer" type="HBoxContainer" parent="NewSavePanel" unique_id=1423629478]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+
+[node name="Back" parent="NewSavePanel/HBoxContainer" unique_id=1337246370 instance=ExtResource("3_oxe6j")]
 custom_minimum_size = Vector2(150, 20)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 12
+text = "Back
+"
+
+[node name="Create" parent="NewSavePanel/HBoxContainer" unique_id=581529071 instance=ExtResource("3_oxe6j")]
+custom_minimum_size = Vector2(150, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 12
 text = "Create Character"
 
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/Back" to="." method="_on_back_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/HBoxContainer/New Character" to="." method="_on_new_save_pressed"]
+[connection signal="text_changed" from="NewSavePanel/NameBox/LineEdit" to="." method="_on_line_edit_text_changed"]
 [connection signal="pressed" from="NewSavePanel/NameBox/Button" to="." method="_on_random_name_pressed"]
 [connection signal="pressed" from="NewSavePanel/SkinCreator/HBoxContainer/HBoxContainer/Button" to="NewSavePanel/SkinCreator/Skin" method="_on_previus_head_pressed"]
 [connection signal="pressed" from="NewSavePanel/SkinCreator/HBoxContainer/HBoxContainer/Button2" to="NewSavePanel/SkinCreator/Skin" method="_on_next_head_pressed"]
 [connection signal="pressed" from="NewSavePanel/SkinCreator/HBoxContainer/Button" to="NewSavePanel/SkinCreator/Skin" method="randomSkin"]
 [connection signal="pressed" from="NewSavePanel/SkinCreator/HBoxContainer/HBoxContainer2/Button" to="NewSavePanel/SkinCreator/Skin" method="_on_previus_pressed"]
 [connection signal="pressed" from="NewSavePanel/SkinCreator/HBoxContainer/HBoxContainer2/Button2" to="NewSavePanel/SkinCreator/Skin" method="_on_next_pressed"]
-[connection signal="pressed" from="NewSavePanel/Create" to="." method="_on_create_pressed"]
+[connection signal="pressed" from="NewSavePanel/HBoxContainer/Back" to="." method="_on_Craft_back_pressed"]
+[connection signal="pressed" from="NewSavePanel/HBoxContainer/Create" to="." method="_on_create_pressed"]

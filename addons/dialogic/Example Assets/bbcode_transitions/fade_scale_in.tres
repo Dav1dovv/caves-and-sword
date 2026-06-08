@@ -6,6 +6,10 @@
 offsets = PackedFloat32Array(0, 0.6351706)
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1)
 
+[sub_resource type="Curve" id="Curve_rsak6"]
+
+[sub_resource type="Curve" id="Curve_pa36x"]
+
 [sub_resource type="Curve" id="Curve_oitc5"]
 _limits = [0.0, 2.0, 0.0, 1.0]
 _data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(0.40294844, 1.0066038), -0.13865282, 0.0, 0, 0]
@@ -19,6 +23,6 @@ color_modulate = SubResource("Gradient_rsak6")
 scale_enabled = true
 scale_curve = SubResource("Curve_oitc5")
 scale_pivot = Vector2(0.5, 0.5)
-position_enabled = false
-test_value = -0.1
+position_x_curve = SubResource("Curve_rsak6")
+position_y_curve = SubResource("Curve_pa36x")
 metadata/_custom_type_script = "uid://wf7hpguw17ex"

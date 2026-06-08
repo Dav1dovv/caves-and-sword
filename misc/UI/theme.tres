@@ -1,8 +1,8 @@
 [gd_resource type="Theme" format=3 uid="uid://bmjvsrl7b67cy"]
 
+[ext_resource type="FontFile" uid="uid://b6dq8pnpngkme" path="res://Assets/Fonts/PlainPixel-Regular.ttf" id="2_5ot5n"]
 [ext_resource type="Texture2D" uid="uid://b62hrm50ou235" path="res://Assets/Textures/UI/UI.png" id="2_sk3jv"]
-[ext_resource type="FontFile" uid="uid://bgjdvouikgyux" path="res://Assets/Fonts/VCR_OSD_MONO.ttf" id="3_rifk1"]
-[ext_resource type="FontFile" uid="uid://xct2lg8doe5w" path="res://Assets/Fonts/static/ScienceGothic_Condensed-SemiBold.ttf" id="3_vaw2w"]
+[ext_resource type="FontFile" uid="uid://6au0n6chebvx" path="res://Assets/Fonts/PixelifySans-VariableFont_wght.ttf" id="3_vaw2w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gwh2h"]
 atlas = ExtResource("2_sk3jv")
@@ -191,10 +191,6 @@ region = Rect2(64, 80, 64, 16)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v2w6c"]
 texture = SubResource("AtlasTexture_reifq")
-texture_margin_left = 1.0
-texture_margin_top = 1.0
-texture_margin_right = 1.0
-texture_margin_bottom = 1.0
 expand_margin_left = 1.0
 expand_margin_top = 1.0
 expand_margin_right = 1.0
@@ -302,8 +298,8 @@ expand_margin_right = 2.0
 expand_margin_bottom = 2.0
 
 [resource]
-default_font = ExtResource("3_rifk1")
-default_font_size = 13
+default_font = ExtResource("3_vaw2w")
+default_font_size = 24
 AcceptDialog/styles/embedded_border = null
 AcceptDialog/styles/embedded_unfocused_border = SubResource("StyleBoxTexture_kfyo1")
 AcceptDialog/styles/panel = SubResource("StyleBoxTexture_7pjvw")
@@ -324,7 +320,7 @@ Button/constants/align_to_largest_stylebox = 1
 Button/constants/h_separation = 6
 Button/constants/icon_max_width = 0
 Button/constants/outline_size = 3
-Button/font_sizes/font_size = 13
+Button/font_sizes/font_size = 24
 Button/styles/disabled = SubResource("StyleBoxTexture_keseg")
 Button/styles/focus = SubResource("StyleBoxTexture_ejlxd")
 Button/styles/hover = SubResource("StyleBoxTexture_5u1tl")
@@ -371,7 +367,7 @@ OptionButton/styles/hover_mirrored = null
 Panel/styles/panel = SubResource("StyleBoxTexture_60d0j")
 ProgressBar/styles/background = SubResource("StyleBoxTexture_v2w6c")
 ProgressBar/styles/fill = SubResource("StyleBoxTexture_c7kau")
-TabContainer/fonts/font = ExtResource("3_vaw2w")
+TabContainer/fonts/font = ExtResource("2_5ot5n")
 TabContainer/icons/decrement = SubResource("AtlasTexture_bcl10")
 TabContainer/icons/decrement_highlight = SubResource("AtlasTexture_m6g4m")
 TabContainer/icons/increment = SubResource("AtlasTexture_ekbp4")

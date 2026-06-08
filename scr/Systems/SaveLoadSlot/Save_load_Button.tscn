@@ -1303,7 +1303,7 @@ anchor_bottom = 0.5
 offset_left = -35.0
 offset_top = -18.5
 offset_right = -3.0
-offset_bottom = 18.5
+offset_bottom = 15.5
 grow_horizontal = 0
 grow_vertical = 2
 size_flags_horizontal = 8
@@ -1314,7 +1314,8 @@ theme_override_styles/pressed = SubResource("StyleBoxTexture_eu7le")
 theme_override_styles/hover = SubResource("StyleBoxTexture_vswmi")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_cp6da")
 theme_override_styles/focus = SubResource("StyleBoxTexture_l50q1")
-text = "X"
+text = "x"
+flat = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=1961733690]
 layout_mode = 1

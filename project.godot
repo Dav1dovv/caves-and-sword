@@ -54,12 +54,13 @@ PhantomCameraManager="*uid://duq6jhf6unyis"
 Cursor="*res://scr/Systems/Cursor/cursor.tscn"
 Global="*res://scr/Manager/global.tscn"
 Dialogic="*uid://ds2q0uclmolvu"
+SaveLoad="*uid://buc810hj77v4k"
 
 [dialogic]
 
 directories/dch_directory={}
 directories/dtl_directory={
-"Dialog1": "res://misc/Dialogs/Tests/Dialog1.dtl"
+"Dialog1": "res://misc/Dialogs/Tests/Test1.dtl"
 }
 layout/style_directory={
 "": "res://misc/UI/DialogBaloon/Dialog.tres",
@@ -144,11 +145,11 @@ Generator=""
 World=""
 MusicManager=""
 SpawnPoint=""
+CoinSlot=""
 
 [gui]
 
 theme/custom="uid://bmjvsrl7b67cy"
-theme/custom_font="uid://bgjdvouikgyux"
 
 [input]
 
@@ -273,6 +274,8 @@ copy_path="res://common/Options"
 2d/physics_engine="Rapier2D"
 3d/physics_engine="Jolt Physics"
 common/physics_interpolation=true
+rapier/solver/max_ccd_substeps=1
+rapier/logic/ghost_collision_distance_2d=0.0
 
 [rendering]
 

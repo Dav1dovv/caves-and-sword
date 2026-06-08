@@ -17,7 +17,7 @@ script = ExtResource("9_1ds54")
 creature_scene = ExtResource("10_n55o3")
 metadata/_custom_type_script = "uid://cspf06hgc8h0w"
 
-[sub_resource type="Resource" id="Resource_n55o3"]
+[sub_resource type="Resource" id="Resource_1ds54"]
 resource_local_to_scene = true
 resource_name = "Player Stat"
 script = ExtResource("7_1ds54")
@@ -44,7 +44,7 @@ creatures = Array[ExtResource("9_1ds54")]([SubResource("Resource_q0jo5")])
 metadata/_custom_type_script = "uid://bl7jbpdad5e77"
 
 [node name="Player" parent="." unique_id=1150737309 instance=ExtResource("6_bd8m6")]
-Entity_stats = SubResource("Resource_n55o3")
+Entity_stats = SubResource("Resource_1ds54")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1490511306]
 physics_interpolation_mode = 1

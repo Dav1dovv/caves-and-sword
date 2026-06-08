@@ -106,13 +106,15 @@ func apply_damage(area: Area2D, damage: float):
 	if area.is_in_group("Harvestable"):
 		area.Harvest(damage, equip.lvl, equip.is_weapon)
 		print("area is harvestable:NAME: " +area.get_parent().name)
-		get_parent().set_stamina(-equip.energy)
+		if equip  is equip_data:
+			equip.reduce_durability(1)
 		
 	elif area.is_in_group("Ennemy"):
 		area.get_parent().take_damage(damage, self)
 		print("weapon damaged: " + str(damage))
-		get_parent().set_stamina(-equip.energy)
 		print("area is entity:NAME: " +area.get_parent().name)
+		if equip  is equip_data:
+			equip.reduce_durability(1)
 
 func _refresh_hotbar_slot_ui() -> void:
 	if not hotbar: return

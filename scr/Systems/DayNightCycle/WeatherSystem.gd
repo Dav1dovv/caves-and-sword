@@ -6,25 +6,14 @@ class_name  weather
 # ===================== ЭФФЕКТЫ (просто перетащи сцены) =====================
 @export var rain_effect: PackedScene
 @export var heavy_rain_effect: PackedScene
-@export var snow_effect: PackedScene
 @export var fog_effect: PackedScene
 @export var sandstorm_effect: PackedScene
 @export var clear_sky_effect: PackedScene   # например, звёздное небо ночью
 
 # ===================== ШАНСЫ ПО СЕЗОНАМ (просто ползунки) =====================
 @export_category("Шансы погоды (%) — просто тяни ползунки")
-@export_range(0,100) var rain_chance_yanuaris:   int = 30
-@export_range(0,100) var rain_chance_kardus:     int = 80
-@export_range(0,100) var rain_chance_tirena:     int = 10
-@export_range(0,100) var rain_chance_vallis:     int = 5
-@export_range(0,100) var rain_chance_lira:       int = 60
-@export_range(0,100) var rain_chance_eikhon:     int = 15
-@export_range(0,100) var rain_chance_verda:      int = 40
-@export_range(0,100) var rain_chance_morva:      int = 90   # дождь + фиолетовый туман?
-
-@export_range(0,100) var snow_chance_cold_seasons: int = 70   # только в холодных (Eikhon, Verda, Morva)
-@export_range(0,100) var fog_chance:               int = 25
-@export_range(0,100) var sandstorm_chance_hot:     int = 40   # только в жарких (Vallis, Lira?)
+@export_range(0,100) var rain_chance:   int = 30
+@export_range(0,100) var fog_chance:    int = 25
 
 # ===================== НАСТРОЙКИ СМЕНЫ =====================
 @export_range(5, 40) var min_minutes_between_changes: float = 12
@@ -37,12 +26,13 @@ var day_night = null
 
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
-	
+	add_to_group("Weather")
 	add_child(timer)
 	timer.one_shot = true
 	timer.timeout.connect(_change_weather)
 	
-	day_night = get_tree().get_first_node_in_group("DayNight")
+	day_night = Global.day_night
+	day_night.phase_changed.connect(_on_phase_changed)
 	
 	if active:
 		_change_weather()           # сразу при входе в локацию
@@ -58,18 +48,6 @@ func _change_weather() -> void:
 	var season = _get_season_name()
 	var is_night = _is_night()
 	var roll = randi_range(1, 100)
-	
-	# --- СНЕГ только в холодных сезонах ---
-	if season in ["Eikhon", "Verda", "Morva"] and roll <= snow_chance_cold_seasons:
-		_spawn_effect(snow_effect)
-		_start_timer()
-		return
-	
-	# --- Песчаная буря в жарких ---
-	if season in ["Vallis", "Lira"] and roll <= sandstorm_chance_hot:
-		_spawn_effect(sandstorm_effect)
-		_start_timer()
-		return
 	
 	# --- Дождь по сезонам ---
 	var rain_chance = _get_rain_chance_for_season(season)
@@ -120,7 +98,13 @@ func force_weather(type: String) -> void:
 	match type.to_lower():
 		"rain": _spawn_effect(rain_effect)
 		"heavy_rain": _spawn_effect(heavy_rain_effect)
-		"snow": _spawn_effect(snow_effect)
 		"fog": _spawn_effect(fog_effect)
 		"sandstorm": _spawn_effect(sandstorm_effect)
-		"clear": pass
+		"clear": _spawn_effect(sandstorm_effect)
+
+func _on_phase_changed(is_night: bool):
+	if is_night:
+		Global._switch_bgm(&"Night")
+			
+	else :
+		_spawn_effect(sandstorm_effect)

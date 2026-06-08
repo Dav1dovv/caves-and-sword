@@ -1,148 +1,129 @@
 extends Node
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  Данные текущей игры
+# ─────────────────────────────────────────────────────────────────────────────
 
-#region game data
-var player_name: String = "Deffault"
+var player_name: String = "Default"
 var player_skin_index: int = 0
 var player_skin_head_index: int = 0
-var game_difficult : int = 0
+var game_difficult: int = 0
 var current_save_slot: String = ""
-var current_location : String = "Land"
+var current_location: String = "Land"
 
-var last_location : String
-var last_position : Vector2
-var pending_exit_walk: Dictionary = { "active": false, "direction": Vector2.ZERO, "duration": 0.5, "speed_mult": 0.7 }
+var corruption := {
+	"Forest" : 100.0,
+	"Desert" : 100.0,
+	"Thundra" : 100.0,
+	"Deep" : 100.0
+}
 
-#endregion
+var last_location: String
+var last_position: Vector2
+var pending_exit_walk: Dictionary = {
+	"active": false, "direction": Vector2.ZERO, "duration": 0.5, "speed_mult": 0.7
+}
 
-#region UI controll
-var is_opened_menu : bool = false
 
+# ─────────────────────────────────────────────────────────────────────────────
+#  UI / сервисы
+# ─────────────────────────────────────────────────────────────────────────────
+
+var is_opened_menu: bool = false
 var hotbar
-var inventory : Inventory
+var inventory: Inventory
+
 const MOUSE_Arrow = preload("res://Assets/Textures/UI/Cursors/Cursor1.png")
 const HINT = preload("uid://wyeldfaexejh")
-#endregion
-
 
 @onready var developer_console: CanvasLayer = %DeveloperConsole
-@onready var scene_manager: SceneManager = $SceneManager
-@onready var BGM: AudioStreamPlayer = $AudioStreamPlayer
+@onready var scene_manager: SceneManager    = $SceneManager
+@onready var BGM: AudioStreamPlayer         = $AudioStreamPlayer
 @onready var setting_manager: SettingManager = $SettingManager
-@onready var day_night: DayNightCycle = $DayNight
+@onready var day_night: DayNightCycle       = $DayNight
 
 
 func _init() -> void:
-	#Input.set_custom_mouse_cursor(MOUSE_Interact,Input.CURSOR_CAN_DROP,Vector2(11,13))
-	Input.set_custom_mouse_cursor(MOUSE_Arrow,Input.CURSOR_ARROW,Vector2(0,0))
-	
+	Input.set_custom_mouse_cursor(MOUSE_Arrow, Input.CURSOR_ARROW, Vector2.ZERO)
+
+
 func _ready() -> void:
-	# Register singleton
 	if not Engine.has_singleton("Global"):
 		Engine.register_singleton("Global", self)
-	
-	# Create Saves directory if it doesn't exist
-	var dir = DirAccess.open("user://")
-	if dir:
-		dir.make_dir("Saves")
-		
-	
 
-# Set character name and create folder
-func set_character_name(new_name: String):
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Имя персонажа
+# ─────────────────────────────────────────────────────────────────────────────
+
+func set_character_name(new_name: String) -> void:
 	if new_name.strip_edges().is_empty():
-		print("Error: Character name cannot be empty")
+		push_error("[Global] Character name cannot be empty")
 		return
 	player_name = new_name.strip_edges()
-	print("Global character name set to: %s" % player_name)
-	
-	# Create character folder
-	var save_dir = "user://Saves/%s" % player_name.replace(" ", "_")
-	var dir = DirAccess.open("user://Saves")
-	if dir:
-		dir.make_dir(save_dir)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Инвентарь
+# ─────────────────────────────────────────────────────────────────────────────
 
 func pickup_item(item_data: ItemData, amount: int = 1) -> void:
-	
 	if not hotbar or not inventory:
-		print("Ошибка: Hotbar или Inventory не найдены!")
+		push_error("[Global] Hotbar or Inventory not found")
 		return
-	
-	# 1. Сначала пытаемся положить в ХОТБАР
-	var added_to_hotbar = _try_add_to_container(hotbar, item_data, amount)
-	
-	if added_to_hotbar:
-		print("Предмет добавлен в хотбар: ", item_data.item_name)
+
+	if _try_add_to_container(hotbar, item_data, amount):
 		return
-	
-	# 2. Если хотбар полон — кладём в основной инвентарь
-	var added_to_inventory = _try_add_to_container(inventory, item_data, amount)
-	
-	if added_to_inventory:
-		print("Предмет добавлен в инвентарь: ", item_data.item_name)
-	else:
-		print("Инвентарь и хотбар полные! Предмет потерян: ", item_data.item_name)
-		# Можно показать уведомление игроку
+	if not _try_add_to_container(inventory, item_data, amount):
+		print("[Global] Inventory full — item lost: ", item_data.item_name)
+
 
 func _try_add_to_container(container, item_data: ItemData, amount: int) -> bool:
 	if not container or not container.has_method("add_item"):
 		return false
-	
-	# Попробуем добавить — возвращает true, если хоть что-то добавилось
 	return container.add_item(item_data, amount)
 
-func add_initial_items():
+
+func add_initial_items() -> void:
 	pickup_item(preload("uid://drk017uaofosr").duplicate(), 1)
 	pickup_item(preload("uid://cn4tj340q3fm3").duplicate(), 1)
-	pass
 
-# Get full path to save file
-func get_save_path() -> String:
-	if player_name.is_empty():
-		print("Error: Character name is empty")
-		return ""
-	return "user://Saves/%s/save.json" % player_name.replace(" ", "_")
 
-func save_last_data():
+# ─────────────────────────────────────────────────────────────────────────────
+#  Сохранение / удаление
+# ─────────────────────────────────────────────────────────────────────────────
+
+func save() -> void:
+	get_tree().call_group("Save", "save_game")
+
+
+func save_last_data() -> void:
 	last_location = current_location
-	print("saved Last Location: " + last_location)
 	last_position = get_tree().get_first_node_in_group("Player").global_position
 
-func delete_game_data():
-	_delete_dir_recursive("user://Saves")
-	print("Save data deleted")
 
-func _delete_dir_recursive(path: String):
-	if not DirAccess.dir_exists_absolute(path):
-		return
-	
-	var dir = DirAccess.open(path)
-	dir.list_dir_begin()
-	var file_name = dir.get_next()
-	
-	while file_name != "":
-		if file_name != "." and file_name != "..":
-			var full_path = path + "/" + file_name
-			if dir.current_is_dir():
-				_delete_dir_recursive(full_path)  # рекурсия для подпапок
-			else:
-				dir.remove(full_path)
-		file_name = dir.get_next()
-	
-	dir.list_dir_end()
-	DirAccess.remove_absolute(path)  # удаляем уже пустую папку
-	
+func delete_game_data() -> void:
+	SaveLoad.delete_all_saves()
 
-func hint(object : Node2D,message : String):
-		print("hint working")
-		var hint_instant = HINT.instantiate()
-		hint_instant.text = message
-		hint_instant.position = object.global_position
-		hint_instant.position.y -= 10
-		object.call_deferred("add_child",hint_instant)
 
-func save():
-	get_tree().call_group("Save","save_game")
+# ─────────────────────────────────────────────────────────────────────────────
+#  UI-утилиты
+# ─────────────────────────────────────────────────────────────────────────────
+
+func hint(object: Node2D, message: String) -> void:
+	var hint_instant = HINT.instantiate()
+	hint_instant.text     = message
+	hint_instant.position = object.global_position + Vector2(0, -10)
+	object.call_deferred("add_child", hint_instant)
+
+
+func CraftMenu() -> void:
+	inventory.call_craft()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  Музыка
+# ─────────────────────────────────────────────────────────────────────────────
 
 func _switch_bgm(clip_name: StringName) -> void:
 	if not BGM.playing:
@@ -156,36 +137,20 @@ func _on_scene_manager_scene_change_finished(scene_key: String) -> void:
 	var stream := BGM.get_stream() as AudioStreamInteractive
 	if not stream:
 		return
-	
 	match scene_key:
-		"Main Menu":
-			_switch_bgm(&"Main Menu")
-		"Land":
-			_switch_bgm(&"Land " + str(randi_range(1, 2)))
-		"Forest":
-			_switch_bgm(&"Forest " + str(randi_range(1, 2)))
-		"Village":
-			_switch_bgm(&"Village " + str(randi_range(1, 2)))
-		"Cave":
-			_switch_bgm(&"Cave " + str(randi_range(1, 2)))
-		"Deep Cave":
-			_switch_bgm(&"Deep Cave " + str(randi_range(1, 2)))
-		"Thundra":
-			_switch_bgm(&"Thundra 1")
-		"Desert":
-			_switch_bgm(&"Desert 1")
-		"Corrupted":
-			_switch_bgm(&"Corrupted " + str(randi_range(1, 2)))
-		"Beach":
-			_switch_bgm(&"Beach " + str(randi_range(1, 2)))
-		"Lullaby":
-			_switch_bgm(&"Lullaby " + str(randi_range(1, 2)))
-		"World":
-			_switch_bgm(&"World")
+		"Main Menu":  _switch_bgm(&"Main Menu")
+		"Land":       _switch_bgm(&"Land "      + str(randi_range(1, 2)))
+		"Forest":     _switch_bgm(&"Forest "    + str(randi_range(1, 2)))
+		"Village":    _switch_bgm(&"Village "   + str(randi_range(1, 2)))
+		"Cave":       _switch_bgm(&"Cave "      + str(randi_range(1, 2)))
+		"Deep Cave":  _switch_bgm(&"Deep Cave " + str(randi_range(1, 2)))
+		"Thundra":    _switch_bgm(&"Thundra 1")
+		"Desert":     _switch_bgm(&"Desert 1")
+		"Corrupted":  _switch_bgm(&"Corrupted " + str(randi_range(1, 2)))
+		"Beach":      _switch_bgm(&"Beach "     + str(randi_range(1, 2)))
+		"Lullaby":    _switch_bgm(&"Lullaby "   + str(randi_range(1, 2)))
+		"World":      _switch_bgm(&"World")
 
-func play_game_over():
+
+func play_game_over() -> void:
 	_switch_bgm(&"Game Over " + str(randi_range(1, 3)))
-
-
-func CraftMenu() -> void:
-	inventory.call_craft()
