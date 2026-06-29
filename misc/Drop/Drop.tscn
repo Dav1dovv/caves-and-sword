@@ -134,6 +134,7 @@ _data = {
 }
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_p6xfw"]
+random_pitch = 1.3348398
 streams_count = 2
 stream_0/stream = ExtResource("5_hil6v")
 stream_1/stream = ExtResource("6_ij6c4")

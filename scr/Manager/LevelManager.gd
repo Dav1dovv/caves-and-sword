@@ -96,13 +96,6 @@ func change_scene(scene_key: String, spawn = Vector2.ZERO) -> void:
 
 	# ── Обновляем состояние в Global ──────────────────────────────────────────
 	Global.current_location = scene_key
-
-	# ── Уведомляем подписчиков ────────────────────────────────────────────────
-	if not scene_data.music_key.is_empty():
-		get_tree().call_group("MusicManager", "on_scene_changed", scene_data.music_key)
-	else:
-		get_tree().call_group("MusicManager", "on_scene_changed", scene_key)
-
 	Cursor.detection_mode(true)
 
 	# ── Fade IN ───────────────────────────────────────────────────────────────
@@ -134,7 +127,7 @@ func change_scene(scene_key: String, spawn = Vector2.ZERO) -> void:
 	Cursor.detection_mode(false)
 	_current_scene_data = scene_data
 	_is_transitioning = false
-	emit_signal("scene_change_finished", scene_data)
+	emit_signal("scene_change_finished", scene_data.music_key)
 
 
 ## Переход в главное меню с автосохранением.
@@ -192,17 +185,12 @@ func get_current_scene_data() -> SceneData:
 
 ## Применяет настройки из SceneData к текущему состоянию мира.
 func _apply_scene_settings(scene_data: SceneData) -> void:
-	# Day/night цикл
 	if Global.day_night:
 		Global.day_night.visible = not scene_data.is_underground
 
-	# Уровень заражения текущей локации (для GameManager / WorldState)
-	if scene_data.corruption_level > 0:
-		# Если GameManager уже есть в сцене — синхронизируем
-		var gm := get_tree().get_first_node_in_group("World")
-		if gm and gm.has_method("set_corruption_level"):
-			gm.set_corruption_level(scene_data.corruption_level)
-
+	var gm := get_tree().get_first_node_in_group("World")
+	if gm and gm.has_method("set_corruption_level"):
+		gm.set_corruption_level(scene_data.corruption_level)  # убрали > 0
 
 func _place_player(spawn) -> void:
 	var player := get_tree().get_first_node_in_group("Player")

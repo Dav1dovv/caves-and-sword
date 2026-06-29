@@ -11,5 +11,5 @@ region = Rect2(48, 0, 16, 16)
 script = ExtResource("1_orv4h")
 icon = SubResource("AtlasTexture_p8whu")
 item_name = "Cooper Ore"
-price = 12
+price = 14
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

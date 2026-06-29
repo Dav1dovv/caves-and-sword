@@ -21,20 +21,10 @@ func _ready() -> void:
 # ─────────────────────────────────────────────────────────────────────────────
 
 func save_game() -> void:
-	var armor_data: Array = []
-	for slot_type in [ArmorData.SlotType.HEAD, ArmorData.SlotType.CHEST,
-					   ArmorData.SlotType.LEGS, ArmorData.SlotType.BOOTS]:
-		var slot_node := inventory.get_armor_slot(slot_type)
-		if slot_node and slot_node.equipped_item:
-			armor_data.append(_pack_armor_entry(slot_node.equipped_item, slot_type))
-		else:
-			armor_data.append(null)
-
 	var data := {
-		"version"   : 7,
+		"version"   : 8,
 		"inventory" : _pack_container(inventory.items),
-		"hotbar"    : _pack_container(hotbar.slots),
-		"armor"     : armor_data
+		"hotbar"    : _pack_container(hotbar.slots)
 	}
 
 	SaveLoad.save_inventory(data)
@@ -58,9 +48,6 @@ func load_game() -> void:
 	_unpack_container(inventory.items, data.get("inventory", []))
 	_unpack_container(hotbar.slots,    data.get("hotbar", []))
 
-	if version >= 7:
-		_unpack_armor(data.get("armor", []))
-
 	hotbar._recalculate_accessories()
 	hotbar.select_slot(hotbar.selected_index)
 	inventory.emit_signal("inventory_changed")
@@ -79,12 +66,6 @@ func _clear_all() -> void:
 		slot_data.slot_node.item    = null
 		slot_data.slot_node.ammount = 0
 		slot_data.slot_node.update_ui()
-	for slot_type in [ArmorData.SlotType.HEAD, ArmorData.SlotType.CHEST,
-					   ArmorData.SlotType.LEGS, ArmorData.SlotType.BOOTS]:
-		var slot_node := inventory.get_armor_slot(slot_type)
-		if slot_node and slot_node.equipped_item:
-			slot_node.equipped_item = null
-			slot_node._update_ui()
 
 func _pack_container(container: Array[InventorySlotData]) -> Array:
 	var packed = []
@@ -225,39 +206,6 @@ func _unpack_effects(arr: Array) -> Array[Effect]:
 			e.icon = _deserialize_texture(d.icon)
 		effects.append(e)
 	return effects
-
-func _pack_armor_entry(armor: ArmorData, slot_type: int) -> Dictionary:
-	return {
-		"slot_type"      : slot_type,
-		"item_name"      : armor.item_name,
-		"description"    : armor.description,
-		"defense"        : armor.defense,
-		"quality"        : armor.quality,
-		"durability"     : armor.get_durability() if armor.has_method("get_durability") else armor.max_durability,
-		"max_durability" : armor.max_durability,
-		"icon_data"      : _serialize_texture(armor.icon)
-	}
-
-func _unpack_armor(packed: Array) -> void:
-	for entry in packed:
-		if not entry: continue
-		var armor := ArmorData.new()
-		armor.item_name      = entry.get("item_name", "")
-		armor.description    = entry.get("description", "")
-		armor.defense        = entry.get("defense", 0)
-		armor.quality        = entry.get("quality", 0)
-		armor.max_durability = entry.get("max_durability", 100)
-		if armor.has_method("set_durability"):
-			armor.set_durability(entry.get("durability", armor.max_durability))
-		else:
-			armor.durability = entry.get("durability", armor.max_durability)
-		armor.icon = _deserialize_texture(entry.get("icon_data", {}))
-		armor.slot = entry.get("slot_type", ArmorData.SlotType.CHEST)
-		var slot_node := inventory.get_armor_slot(armor.slot)
-		if slot_node:
-			slot_node.equipped_item = armor
-			slot_node._update_ui()
-			inventory.emit_signal("inventory_changed")
 
 func _serialize_texture(t: Texture2D) -> Dictionary:
 	if not t: return {}

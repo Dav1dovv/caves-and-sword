@@ -20,8 +20,8 @@ class_name SceneData
 # ── Параметры мира ─────────────────────────────────────────────────────────────
 
 ## Биом / тип локации
-@export_enum("Land", "Desert", "Forest", "Village", "House", "Tavern", "Cave", "Dungeon")
-var biome: String = "Land"
+@export_enum("Desert", "Forest", "Thundra","Deep")
+var biome: String = "Forest"
 
 ## Уровень заражения этой локации (0 = чисто, 3 = полностью заражено)
 @export_range(0, 3, 1) var corruption_level: int = 0

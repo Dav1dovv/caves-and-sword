@@ -51,7 +51,7 @@ color_ramp = SubResource("GradientTexture1D_fdh37")
 
 [node name="Bomb" type="CharacterBody2D" unique_id=1030202062]
 script = ExtResource("1_x0dfj")
-speed = 200.0
+speed = 100.0
 lifetime = 10.0
 damage = 20.0
 projectile_type = "bomb"

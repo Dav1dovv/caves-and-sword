@@ -3,7 +3,10 @@ class_name Slime
 
 func _on_Damaged(new_health: float) -> void:
 	# Каждый удар делает слайма агрессивнее (шаг 0.2, не 0.7 — иначе с первого же удара максимум)
-	behavior = minf(1.0, behavior + 0.2)
+	behavior += 0.25
+	Entity_stats.move_speed += 1.5
+	$Skin/AnimationPlayer.speed_scale += 0.25
+	$HitBox.equip.Damage += 0.25
 	_resolve_behavior_type()
 
 	# Если стал агрессивным и видит игрока — немедленно атаковать

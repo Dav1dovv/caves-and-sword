@@ -23,15 +23,16 @@ var inventory: Inventory = null
 func _ready() -> void:
 	if gold_item and icon_rect:
 		icon_rect.texture = gold_item.icon
-	_refresh()
-	# Подключаемся к сигналу инвентаря когда он появится
+	# Ждём кадр — Inventory регистрирует себя в группе в своём _ready()
 	await get_tree().process_frame
 	inventory = get_tree().get_first_node_in_group("Inventory")
 	if inventory:
 		inventory.inventory_changed.connect(_refresh)
-	var hotbar = get_tree().get_first_node_in_group("Hotbar")
-	if hotbar:
-		hotbar.hotbar_changed.connect(_refresh)
+	var hb = get_tree().get_first_node_in_group("Hotbar")
+	if hb:
+		hb.hotbar_changed.connect(_refresh)
+	# Теперь вызываем refresh — inventory уже есть
+	_refresh()
 
 # ─── Обновить отображение ────────────────────────────────────────
 func _refresh() -> void:

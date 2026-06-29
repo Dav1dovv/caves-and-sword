@@ -4,9 +4,17 @@
 [ext_resource type="Texture2D" uid="uid://b62hrm50ou235" path="res://Assets/Textures/UI/UI.png" id="2_smraw"]
 [ext_resource type="Script" uid="uid://bxguvf402r2aw" path="res://scr/Systems/Inventory/TrashSlot.gd" id="3_08cpt"]
 [ext_resource type="PackedScene" uid="uid://bwaixuiwrerk5" path="res://scr/Systems/Inventory/InventorySlot.tscn" id="6_81ckb"]
+[ext_resource type="Shader" uid="uid://cpqgkpo83gda7" path="res://Assets/Shader/Blur.gdshader" id="6_1502c"]
 [ext_resource type="Script" uid="uid://bggk28l7figbt" path="res://scr/Systems/Inventory/InventorySaver.gd" id="7_viqwy"]
 [ext_resource type="PackedScene" uid="uid://5nk644nw1v5k" path="res://scr/Systems/Craft/SimpleCraft/CraftStation.tscn" id="8_d17u8"]
+[ext_resource type="PackedScene" uid="uid://dts1ot2trd002" path="res://scr/Systems/TradingSystem/TradeWindow.tscn" id="9_f8cid"]
 [ext_resource type="Script" uid="uid://c785sodtl7e0" path="res://scr/Systems/Inventory/hot_bar.gd" id="9_tp014"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f8cid"]
+shader = ExtResource("6_1502c")
+shader_parameter/blur_amount = 1.0000001424999998
+shader_parameter/mix_amount = 0.0
+shader_parameter/color_over = Color(0, 0, 0, 1)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jhamk"]
 atlas = ExtResource("2_smraw")
@@ -27,6 +35,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_w5r8t")
+
+[node name="Panel" type="Panel" parent="." unique_id=1613174770]
+visible = false
+modulate = Color(0.9490196, 0.9490196, 0.9490196, 1)
+material = SubResource("ShaderMaterial_f8cid")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="HotBar" type="HBoxContainer" parent="." unique_id=1371309030 groups=["Hotbar", "Save"]]
 custom_minimum_size = Vector2(16, 16)
@@ -170,12 +190,13 @@ hotbar_node = NodePath("../HotBar")
 metadata/_custom_type_script = "uid://bggk28l7figbt"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=295397158]
+visible = false
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_top = -137.0
+offset_top = -79.5
 offset_bottom = 70.5
 grow_horizontal = 2
 grow_vertical = 2
@@ -184,15 +205,15 @@ alignment = 1
 
 [node name="Inventory" type="Panel" parent="HBoxContainer" unique_id=1430589918]
 visible = false
-custom_minimum_size = Vector2(122.17, 167.185)
+custom_minimum_size = Vector2(180, 106.58)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Inventory" unique_id=1132412473]
 layout_mode = 0
-offset_right = 123.0
-offset_bottom = 157.0
+offset_right = 180.0
+offset_bottom = 100.0
 
 [node name="Label" type="Label" parent="HBoxContainer/Inventory/VBoxContainer" unique_id=1491028735]
 layout_mode = 2
@@ -200,123 +221,101 @@ text = "INVENTORY"
 label_settings = SubResource("LabelSettings_jhamk")
 horizontal_alignment = 1
 
-[node name="GridContainer" type="GridContainer" parent="HBoxContainer/Inventory/VBoxContainer" unique_id=155033620]
-custom_minimum_size = Vector2(115.705, 136)
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Inventory/VBoxContainer" unique_id=353422279]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-columns = 6
 
-[node name="InventorySlot" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=238573035 instance=ExtResource("6_81ckb")]
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer" unique_id=155033620]
+custom_minimum_size = Vector2(115.705, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 9
+
+[node name="InventorySlot" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=238573035 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot2" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1936278560 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot2" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1936278560 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot3" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1020320211 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot3" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1020320211 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot4" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1123945156 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot4" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1123945156 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot5" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1112733699 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot5" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1112733699 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot6" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1426627439 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot6" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1426627439 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot7" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1731443399 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot7" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1731443399 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot8" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1828262656 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot8" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1828262656 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot9" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=707893992 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot9" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=707893992 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot10" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1487734444 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot10" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1487734444 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot11" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=955899515 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot11" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=955899515 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot12" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1320527616 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot12" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1320527616 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot13" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=218579460 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot13" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=218579460 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot14" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1383317651 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot14" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1383317651 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot15" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1602822279 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot15" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1602822279 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot16" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1016580639 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot16" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1016580639 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot17" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1408202419 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot17" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1408202419 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot18" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1267075718 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot18" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1267075718 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot19" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=352874688 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot19" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=352874688 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot20" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1724280362 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot20" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1724280362 instance=ExtResource("6_81ckb")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 
-[node name="InventorySlot21" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1225107555 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot21" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1225107555 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot22" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1798237892 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot22" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1798237892 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot23" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=498966753 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot23" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=498966753 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot24" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1334552861 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot24" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1334552861 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot25" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=106160895 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot25" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=106160895 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot26" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1666208608 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot26" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=1666208608 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot27" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=737651556 instance=ExtResource("6_81ckb")]
+[node name="InventorySlot27" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=737651556 instance=ExtResource("6_81ckb")]
 layout_mode = 2
 
-[node name="InventorySlot28" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1423900788 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot29" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1345735716 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot30" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=206159664 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot31" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1604338383 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot32" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=822337011 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot33" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=968357466 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot34" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=610014710 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot35" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=1504469337 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="InventorySlot36" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=569572103 instance=ExtResource("6_81ckb")]
-layout_mode = 2
-
-[node name="TrashSlot" type="TextureRect" parent="HBoxContainer/Inventory/VBoxContainer/GridContainer" unique_id=824992838]
+[node name="TrashSlot" type="TextureRect" parent="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer" unique_id=824992838]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 8
@@ -324,10 +323,17 @@ texture = SubResource("AtlasTexture_08cpt")
 expand_mode = 1
 script = ExtResource("3_08cpt")
 
-[node name="WorkBench" parent="HBoxContainer" unique_id=657580427 instance=ExtResource("8_d17u8")]
+[node name="Smith" parent="HBoxContainer" unique_id=657580427 instance=ExtResource("8_d17u8")]
 visible = false
 layout_mode = 2
-is_smithy = false
 
-[connection signal="mouse_entered" from="HBoxContainer/Inventory/VBoxContainer/GridContainer/TrashSlot" to="HBoxContainer/Inventory/VBoxContainer/GridContainer/TrashSlot" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="HBoxContainer/Inventory/VBoxContainer/GridContainer/TrashSlot" to="HBoxContainer/Inventory/VBoxContainer/GridContainer/TrashSlot" method="_on_mouse_exited"]
+[node name="Barmen" parent="HBoxContainer" unique_id=104361974 instance=ExtResource("8_d17u8")]
+visible = false
+layout_mode = 2
+
+[node name="TradeWindow" parent="HBoxContainer" unique_id=1491107427 instance=ExtResource("9_f8cid")]
+visible = false
+layout_mode = 2
+
+[connection signal="mouse_entered" from="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer/TrashSlot" to="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer/TrashSlot" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer/TrashSlot" to="HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer/TrashSlot" method="_on_mouse_exited"]

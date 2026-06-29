@@ -42,4 +42,5 @@ amount = 24
 texture = ExtResource("1_f05ew")
 lifetime = 0.5
 one_shot = true
+explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_t0bu7")

@@ -7,6 +7,5 @@ script = ExtResource("1_qse2w")
 key = "Village"
 scene_path = "uid://s85soyx8ao5e"
 display_name = "Norville"
-biome = "Village"
 music_key = "Village"
 metadata/_custom_type_script = "uid://dahsqqqv7jj4q"

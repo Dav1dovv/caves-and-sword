@@ -10,8 +10,8 @@ region = Rect2(32, 112, 16, 16)
 [resource]
 script = ExtResource("1_cuv5k")
 lvl = 5
-max_durability = 400
-Damage = 30
+max_durability = 125
+Damage = 20
 hit_distance = 24.0
 Atk_speed = 0.75
 equiped_weapon_sprite = SubResource("AtlasTexture_r5ybw")
@@ -23,4 +23,6 @@ one_shot_attack = false
 icon = SubResource("AtlasTexture_r5ybw")
 item_name = "AxenRang"
 stackable = false
+price = 244
+quality = 2
 metadata/_custom_type_script = "uid://b2ovoyoflp1gw"

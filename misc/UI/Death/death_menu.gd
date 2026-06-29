@@ -15,7 +15,6 @@ func death():
 
 
 
-
 func _on_main_menu_pressed() -> void:
 	Global.scene_manager.change_to_main_menu()
 

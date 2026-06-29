@@ -11,4 +11,5 @@ region = Rect2(96, 64, 16, 16)
 script = ExtResource("1_8h4fs")
 icon = SubResource("AtlasTexture_6m6go")
 item_name = "Web"
+price = 6
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

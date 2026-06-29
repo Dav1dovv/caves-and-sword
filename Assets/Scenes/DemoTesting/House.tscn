@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="3_14ked"]
 [ext_resource type="Script" uid="uid://bj528o0edtyfg" path="res://scr/Misc/Door.gd" id="4_8o7jq"]
 
-[sub_resource type="Resource" id="Resource_14ked"]
+[sub_resource type="Resource" id="Resource_8o7jq"]
 resource_local_to_scene = true
 resource_name = "Player Stat"
 script = ExtResource("3_14ked")
@@ -44,25 +44,25 @@ tile_map_data = PackedByteArray("AAD+//f/AwAHAAMAAAAAAPf/AwAHAAMAAAAFAPf/AwAHAAM
 tile_set = ExtResource("2_8o7jq")
 
 [node name="Player" parent="." index="3" unique_id=1150737309]
-Entity_stats = SubResource("Resource_14ked")
+Entity_stats = SubResource("Resource_8o7jq")
 
 [node name="Camera2D" parent="." index="4" unique_id=1490511306]
 physics_interpolation_mode = 0
-position = Vector2(-2.333313, -9.62)
-zoom = Vector2(0.72, 0.72)
+position = Vector2(0, -44.807953)
+zoom = Vector2(0.755, 0.755)
 process_callback = 1
 limit_left = -354
 limit_top = -222
-limit_right = 331
-limit_bottom = 186
+limit_right = 330
+limit_bottom = 134
 
 [node name="PhantomCamera2D" parent="." index="5" unique_id=2085077661 node_paths=PackedStringArray("follow_target")]
-position = Vector2(-2.333313, -9.62)
+position = Vector2(0, -44.807953)
 follow_mode = 5
 follow_target = NodePath("../Tiles/Floor")
-zoom = Vector2(0.72, 0.72)
+zoom = Vector2(0.755, 0.755)
 limit_target = NodePath("../Tiles/Walls")
-limit_margin = Vector4i(-194, -46, -187, -42)
+limit_margin = Vector4i(-194, -46, -186, 10)
 
 [node name="ColorRect" type="ColorRect" parent="." index="6" unique_id=1772210208]
 z_index = -69

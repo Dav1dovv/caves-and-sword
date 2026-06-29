@@ -20,8 +20,8 @@ signal world_ready
 @export var is_underground: bool = false
 
 ## Биом / тип локации (для логики мира)
-@export_enum("Land", "Desert", "Forest", "Village", "House", "Tavern", "Cave", "Dungeon")
-var biome: String = "Land"
+@export_enum("Desert", "Forest", "Thundra","Deep")
+var biome: String = "Forest"
 
 
 var activated_stations: int = 0
@@ -39,6 +39,7 @@ func _ready() -> void:
 	# Day/night управляется SceneManager через SceneData.is_underground,
 	# но на случай если сцена открывается напрямую — применяем локальный флаг
 	if Global.day_night:
+		Global.day_night.start()
 		Global.day_night.visible = not is_underground
 	player = find_child("Player")
 
@@ -77,9 +78,7 @@ func set_corruption_level(level: int) -> void:
 ## Возвращает новый уровень.
 func modify_corruption(delta: int) -> int:
 	corruption_level = clamp(corruption_level + delta, 0, 3)
-	# Синхронизируем с глобальным словарём заражения если он есть
-	if Global.corruption.has(biome):
-		Global.corruption[biome] = corruption_level
+	# Убрать строки с Global.corruption — они затирали float-значение 0-100 числом 0-3
 	return corruption_level
 
 

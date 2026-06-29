@@ -55,19 +55,32 @@ var durability: int = -1  # -1 = не инициализирована
 # ═══════════════════════════════════════════════════════════════════
 @export_group("On-Hit Effects")
 
-## Тип эффекта статуса, накладываемого при ударе
-## Значения: "none", "burn", "poison", "slow", "freeze", "blind", "stun", "heal_on_hit"
-@export_enum("none","burn","poison","slow","freeze","blind","stun","heal_on_hit") \
+# ── On-Hit Effects — только эта секция меняется ────────────────────────────
+# Заменить блок @export_group("On-Hit Effects") в оригинальном файле на этот:
+
+@export_group("On-Hit Effects")
+
+## Тип эффекта, накладываемого на цель при ударе.
+## none        — без эффекта
+## burn        — Обжиг DOT + паника (Взрывная ягода, огневое)
+## poison      — Отравление DOT (Меч-Жало, Паучий кинжал; не работает на голем/скелет)
+## freeze      — Заморозка: замедление -30-40% + слабый DOT (Лёд, Посох, Снежный лук)
+## bleed       — Кровотечение: % от max HP в тик (Костяной бич, Костяной клинок)
+## corruption  — Заражение: DOT + враг усиливается (Бездна, ловушки)
+## slow        — Замедление без DOT (вспомогательный)
+## heal_on_hit — Лечит игрока при попадании (особый случай)
+@export_enum("none","burn","poison","freeze","bleed","corruption","slow","heal_on_hit") \
 	var on_hit_effect: String = "none"
 
-## Шанс наложить эффект (0..1)
 @export_range(0.0, 1.0, 0.01) var on_hit_chance: float = 1.0
-
-## Длительность эффекта (сек)
 @export_range(0.5, 15.0, 0.5) var on_hit_duration: float = 3.0
-
-## Сила эффекта (урон/сек для яда/огня, множитель замедления для slow и т.д.)
 @export_range(0.1, 50.0, 0.1) var on_hit_potency: float = 5.0
+
+# Только для bleed: процент от max HP врага за тик (default 3%)
+@export_range(0.01, 0.15, 0.005) var on_hit_bleed_percent: float = 0.03
+
+# Только для corruption: насколько усиливается враг (default +15% урона)
+@export_range(0.05, 0.5, 0.05) var on_hit_corruption_bonus: float = 0.15
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -94,7 +107,12 @@ var durability: int = -1  # -1 = не инициализирована
 
 ## Сила пассивного эффекта на игрока
 @export_range(0.0, 50.0, 0.1) var passive_player_potency: float = 0.0
-
+@export_group("CurseObject Interaction")
+ 
+## Может ли это оружие отбивать CurseObject («Волейбол тьмы»)?
+## Нож и расходное оружие (ветка, кость) → false
+## Все мечи, луки, посохи → true
+@export var can_deflect_curse: bool = true
 
 # ═══════════════════════════════════════════════════════════════════
 #  Прочность

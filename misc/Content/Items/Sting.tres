@@ -11,4 +11,6 @@ region = Rect2(112, 64, 16, 16)
 script = ExtResource("1_b4dmc")
 icon = SubResource("AtlasTexture_mb4om")
 item_name = "Sting"
+max_count = 30
+price = 18
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

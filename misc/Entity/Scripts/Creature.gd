@@ -270,7 +270,7 @@ func _tick_flee(delta: float) -> void:
 		_lose_target(); return
 	var away := global_position + (global_position - target.global_position).normalized() * sight_radius
 	_move_toward(away, delta)
-	if global_position.distance_to(target.global_position) > sight_radius * 1.5:
+	if global_position.distance_to(target.global_position) > sight_radius * 2:
 		_lose_target()
 
 # ── ATTACK ────────────────────────────────────────────────────

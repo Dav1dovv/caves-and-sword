@@ -54,6 +54,9 @@ func _process(delta: float) -> void:
 
 ## Вызывается из player.gd при попадании по врагу.
 ## target — нода врага (должна иметь метод apply_status_effect или take_damage)
+# ── try_apply_on_hit_effect — заменить весь метод на этот ─────────────────
+# Добавлена поддержка bleed и corruption через фабрики Effect
+
 func try_apply_on_hit_effect(target: Node) -> void:
 	if not _current_equip:
 		return
@@ -63,20 +66,41 @@ func try_apply_on_hit_effect(target: Node) -> void:
 	if randf() > e.on_hit_chance:
 		return
 
+	# heal_on_hit — лечит игрока, не врага
 	if e.on_hit_effect == "heal_on_hit":
-		# Лечит игрока, а не врага
-		var heal: float = e.on_hit_potency
 		_player.Entity_stats.current_health = minf(
-			_player.Entity_stats.current_health + heal,
+			_player.Entity_stats.current_health + e.on_hit_potency,
 			_player.Entity_stats.max_health
 		)
 		_player._on_health_changed(_player.Entity_stats.current_health)
 		return
 
-	# Передаём эффект врагу (если у него есть метод)
-	if target.has_method("apply_status_effect"):
-		target.apply_status_effect(e.on_hit_effect, e.on_hit_duration, e.on_hit_potency)
+	if not target.has_method("apply_effect_instance"):
+		return
 
+	var effect: Effect = null
+
+	match e.on_hit_effect:
+		"poison":
+			effect = Effect.create_poison(e.on_hit_potency, e.on_hit_duration)
+		"burn":
+			effect = Effect.create_burn(e.on_hit_potency, e.on_hit_duration)
+		"freeze":
+			# on_hit_potency здесь = доля замедления (0.35 = -35%)
+			effect = Effect.create_freeze(e.on_hit_potency, e.on_hit_duration)
+		"bleed":
+			effect = Effect.create_bleed(e.on_hit_bleed_percent, e.on_hit_duration)
+		"corruption":
+			effect = Effect.create_corruption(e.on_hit_potency, e.on_hit_corruption_bonus, e.on_hit_duration)
+		"slow":
+			effect = Effect.new()
+			effect.effect_type   = Effect.EffectType.SLOW
+			effect.value         = e.on_hit_potency
+			effect.duration      = e.on_hit_duration
+			effect.display_name  = "Замедление"
+
+	if effect:
+		target.apply_effect_instance(effect)
 
 ## Вызывается из player.gd на каждом шаге рывка.
 ## Возвращает список нод, которым нанесён урон (чтобы не бить дважды).

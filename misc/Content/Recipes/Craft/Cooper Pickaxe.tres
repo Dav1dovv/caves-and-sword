@@ -8,10 +8,11 @@
 [resource]
 script = ExtResource("1_q76ch")
 recipe_name = "Cooper Pickaxe"
+category = 1
 result_item = ExtResource("2_ibiw2")
 main_resource = ExtResource("1_ym41s")
-main_amount = 20
+main_amount = 10
 secondary_resource = ExtResource("4_ot2dw")
-secondary_amount = 10
-gold_cost = 15
+secondary_amount = 3
+gold_cost = 150
 metadata/_custom_type_script = "uid://b47c08bhjaot6"

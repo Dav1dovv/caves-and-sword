@@ -14,10 +14,10 @@ shader = ExtResource("12_c1pdj")
 shader_parameter/outerRadius = 0.4390000208525
 shader_parameter/MainAlpha = 0.346000016435
 
-[node name="RoomGenerationTest" type="Node2D" unique_id=191155142]
+[node name="RoomGenerationTest" type="Node2D" unique_id=191155142 groups=["World"]]
 y_sort_enabled = true
 script = ExtResource("1_3gp56")
-is_in_shaft = true
+biome = "Deep"
 
 [node name="MineGenerator" type="Node2D" parent="." unique_id=1975323913]
 y_sort_enabled = true

@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://d1db77vb5cyfq"]
 
+[ext_resource type="Script" uid="uid://dlswreqv7akhj" path="res://scr/Systems/DayNightCycle/Weather/WeatherEffect.gd" id="1_8b07k"]
 [ext_resource type="Texture2D" uid="uid://ctgel1bdfuv1o" path="res://misc/Particles/Snow-sheet.png" id="1_n7lem"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_8b07k"]
@@ -41,15 +42,16 @@ scale_curve = SubResource("CurveTexture_6fvwh")
 color_ramp = SubResource("GradientTexture1D_8pq8i")
 alpha_curve = SubResource("CurveTexture_85eed")
 
-[node name="Rain" type="Control"]
+[node name="Rain" type="Control" unique_id=719357116]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_8b07k")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=288713228]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,7 +60,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.85490197, 0.99607843, 0.99607843, 0.02745098)
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=283346658]
 material = SubResource("CanvasItemMaterial_8b07k")
 position = Vector2(249, 131)
 amount = 1000

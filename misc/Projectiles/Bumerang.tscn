@@ -69,6 +69,8 @@ region_rect = Rect2(96, 96, 16, 16)
 one_shot = true
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1830582343]
+collision_layer = 8
+collision_mask = 18
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1441622911]
 position = Vector2(1, 0)
@@ -96,3 +98,4 @@ randomness = 1.0
 process_material = SubResource("ParticleProcessMaterial_7newr")
 
 [connection signal="timeout" from="LifetimeTimer" to="." method="_on_lifetime_timer_timeout"]
+[connection signal="area_entered" from="Area2D" to="." method="_on_area_entered"]

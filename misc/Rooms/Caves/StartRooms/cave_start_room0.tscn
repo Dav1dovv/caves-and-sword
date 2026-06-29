@@ -27,9 +27,17 @@ random_scales = {
 }
 metadata/_custom_type_script = "uid://bwabf86cec2s5"
 
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_uy8cc"]
+blend_mode = 1
+light_mode = 1
+particles_animation = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_26bhv"]
 blend_mode = 1
-light_mode = 2
+light_mode = 1
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ju28e"]
 blend_mode = 3
@@ -60,8 +68,7 @@ polygon = PackedVector2Array(-21, -161, -110, -155, -278, -151, -285, -27, -170,
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="2" unique_id=2051681740]
 visibility_layer = 16
-z_index = 17
-z_as_relative = false
+material = SubResource("CanvasItemMaterial_uy8cc")
 position = Vector2(0, -173)
 scale = Vector2(1.5833334, 1.3125)
 texture = ExtResource("2_55mtj")
@@ -80,8 +87,9 @@ position = Vector2(0, -175)
 collision_layer = 1024
 collision_mask = 4
 script = ExtResource("4_55mtj")
-go_to_scene = "Previous"
+scene_name = "Previous"
 action = 0
+move_direction = "Up"
 metadata/_custom_type_script = "uid://bj528o0edtyfg"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door" index="0" unique_id=2080752291]
@@ -89,18 +97,14 @@ position = Vector2(0, -4)
 shape = SubResource("CircleShape2D_fps2e")
 
 [node name="Player" parent="." index="4" unique_id=1150737309 instance=ExtResource("5_26bhv")]
-position = Vector2(0, -134)
+position = Vector2(0, -160)
 Entity_stats = SubResource("Resource_uy8cc")
 
 [node name="Camera2D" type="Camera2D" parent="." index="5" unique_id=1404122190]
 physics_interpolation_mode = 1
 top_level = true
-position = Vector2(0, -143.62)
+position = Vector2(0, -169.62)
 process_callback = 0
-limit_left = -286
-limit_top = -233
-limit_right = 456
-limit_bottom = 326
 position_smoothing_speed = 2.0
 editor_draw_limits = true
 script = ExtResource("6_ju28e")
@@ -114,7 +118,7 @@ script = ExtResource("7_hr0lt")
 
 [node name="PhantomCamera2D" type="Node2D" parent="." index="6" unique_id=1974548071 node_paths=PackedStringArray("follow_target")]
 top_level = true
-position = Vector2(0, -143.62)
+position = Vector2(0, -169.62)
 script = ExtResource("8_gh1sx")
 follow_mode = 2
 follow_target = NodePath("../Player")

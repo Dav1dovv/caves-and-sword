@@ -28,7 +28,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Caves and Sword"
+config/name="Caves and Sword (4.6)"
 config/name_localized={
 "en_RU": "Пешеры и Мечи"
 }
@@ -143,7 +143,6 @@ folder_colors={
 Debug=""
 Generator=""
 World=""
-MusicManager=""
 SpawnPoint=""
 CoinSlot=""
 

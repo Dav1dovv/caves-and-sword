@@ -1,4 +1,3 @@
-# PlayerHitBox.gd
 extends HitBox
 class_name player_HitBox
 
@@ -25,20 +24,17 @@ func _update_from_hotbar() -> void:
 	if not hotbar or hotbar.selected_index >= hotbar.slots.size():
 		update_equip(null)
 		return
-	
 	var slot_data = hotbar.slots[hotbar.selected_index]
 	update_equip(slot_data.item)
 
-func update_equip(new_equip : ItemData):
+func update_equip(new_equip : ItemData) -> void:
 	if not equip_sprite:
 		push_error("PlayerHitBox: equip_sprite is not assigned!")
 		return
 
-	# Отключаем старый сигнал прочности, если был
 	if equip is equip_data and equip.weapon_broken.is_connected(_on_weapon_broken):
 		equip.weapon_broken.disconnect(_on_weapon_broken)
 
-	# Сбрасываем цвет спрайта при смене предмета
 	equip_sprite.modulate = Color.WHITE
 	equip = new_equip
 
@@ -77,50 +73,87 @@ func update_equip(new_equip : ItemData):
 		equip_sprite.texture = null
 		is_weapon = false
 
+
 func _on_weapon_broken() -> void:
 	print("Оружие сломано!")
-	# Визуальная обратная связь — мигание красным
 	var tween = create_tween()
 	tween.tween_property(equip_sprite, "modulate", Color(1, 0.2, 0.2), 0.1)
 	tween.tween_property(equip_sprite, "modulate", Color(1, 1, 1), 0.1)
 	tween.tween_property(equip_sprite, "modulate", Color(1, 0.2, 0.2), 0.1)
 	tween.tween_property(equip_sprite, "modulate", Color(0.4, 0.4, 0.4), 0.2)
 
-func hit(area: Area2D):
+
+func hit(area: Area2D) -> void:
 	if not is_weapon:
 		return
-	
-	# Проверяем прочность перед ударом
+
 	if equip is equip_data and equip.is_broken():
 		print("Оружие сломано — удар не наносится!")
 		return
 
 	apply_damage(area, equip.Damage)
-	
-	# Уменьшаем прочность после успешного удара
+
 	if equip is equip_data:
-		# Обновляем UI слота хотбара
 		_refresh_hotbar_slot_ui()
 
-func apply_damage(area: Area2D, damage: float):
+
+func apply_damage(area: Area2D, damage: float) -> void:
+
+	# ── CurseObject — волейбол тьмы ────────────────────────────────────────
+	if area.is_in_group("CurseObject"):
+		var curse = area as CurseObject
+		if curse == null:
+			return
+
+		# Проверяем может ли это оружие отбивать проклятия
+		var can_deflect := true
+		if equip is equip_data:
+			can_deflect = equip.get("can_deflect_curse") if equip.get("can_deflect_curse") != null else true
+
+		if not can_deflect:
+			# Слишком слабое — проходит сквозь (нет фидбэка)
+			return
+
+		# Направление удара: от игрока к курсору
+		var player_node = get_tree().get_first_node_in_group("Player")
+		var mouse_pos = player_node.get_global_mouse_position() if player_node else global_position
+		var hit_direction = (mouse_pos - global_position).normalized()
+
+		curse.on_weapon_hit(int(damage), hit_direction)
+
+		# Прочность оружия не тратится при отбитии (можно изменить)
+		return
+	# ────────────────────────────────────────────────────────────────────────
+
+	# ── Harvestable ──────────────────────────────────────────────────────────
 	if area.is_in_group("Harvestable"):
 		area.Harvest(damage, equip.lvl, equip.is_weapon)
-		print("area is harvestable:NAME: " +area.get_parent().name)
-		if equip  is equip_data:
-			equip.reduce_durability(1)
-		
-	elif area.is_in_group("Ennemy"):
+		print("area is harvestable: " + area.get_parent().name)
+		if equip is equip_data:
+			if equip.lvl >= area.harvest_tool_lvl:
+				equip.reduce_durability(1)
+			else:
+				# Кирка ниже нужного тира — ломается в 4× быстрее
+				equip.reduce_durability(1 * area.harvest_tool_lvl)
+		return
+	# ────────────────────────────────────────────────────────────────────────
+
+	# ── Enemy ────────────────────────────────────────────────────────────────
+	if area.is_in_group("Ennemy"):
 		area.get_parent().take_damage(damage, self)
-		print("weapon damaged: " + str(damage))
-		print("area is entity:NAME: " +area.get_parent().name)
-		if equip  is equip_data:
+		print("weapon damaged: " + str(damage) + " on " + area.get_parent().name)
+		if equip is equip_data:
 			equip.reduce_durability(1)
+		return
+	# ────────────────────────────────────────────────────────────────────────
+
 
 func _refresh_hotbar_slot_ui() -> void:
 	if not hotbar: return
 	var slot_data = hotbar.slots[hotbar.selected_index]
 	if slot_data.slot_node:
 		slot_data.slot_node.update_ui()
+
 
 func consume_food(food: FoodData) -> void:
 	if not hotbar: return
@@ -141,6 +174,7 @@ func consume_food(food: FoodData) -> void:
 
 	_apply_food_effects(food)
 	hotbar.emit_signal("hotbar_changed")
+
 
 func _apply_food_effects(food: FoodData) -> void:
 	if food.eat_sound:
@@ -164,16 +198,14 @@ func _apply_food_effects(food: FoodData) -> void:
 	if p.has_method("set_stamina"):
 		p.set_stamina(food.hunger_restore)
 
-func eat_food():
+
+func eat_food() -> void:
 	if not equip:
 		return
-		
 	if equip is FoodData:
 		consume_food(equip as FoodData)
 
 
 func _on_animation_player_animation_started(anim_name: StringName) -> void:
-	# consume_food вызывается только отсюда (через анимацию),
-	# eat_food() служит точкой входа которая запускает анимацию.
 	if (anim_name == "Eating" or anim_name == "Drink") and equip is FoodData:
 		consume_food(equip as FoodData)

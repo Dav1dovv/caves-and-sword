@@ -11,6 +11,9 @@ var game_difficult: int = 0
 var current_save_slot: String = ""
 var current_location: String = "Land"
 
+# Текущая погода по биому — сохраняется при смене локации
+var weather_state: Dictionary = {}
+
 var corruption := {
 	"Forest" : 100.0,
 	"Desert" : 100.0,
@@ -32,6 +35,8 @@ var pending_exit_walk: Dictionary = {
 var is_opened_menu: bool = false
 var hotbar
 var inventory: Inventory
+var music_key 
+var night_key
 
 const MOUSE_Arrow = preload("res://Assets/Textures/UI/Cursors/Cursor1.png")
 const HINT = preload("uid://wyeldfaexejh")
@@ -120,6 +125,8 @@ func hint(object: Node2D, message: String) -> void:
 func CraftMenu() -> void:
 	inventory.call_craft()
 
+func Trade(Trader : TraderData):
+	inventory.call_trade(Trader)
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  Музыка
@@ -134,23 +141,36 @@ func _switch_bgm(clip_name: StringName) -> void:
 
 
 func _on_scene_manager_scene_change_finished(scene_key: String) -> void:
+	music_key = scene_key
 	var stream := BGM.get_stream() as AudioStreamInteractive
 	if not stream:
 		return
-	match scene_key:
-		"Main Menu":  _switch_bgm(&"Main Menu")
-		"Land":       _switch_bgm(&"Land "      + str(randi_range(1, 2)))
-		"Forest":     _switch_bgm(&"Forest "    + str(randi_range(1, 2)))
-		"Village":    _switch_bgm(&"Village "   + str(randi_range(1, 2)))
-		"Cave":       _switch_bgm(&"Cave "      + str(randi_range(1, 2)))
-		"Deep Cave":  _switch_bgm(&"Deep Cave " + str(randi_range(1, 2)))
-		"Thundra":    _switch_bgm(&"Thundra 1")
-		"Desert":     _switch_bgm(&"Desert 1")
-		"Corrupted":  _switch_bgm(&"Corrupted " + str(randi_range(1, 2)))
-		"Beach":      _switch_bgm(&"Beach "     + str(randi_range(1, 2)))
-		"Lullaby":    _switch_bgm(&"Lullaby "   + str(randi_range(1, 2)))
-		"World":      _switch_bgm(&"World")
+	if night_key:
+		_switch_bgm(&"Night "      + str(randi_range(1, 2)))
+	else:
+		match scene_key:
+			"Main Menu":  _switch_bgm(&"Main Menu")
+			"Land":       _switch_bgm(&"Land "      + str(randi_range(1, 4)))
+			"Forest":     _switch_bgm(&"Forest "    + str(randi_range(1, 4)))
+			"Village":    _switch_bgm(&"Village "   + str(randi_range(1, 2)))
+			"Cave":       _switch_bgm(&"Cave "      + str(randi_range(1, 2)))
+			"Deep Cave":  _switch_bgm(&"Deep Cave " + str(randi_range(1, 2)))
+			"Thundra":    _switch_bgm(&"Thundra 1")
+			"Desert":     _switch_bgm(&"Desert 1")
+			"Corrupted":  _switch_bgm(&"Corrupted " + str(randi_range(1, 2)))
+			"Beach":      _switch_bgm(&"Beach "     + str(randi_range(1, 2)))
+			"Lullaby":    _switch_bgm(&"Lullaby "   + str(randi_range(1, 2)))
+			"World":      _switch_bgm(&"World")
+			"Night":      _switch_bgm(&"Night "      + str(randi_range(1, 2)))
 
 
 func play_game_over() -> void:
 	_switch_bgm(&"Game Over " + str(randi_range(1, 3)))
+
+
+func _on_day_night_phase_changed(is_night: bool) -> void:
+	night_key = is_night
+	if is_night:
+		_on_scene_manager_scene_change_finished("Night")
+	else:
+		_on_scene_manager_scene_change_finished(music_key)

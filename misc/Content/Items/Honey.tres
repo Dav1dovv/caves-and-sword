@@ -53,4 +53,6 @@ effects = Array[ExtResource("1_1wttl")]([SubResource("Resource_7utph"), SubResou
 icon = SubResource("AtlasTexture_81hqh")
 play_anim = "Drink"
 item_name = "Honey"
+max_count = 50
+price = 15
 metadata/_custom_type_script = "uid://ds5d4cljtsmfp"

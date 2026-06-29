@@ -14,7 +14,7 @@ func _drop_items() -> void:
 	var root = get_tree().get_first_node_in_group("World")
 	if root == null:
 		return
-	var drop_count = randi_range(1, max_drop)
+	var drop_count = randi_range(4, max_drop)
 	
 	for i in drop_count:
 		var new_drop = DROP.instantiate()

@@ -11,14 +11,14 @@ region = Rect2(96, 96, 16, 16)
 [resource]
 script = ExtResource("1_qkmpo")
 lvl = 2
-max_durability = 180
-Damage = 14
-Atk_speed = 1.1
+max_durability = 130
 equiped_weapon_sprite = SubResource("AtlasTexture_rvlyy")
 projectile = ExtResource("2_rvlyy")
 accuracy_radius = 12.0
 critical_radius = 7.0
 icon = SubResource("AtlasTexture_rvlyy")
 item_name = "Boomerang"
+count = 1
 stackable = false
+price = 42
 metadata/_custom_type_script = "uid://b2ovoyoflp1gw"

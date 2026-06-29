@@ -6,7 +6,7 @@ const ACCELERATION = 3
 @onready var sprite = $Sprite2D
 @onready var animationPlayer = $AnimationPlayer
 
-var item : ItemData
+@export var item : ItemData
 var can_pick : bool = false
 var speed : float
 var player #= get_tree().get_first_node_in_group("Player")

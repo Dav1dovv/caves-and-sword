@@ -14,6 +14,7 @@ region = Rect2(80, 16, 16, 16)
 script = ExtResource("2_cdw06")
 eat_sound = ExtResource("1_kiiny")
 effects = Array[ExtResource("1_vxtgx")]([ExtResource("2_bsd5h")])
+hunger_restore = 2.0
 icon = SubResource("AtlasTexture_xo0m3")
 play_anim = "Eating"
 item_name = "Berry"

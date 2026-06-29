@@ -23,7 +23,7 @@ func _damage_vfx(new_character : Node2D):
 	await tween.tween_property(character, 'modulate', Color(3.705, 0.0, 0.0, 1.0), 0.1)
 	tween.tween_property(character, 'modulate', Color.WHITE, 0.2)
 
-	tween.tween_property(character, "rotation", 0.0, 0.1).set_delay(0.1)
+	tween.tween_property(character, "rotation", 0.0, 0.1)
 
 
 func _play_audio():

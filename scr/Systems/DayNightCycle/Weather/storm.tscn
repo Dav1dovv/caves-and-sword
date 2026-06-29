@@ -1,4 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://4yl2s8436vcp"]
+[gd_scene format=3 uid="uid://4yl2s8436vcp"]
+
+[ext_resource type="Script" uid="uid://dlswreqv7akhj" path="res://scr/Systems/DayNightCycle/Weather/WeatherEffect.gd" id="1_3fe7y"]
 
 [sub_resource type="Curve" id="Curve_hk7i3"]
 _limits = [0.0, 0.3, 0.0, 1.0]
@@ -43,15 +45,16 @@ scale_curve = SubResource("CurveXYZTexture_aasls")
 color_ramp = SubResource("GradientTexture1D_8pq8i")
 alpha_curve = SubResource("CurveTexture_85eed")
 
-[node name="Storm" type="Control"]
+[node name="Storm" type="Control" unique_id=1908287271]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_3fe7y")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=633260520]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +63,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.168627, 0.188235, 0.227451, 0.239216)
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=412680625]
 position = Vector2(249, 131)
 amount = 1000
 lifetime = 0.5

@@ -6,10 +6,10 @@
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="3_wk8xf"]
 [ext_resource type="Texture2D" uid="uid://c604sxdmtnh3w" path="res://misc/Entity/Textures/Creatures.png" id="5_nfayc"]
 
-[sub_resource type="Resource" id="Resource_wk8xf"]
+[sub_resource type="Resource" id="Resource_nfayc"]
 resource_local_to_scene = true
 script = ExtResource("3_wk8xf")
-max_health = 50
+max_health = 20
 base_move_speed = 8.0
 base_armor = 1.0
 base_defense_modifier = 0.1
@@ -598,7 +598,7 @@ fear_calm_threshold = 0.015
 hear_radius = 200.0
 sight_radius = 200.0
 body_anim = NodePath("Skin/AnimationPlayer")
-Entity_stats = SubResource("Resource_wk8xf")
+Entity_stats = SubResource("Resource_nfayc")
 
 [node name="optimizer" parent="." index="0" unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
 rect = Rect2(-10, -15, 21, 25)
@@ -657,6 +657,7 @@ position = Vector2(0, -12)
 shape = SubResource("CircleShape2D_wk8xf")
 
 [node name="Timer" type="Timer" parent="." index="11" unique_id=966960858]
+wait_time = 0.5
 
 [connection signal="body_entered" from="Fearzone" to="." method="_on_fearzone_body_entered"]
 [connection signal="body_exited" from="Fearzone" to="." method="_on_fearzone_body_exited"]

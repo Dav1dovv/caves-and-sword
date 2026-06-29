@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://btxho8sqg8tnx" path="res://scr/Systems/Interaction/Interaction.gd" id="6_sy52g"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="6_uqqtv"]
 
-[sub_resource type="Resource" id="Resource_1sw5g"]
+[sub_resource type="Resource" id="Resource_uqqtv"]
 resource_local_to_scene = true
 script = ExtResource("2_qd8fl")
 metadata/_custom_type_script = "uid://cpp05fs341abo"
@@ -511,10 +511,10 @@ tracks/4/path = NodePath("Skin/Body/Head:rotation")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 1),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.31, 0.71, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0]
+"values": [0.0, -0.05624091, 0.02555966, 0.0]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -693,7 +693,7 @@ wander_radius = 20.0
 ray_length = 50.0
 avoidance_strength = 2.0
 body_anim = NodePath("AnimationPlayer")
-Entity_stats = SubResource("Resource_1sw5g")
+Entity_stats = SubResource("Resource_uqqtv")
 
 [node name="optimizer" parent="." index="0" unique_id=1815416353 node_paths=PackedStringArray("hide_objects")]
 hide_objects = [NodePath("../Skin")]

@@ -1,22 +1,19 @@
 # inventory.gd
-# Оригинальный + слоты брони (4 ArmorSlot) + слот золота (GoldSlot)
+# Оригинальный + слот золота (GoldSlot)
 extends Control
 class_name Inventory
 
 signal inventory_changed
 
-@onready var grid_container: GridContainer = $HBoxContainer/Inventory/VBoxContainer/GridContainer
+@onready var grid_container: GridContainer = $HBoxContainer/Inventory/VBoxContainer/HBoxContainer/GridContainer
 @onready var hotbar: Hotbar = $HotBar
 
 #Menus
 @onready var inventory: Panel = $HBoxContainer/Inventory
-@onready var work_bench: Control = $HBoxContainer/WorkBench
-# ── Слоты брони ─────────────────────────────────────────────────
-# Добавь эти ноды в сцену: HBoxContainer/Inventory/VBoxContainer/EquipPanel/
-@onready var slot_head:  ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotHead
-@onready var slot_chest: ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotChest
-@onready var slot_legs:  ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotLegs
-@onready var slot_boots: ArmorSlot = $HBoxContainer/Inventory/VBoxContainer/EquipPanel/SlotBoots
+@onready var smith: Control = $HBoxContainer/Smith
+@onready var barmen: Control = $HBoxContainer/Barmen
+@onready var trade_window: TradeWindow = $HBoxContainer/TradeWindow
+
 
 # ── Слот золота ──────────────────────────────────────────────────
 # Добавь ноду: HBoxContainer/Inventory/VBoxContainer/GoldSlot
@@ -30,7 +27,6 @@ func _init() -> void:
 
 func _ready() -> void:
 	_initialize_slots()
-	_initialize_armor_slots()
 	_initialize_gold_slot()
 	Global.inventory = self
 	Global.developer_console.register_command("all_items_list", _cmd_list, "List all items")
@@ -61,52 +57,9 @@ func _initialize_slots() -> void:
 			items.append(data)
 			child.inventory = self
 
-func _initialize_armor_slots() -> void:
-	# Передаём ссылку на инвентарь всем слотам брони
-	for s in [slot_head, slot_chest, slot_legs, slot_boots]:
-		if s:
-			s.inventory = self
-			# Подключаем сигнал чтобы броня применялась к игроку
-			if not s.armor_equipped.is_connected(_on_armor_equipped):
-				s.armor_equipped.connect(_on_armor_equipped)
-			if not s.armor_unequipped.is_connected(_on_armor_unequipped):
-				s.armor_unequipped.connect(_on_armor_unequipped)
-
 func _initialize_gold_slot() -> void:
 	if gold_slot:
 		gold_slot.inventory = self
-
-# ─────────────────────────────────────────────────────────────────
-#  БРОНЯ — применение к игроку
-# ─────────────────────────────────────────────────────────────────
-func _on_armor_equipped(armor: ArmorData) -> void:
-	var player: Node = get_tree().get_first_node_in_group("Player")
-	if player and player.has_method("apply_armor"):
-		player.apply_armor(armor)
-	emit_signal("inventory_changed")
-
-func _on_armor_unequipped(armor: ArmorData) -> void:
-	var player: Node = get_tree().get_first_node_in_group("Player")
-	if player and player.has_method("remove_armor"):
-		player.remove_armor(armor)
-	emit_signal("inventory_changed")
-
-## Суммарная защита всей надетой брони
-func get_total_defense() -> int:
-	var total := 0
-	for s in [slot_head, slot_chest, slot_legs, slot_boots]:
-		if s:
-			total += s.get_defense()
-	return total
-
-## Вернуть ArmorSlot по типу (HEAD/CHEST/LEGS/BOOTS)
-func get_armor_slot(slot_type: int) -> ArmorSlot:
-	match slot_type:
-		ArmorData.SlotType.HEAD:  return slot_head
-		ArmorData.SlotType.CHEST: return slot_chest
-		ArmorData.SlotType.LEGS:  return slot_legs
-		ArmorData.SlotType.BOOTS: return slot_boots
-	return null
 
 # ─────────────────────────────────────────────────────────────────
 #  ДОБАВЛЕНИЕ ПРЕДМЕТОВ
@@ -114,16 +67,6 @@ func get_armor_slot(slot_type: int) -> ArmorSlot:
 func add_item(item_data: ItemData, amount: int = 1) -> bool:
 	if not item_data or amount <= 0:
 		return false
-
-	# Если это броня — сначала пробуем надеть в слот экипировки
-	if item_data is ArmorData:
-		var armor := item_data as ArmorData
-		var armor_slot_node := get_armor_slot(armor.slot)
-		if armor_slot_node and armor_slot_node.equipped_item == null:
-			armor_slot_node.try_equip(armor)
-			emit_signal("inventory_changed")
-			return true
-		# Слот занят — кладём в обычный инвентарь ниже
 
 	var remaining := amount
 
@@ -146,7 +89,7 @@ func add_item(item_data: ItemData, amount: int = 1) -> bool:
 		if remaining <= 0:
 			break
 		if data.item == null:
-			# Дублируем только стакаемые предметы; нестакаемые/броня — напрямую
+			# Дублируем только стакаемые предметы; нестакаемые — напрямую
 			data.item   = item_data.duplicate() if item_data.stackable else item_data
 			var add: int = mini(remaining, item_data.max_count)
 			data.amount  = add
@@ -276,15 +219,20 @@ func call_inventory():
 	is_opened = !is_opened
 	Global.is_opened_menu = is_opened
 	$HBoxContainer.visible = is_opened
-	$HBoxContainer/Inventory.visible = true
+	$Panel.visible = is_opened
+	inventory.visible = true
+	smith.visible = false
+	trade_window.visible = false
 	Cursor.detection_mode(is_opened)
 
 func uncall_craft():
 	is_opened = false
 	Global.is_opened_menu = false
+	$Panel.visible = is_opened
 	$HBoxContainer.visible = false
-	$HBoxContainer/Inventory.visible = false
-	$HBoxContainer/WorkBench.visible = false
+	inventory.visible = false
+	smith.visible = false
+	trade_window.visible = false
 	Cursor.detection_mode(false)
 
 
@@ -295,12 +243,39 @@ func call_craft():
 	is_opened = !is_opened
 	Global.is_opened_menu = is_opened
 	$HBoxContainer.visible = is_opened
-	$HBoxContainer/Inventory.visible = true
-	$HBoxContainer/WorkBench.visible = true
+	$Panel.visible = is_opened
+	smith.visible = true
+	inventory.visible = false
 	Cursor.detection_mode(is_opened)
 	if is_opened:
-		$HBoxContainer/WorkBench._refresh()
-		$HBoxContainer/WorkBench._update_preview()
+		smith._refresh()
+		smith._update_preview()
+
+func uncall_trade():
+	is_opened = false
+	Global.is_opened_menu = false
+	$Panel.visible = is_opened
+	$HBoxContainer.visible = false
+	inventory.visible = false
+	trade_window.visible = false
+	Cursor.detection_mode(false)
+
+
+
+func call_trade(Trader : TraderData):
+	if Global.is_opened_menu && !is_opened:
+		return
+	is_opened = !is_opened
+	Global.is_opened_menu = is_opened
+	$HBoxContainer.visible = is_opened
+	$Panel.visible = is_opened
+	inventory.visible = false
+	trade_window.visible = true
+	Cursor.detection_mode(is_opened)
+	if is_opened:
+		trade_window.open(Trader)
+
+
 
 # ─────────────────────────────────────────────────────────────────
 #  DEBUG КОМАНДЫ

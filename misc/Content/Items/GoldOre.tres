@@ -12,4 +12,5 @@ script = ExtResource("1_xysg5")
 icon = SubResource("AtlasTexture_c108n")
 item_name = "Gold Ore"
 price = 40
+quality = 2
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

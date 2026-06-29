@@ -1,4 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://detgmix34vp0p"]
+[gd_scene format=3 uid="uid://detgmix34vp0p"]
+
+[ext_resource type="Script" uid="uid://dlswreqv7akhj" path="res://scr/Systems/DayNightCycle/Weather/WeatherEffect.gd" id="1_11k5m"]
 
 [sub_resource type="Gradient" id="Gradient_85eed"]
 offsets = PackedFloat32Array(0, 0.257778, 0.431111, 0.688889, 1)
@@ -45,15 +47,16 @@ scale_max = 1.8
 color_ramp = SubResource("GradientTexture1D_un3hl")
 color_initial_ramp = SubResource("GradientTexture1D_j5nt2")
 
-[node name="Wind" type="Control"]
+[node name="Wind" type="Control" unique_id=1211738273]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_11k5m")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=1723798732]
 position = Vector2(3, 133)
 amount = 25
 texture = SubResource("GradientTexture2D_byhle")

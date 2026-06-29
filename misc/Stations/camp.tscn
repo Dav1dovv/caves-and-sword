@@ -134,7 +134,7 @@ texture = ExtResource("2_0u7hf")
 texture_scale = 9.88
 
 [node name="optimizer" type="VisibleOnScreenEnabler2D" parent="." unique_id=750335681 node_paths=PackedStringArray("hide_objects")]
-rect = Rect2(-24, -37, 50, 47)
+rect = Rect2(-82, -93, 166, 159)
 script = ExtResource("3_gbsbb")
 hide_objects = [NodePath("../AnimatedSprite2D"), NodePath("../PointLight2D")]
 metadata/_custom_type_script = "uid://dbxsovdq7bbia"

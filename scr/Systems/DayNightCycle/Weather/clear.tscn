@@ -1,5 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://beftdhk2k5lrh"]
+[gd_scene format=3 uid="uid://beftdhk2k5lrh"]
 
+[ext_resource type="Script" uid="uid://dlswreqv7akhj" path="res://scr/Systems/DayNightCycle/Weather/WeatherEffect.gd" id="1_ub0n1"]
 [ext_resource type="Shader" uid="uid://uff1oqn8ggbo" path="res://Assets/Shader/GodRays.gdshader" id="1_v8w3a"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vfrd5"]
@@ -24,15 +25,16 @@ shader_parameter/dither = true
 shader_parameter/dither_strength = 0.374
 shader_parameter/opacity = 0.57
 
-[node name="Clear" type="Control"]
+[node name="Clear" type="Control" unique_id=1128854638]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_ub0n1")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=804717697]
 material = SubResource("ShaderMaterial_vfrd5")
 layout_mode = 1
 anchors_preset = 15

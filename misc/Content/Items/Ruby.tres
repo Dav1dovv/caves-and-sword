@@ -12,4 +12,5 @@ script = ExtResource("1_xt56m")
 icon = SubResource("AtlasTexture_68258")
 item_name = "Ruby"
 price = 50
+quality = 2
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

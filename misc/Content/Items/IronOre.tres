@@ -11,4 +11,6 @@ region = Rect2(64, 0, 16, 16)
 script = ExtResource("1_1cmdy")
 icon = SubResource("AtlasTexture_sui23")
 item_name = "Iron Ore"
+price = 22
+quality = 1
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

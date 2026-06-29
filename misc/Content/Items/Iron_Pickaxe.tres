@@ -22,5 +22,4 @@ one_shot_attack = false
 icon = SubResource("AtlasTexture_tuabl")
 item_name = "Iron Pickaxe"
 stackable = false
-energy = 0.7
 metadata/_custom_type_script = "uid://b2ovoyoflp1gw"

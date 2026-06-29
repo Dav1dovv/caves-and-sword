@@ -170,6 +170,55 @@ texture = SubResource("AtlasTexture_v2w6c")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a67o8"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_vaw2w"]
+atlas = ExtResource("2_sk3jv")
+region = Rect2(128, 112, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_vaw2w"]
+load_path = "res://.godot/imported/UI.png-3127ff07c75ab5f066f57f51ab20937b.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbecx"]
+atlas = SubResource("CompressedTexture2D_vaw2w")
+region = Rect2(82, 33, 44, 13)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_lrg5a"]
+texture = SubResource("AtlasTexture_hbecx")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_awkti"]
+atlas = ExtResource("2_sk3jv")
+region = Rect2(2, 113, 44, 13)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_m5kcx"]
+texture = SubResource("AtlasTexture_awkti")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_glcgr"]
+texture = SubResource("AtlasTexture_awkti")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+modulate_color = Color(0.7121294, 0.7121294, 0.71212935, 1)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_eebt1"]
 atlas = ExtResource("2_sk3jv")
 region = Rect2(160, 96, 16, 16)
@@ -191,6 +240,10 @@ region = Rect2(64, 80, 64, 16)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v2w6c"]
 texture = SubResource("AtlasTexture_reifq")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
 expand_margin_left = 1.0
 expand_margin_top = 1.0
 expand_margin_right = 1.0
@@ -202,6 +255,7 @@ region = Rect2(64, 112, 64, 16)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_c7kau"]
 texture = SubResource("AtlasTexture_po7el")
+texture_margin_left = 1.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bcl10"]
 atlas = ExtResource("2_sk3jv")
@@ -299,7 +353,7 @@ expand_margin_bottom = 2.0
 
 [resource]
 default_font = ExtResource("3_vaw2w")
-default_font_size = 24
+default_font_size = 8
 AcceptDialog/styles/embedded_border = null
 AcceptDialog/styles/embedded_unfocused_border = SubResource("StyleBoxTexture_kfyo1")
 AcceptDialog/styles/panel = SubResource("StyleBoxTexture_7pjvw")
@@ -350,6 +404,11 @@ Label/constants/shadow_offset_y = 3
 Label/constants/shadow_outline_size = 2
 Label/font_sizes/font_size = 8
 Label/styles/normal = SubResource("StyleBoxEmpty_a67o8")
+LineEdit/font_sizes/font_size = 12
+LineEdit/icons/clear = SubResource("AtlasTexture_vaw2w")
+LineEdit/styles/focus = SubResource("StyleBoxTexture_lrg5a")
+LineEdit/styles/normal = SubResource("StyleBoxTexture_m5kcx")
+LineEdit/styles/read_only = SubResource("StyleBoxTexture_glcgr")
 OptionButton/colors/font_color = Color(0.875, 0.875, 0.875, 1)
 OptionButton/colors/font_disabled_color = Color(0.875, 0.875, 0.875, 0.5)
 OptionButton/colors/font_focus_color = Color(0.95, 0.95, 0.95, 1)
@@ -365,6 +424,7 @@ OptionButton/font_sizes/font_size = 16
 OptionButton/icons/arrow = SubResource("AtlasTexture_eebt1")
 OptionButton/styles/hover_mirrored = null
 Panel/styles/panel = SubResource("StyleBoxTexture_60d0j")
+ProgressBar/font_sizes/font_size = 25
 ProgressBar/styles/background = SubResource("StyleBoxTexture_v2w6c")
 ProgressBar/styles/fill = SubResource("StyleBoxTexture_c7kau")
 TabContainer/fonts/font = ExtResource("2_5ot5n")

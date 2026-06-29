@@ -1185,8 +1185,9 @@ horizontal_alignment = 1
 uppercase = true
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Panel/VBoxContainer" unique_id=2041146966]
-custom_minimum_size = Vector2(0, 187.31)
+custom_minimum_size = Vector2(430, 178.83)
 layout_mode = 2
+theme_override_constants/scrollbar_v_separation = 14
 
 [node name="SaveSlots" type="VBoxContainer" parent="Panel/VBoxContainer/ScrollContainer" unique_id=1118311292]
 custom_minimum_size = Vector2(371.8, 194.485)

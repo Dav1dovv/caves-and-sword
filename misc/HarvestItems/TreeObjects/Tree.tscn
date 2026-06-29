@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://d0qb8iwxdcwpn"]
 
 [ext_resource type="PackedScene" uid="uid://bny4sqh4i8i5v" path="res://misc/HarvestItems/Harvestable.tscn" id="1_32v1v"]
+[ext_resource type="Texture2D" uid="uid://dx2anf7b2yfha" path="res://misc/HarvestItems/Textures/DiedTree.png" id="2_45q5k"]
 [ext_resource type="Script" uid="uid://b7lfnqk6b5cdp" path="res://scr/Misc/RandomSprite.gd" id="3_hs44r"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="4_8f8hu"]
 [ext_resource type="Script" uid="uid://wm1t8anytdyq" path="res://scr/Resources/ItemData/ItemData.gd" id="5_fmajy"]
@@ -9,8 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://ba68hc527pcvj" path="res://misc/HarvestItems/Textures/Tree.png" id="6_qgcag"]
 [ext_resource type="Script" uid="uid://ctm4b4v8txo1q" path="res://scr/Resources/WeightItem.gd" id="7_buu5p"]
 [ext_resource type="Resource" uid="uid://bx48che8mxghx" path="res://misc/Content/Items/Apple.tres" id="8_xne83"]
-[ext_resource type="AudioStream" uid="uid://bdpgims8h837c" path="res://misc/HarvestItems/SFX/Tree/Chop1.mp3" id="9_i2x8x"]
-[ext_resource type="AudioStream" uid="uid://7cg0p0tt6th1" path="res://misc/HarvestItems/SFX/Tree/Chop3.mp3" id="11_jdof1"]
+[ext_resource type="AudioStream" uid="uid://v4sxnpx0ucxs" path="res://Assets/Audio/SFX/Environemnt/HarvesstItems/Wood-01.mp3" id="10_jow1p"]
+[ext_resource type="AudioStream" uid="uid://drwfryrgniotc" path="res://Assets/Audio/SFX/Environemnt/HarvesstItems/Wood-02.mp3" id="11_45q5k"]
+[ext_resource type="Resource" uid="uid://crxv7hg1loq5v" path="res://misc/Content/Items/Stick.tres" id="11_qinkj"]
 [ext_resource type="PackedScene" uid="uid://d4dhrx0cb6776" path="res://misc/Particles/SplashParticles.tscn" id="13_jow1p"]
 [ext_resource type="AudioStream" uid="uid://bucv88ie5tnuv" path="res://misc/HarvestItems/SFX/Tree/WoodDestroy.mp3" id="16_3spyh"]
 
@@ -30,14 +32,21 @@ shader_parameter/fade_alpha = 1.0
 [sub_resource type="Resource" id="Resource_mchyi"]
 script = ExtResource("7_buu5p")
 item = ExtResource("8_xne83")
-weight = 0.1
+weight = 0.05
+metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
+
+[sub_resource type="Resource" id="Resource_wwo1s"]
+script = ExtResource("7_buu5p")
+item = ExtResource("11_qinkj")
+weight = 0.015
 metadata/_custom_type_script = "uid://ctm4b4v8txo1q"
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_mchyi"]
 playback_mode = 1
+random_pitch = 1.4753766
 streams_count = 2
-stream_0/stream = ExtResource("9_i2x8x")
-stream_1/stream = ExtResource("11_jdof1")
+stream_0/stream = ExtResource("10_jow1p")
+stream_1/stream = ExtResource("11_45q5k")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_phfk7"]
 size = Vector2(21.7234, 24.4137)
@@ -77,8 +86,9 @@ scale_min = 0.5
 color_ramp = SubResource("GradientTexture1D_uupl7")
 
 [node name="Tree" unique_id=1525282769 instance=ExtResource("1_32v1v")]
-durability = 25.0
+durability = 8.0
 harvest_tool_lvl = 0
+corrupted_texture = ExtResource("2_45q5k")
 max_distance = 70.0
 
 [node name="CollisionShape2D" parent="StaticBody2D" parent_id_path=PackedInt32Array(1226065190) index="0" unique_id=605264910]
@@ -100,7 +110,7 @@ position = Vector2(2, -7)
 texture = ExtResource("6_qgcag")
 offset = Vector2(-3, -21)
 hframes = 4
-frame = 1
+frame = 3
 script = ExtResource("3_hs44r")
 frame_weights = Array[float]([1.0, 1.0, 1.0, 1.0])
 metadata/_custom_type_script = "uid://b7lfnqk6b5cdp"
@@ -114,8 +124,7 @@ texture = ExtResource("4_8f8hu")
 
 [node name="droper" parent="." index="5" unique_id=1465568748]
 drop_item = Array[ExtResource("5_fmajy")]([ExtResource("6_1fv40")])
-unique_items = Array[ExtResource("7_buu5p")]([SubResource("Resource_mchyi")])
-max_drop = 8
+unique_items = Array[ExtResource("7_buu5p")]([SubResource("Resource_mchyi"), SubResource("Resource_wwo1s")])
 random_values = true
 
 [node name="SFX" type="AudioStreamPlayer2D" parent="." index="7" unique_id=692783260]

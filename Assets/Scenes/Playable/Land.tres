@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_kuirq")
 key = "Land1"
-scene_path = "uid://lsnth2mtaw2u"
+scene_path = "uid://cayxgea6pioqy"
 display_name = "Open Lands"
 corruption_level = 2
 music_key = "Land"

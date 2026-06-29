@@ -12,4 +12,5 @@ script = ExtResource("2_kjuro")
 icon = SubResource("AtlasTexture_ry0fr")
 item_name = "Crystal"
 price = 55
+quality = 2
 metadata/_custom_type_script = "uid://wm1t8anytdyq"

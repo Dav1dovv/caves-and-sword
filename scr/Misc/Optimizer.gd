@@ -11,8 +11,10 @@ func _init() -> void:
 
 func on_screen():
 	for i in hide_objects.size():
-		hide_objects[i].visible = true
+		if !hide_objects[i] == null:
+			hide_objects[i].visible = true
 
 func non_screen():
 	for i in hide_objects.size():
-		hide_objects[i].visible = false
+		if !hide_objects[i]== null:
+			hide_objects[i].visible = false

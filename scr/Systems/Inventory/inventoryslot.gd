@@ -1,6 +1,4 @@
 # inventoryslot.gd
-# Оригинальный файл + поддержка drag ArmorData → ArmorSlot
-# и запрет класть ArmorData/gold в обычные слоты (опционально)
 extends TextureButton
 class_name InventorySlot
 
@@ -24,6 +22,7 @@ static var _drag_started_this_frame: bool = false
 @onready var _count_node: Label            = get_node_or_null("Count")
 @onready var _dur_bar:    TextureProgressBar = get_node_or_null("DurabilityBar")
 @onready var _tip_node:   Node             = get_node_or_null("Tooltip")
+@onready var _index_label: Label           = get_node_or_null("Label")
 
 var _is_ready := false
 
@@ -50,8 +49,6 @@ func _update_durability_bar() -> void:
 	var maxd    := 1.0
 	if item is equip_data:
 		cur = float(item.get_durability()); maxd = float(item.max_durability); has_dur = true
-	elif item is ArmorData:
-		cur = float(item.get_durability()); maxd = float(item.max_durability); has_dur = true
 	if has_dur:
 		bar.min_value = 0.0
 		bar.max_value = maxd
@@ -77,6 +74,14 @@ func update_ui() -> void:
 	if _count_node:
 		_count_node.text = str(ammount) if (item and ammount > 1) else ""
 
+	if _index_label:
+		_index_label.visible = (item == null)
+
+	if _icon_node:
+		_icon_node.scale = Vector2.ONE
+		_icon_node.pivot_offset = _icon_node.size / 2.0
+		_icon_node.modulate = Color.WHITE
+
 	_update_durability_bar()
 	_update_tooltip()
 
@@ -95,30 +100,107 @@ func disable_slot() -> void:
 	texture_normal = unactive_slot
 
 # ── Mouse events ─────────────────────────────────────────────────
+const _HOVER_SCALE := 1.35
+
 func _on_mouse_entered() -> void:
 	if _tip_node:
 		_tip_node.visible = (item != null)
+	_update_drag_highlight()
+	if item and _icon_node:
+		_icon_node.pivot_offset = _icon_node.size / 2.0
+		_icon_node.scale = Vector2.ONE * _HOVER_SCALE
+		_icon_node.z_index = 1
 
 func _on_mouse_exited() -> void:
 	if _tip_node:
 		_tip_node.visible = false
+	modulate = Color.WHITE
+	if _icon_node:
+		_icon_node.scale = Vector2.ONE
+		_icon_node.z_index = 0
+
+# ── Подсветка слота под курсором во время drag ────────────────────
+const _HL_VALID_SWAP  := Color(0.75, 1.0, 0.75)  # зелёный — обмен/перемещение
+const _HL_VALID_STACK := Color(0.75, 0.85, 1.0)  # синий — стакается
+const _HL_INVALID     := Color(1.0, 0.7, 0.7)    # красный — нельзя бросить
+
+var _pending_split_amount: int = -1
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		modulate = Color.WHITE
+		if _icon_node:
+			_icon_node.modulate = Color.WHITE
+		if _pending_split_amount >= 0:
+			if not get_viewport().gui_is_drag_successful():
+				ammount += _pending_split_amount
+				update_ui()
+			_pending_split_amount = -1
+
+func _update_drag_highlight() -> void:
+	var data: Variant = get_viewport().gui_get_drag_data()
+	if not (data is Dictionary) or not data.has("item"):
+		modulate = Color.WHITE
+		return
+
+	var drag_item: ItemData = data.get("item", null)
+	var src_slot: InventorySlotData = data.get("source_slot", null)
+	var dst_slot := _get_slot_data()
+
+	if not drag_item or not dst_slot or src_slot == dst_slot:
+		modulate = Color.WHITE
+		return
+
+	if dst_slot.item:
+		var inv_ref := inventory if inventory else (hotbar.get_node_or_null("../..") as Inventory if hotbar else null)
+		var same := false
+		if inv_ref and inv_ref.has_method("_is_same_item"):
+			same = inv_ref._is_same_item(dst_slot.item, drag_item)
+		elif dst_slot.item.item_name == drag_item.item_name:
+			same = true
+		if same and drag_item.stackable and dst_slot.amount < drag_item.max_count:
+			modulate = _HL_VALID_STACK
+		else:
+			modulate = _HL_VALID_SWAP  # обмен местами — тоже валидно
+	else:
+		modulate = _HL_VALID_SWAP
 
 # ── Drag & Drop ──────────────────────────────────────────────────
 func _get_drag_data(_pos: Vector2) -> Variant:
 	if not item:
 		return null
 	_drag_started_this_frame = true
-	# Превью курсора
+	# Превью курсора — чуть крупнее слота, без сплошной подложки
 	var preview := TextureRect.new()
-	preview.texture              = item.icon
-	preview.custom_minimum_size  = Vector2(16, 16)
-	preview.expand_mode          = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	preview.texture             = item.icon
+	preview.custom_minimum_size = Vector2(24, 24)
+	preview.expand_mode         = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	set_drag_preview(preview)
+
+	# Затемняем иконку в исходном слоте, чтобы было видно, что предмет "взят"
+	if _icon_node:
+		_icon_node.modulate = Color(1, 1, 1, 0.35)
+
+	# Shift зажат + стак > 1 → отделяем половину стака для переноса
+	var drag_amount := ammount
+	var is_split := false
+	if Input.is_key_pressed(KEY_SHIFT) and item.stackable and ammount > 1:
+		drag_amount = ammount / 2  # целочисленное деление, остаток остаётся в источнике
+		var remaining := ammount - drag_amount
+		ammount = remaining
+		var src := _get_slot_data()
+		if src:
+			src.amount = remaining
+		update_ui()
+		is_split = true
+		_pending_split_amount = drag_amount
+
 	# Данные для drop-таргетов
 	return {
 		"item":        item,
-		"amount":      ammount,
+		"amount":      drag_amount,
 		"source_slot": _get_slot_data(),
+		"split":       is_split,
 	}
 
 func _get_slot_data() -> InventorySlotData:
@@ -139,6 +221,7 @@ func _drop_data(_pos: Vector2, data: Variant) -> void:
 	var src_slot: InventorySlotData = data.get("source_slot", null)
 	var drag_item: ItemData         = data.get("item", null)
 	var drag_amt: int               = data.get("amount", 1)
+	var is_split: bool              = data.get("split", false)
 	if not drag_item:
 		return
 
@@ -146,12 +229,17 @@ func _drop_data(_pos: Vector2, data: Variant) -> void:
 	if not dst_slot:
 		return
 
-	# Если это тот же слот — ничего не делаем
+	# Если это тот же слот — вернуть отщеплённый стак обратно
 	if src_slot == dst_slot:
+		if is_split and src_slot:
+			src_slot.amount += drag_amt
+			src_slot.slot_node.ammount = src_slot.amount
+			src_slot.slot_node.update_ui()
 		return
 
-	# Попытка стакнуть: dst уже имеет тот же предмет
 	var inv_ref := inventory if inventory else (hotbar.get_node_or_null("../..") as Inventory if hotbar else null)
+
+	# Попытка стакнуть: dst уже имеет тот же предмет
 	if dst_slot.item and src_slot:
 		var same := false
 		if inv_ref and inv_ref.has_method("_is_same_item"):
@@ -165,15 +253,49 @@ func _drop_data(_pos: Vector2, data: Variant) -> void:
 				dst_slot.amount += moved
 				dst_slot.slot_node.ammount = dst_slot.amount
 				dst_slot.slot_node.update_ui()
-				src_slot.amount -= moved
-				if src_slot.amount <= 0:
-					src_slot.item = null
-					src_slot.amount = 0
-					src_slot.slot_node.item = null
-				src_slot.slot_node.ammount = src_slot.amount
-				src_slot.slot_node.update_ui()
+
+				if is_split:
+					# Остаток не помещается — возвращаем непомещённую часть в источник
+					var leftover := drag_amt - moved
+					if leftover > 0:
+						src_slot.amount += leftover
+						src_slot.slot_node.ammount = src_slot.amount
+						src_slot.slot_node.update_ui()
+				else:
+					src_slot.amount -= moved
+					if src_slot.amount <= 0:
+						src_slot.item = null
+						src_slot.amount = 0
+						src_slot.slot_node.item = null
+					src_slot.slot_node.ammount = src_slot.amount
+					src_slot.slot_node.update_ui()
+
 				_emit_changed_signals(src_slot, dst_slot)
 				return
+		elif is_split:
+			# Разный предмет, слот занят, сплит невозможен — возвращаем в источник
+			src_slot.amount += drag_amt
+			src_slot.slot_node.ammount = src_slot.amount
+			src_slot.slot_node.update_ui()
+			return
+
+	# Сплит в пустой слот — просто кладём отщеплённую часть, источник не трогаем
+	if is_split and not dst_slot.item:
+		dst_slot.item   = drag_item.duplicate() if drag_item.stackable else drag_item
+		dst_slot.amount = drag_amt
+		dst_slot.slot_node.item    = dst_slot.item
+		dst_slot.slot_node.ammount = drag_amt
+		dst_slot.slot_node.update_ui()
+		_emit_changed_signals(src_slot, dst_slot)
+		return
+
+	if is_split:
+		# Занятый слот другим предметом и не стакается — вернуть в источник
+		if src_slot:
+			src_slot.amount += drag_amt
+			src_slot.slot_node.ammount = src_slot.amount
+			src_slot.slot_node.update_ui()
+		return
 
 	# Обмен местами
 	var tmp_item   := dst_slot.item

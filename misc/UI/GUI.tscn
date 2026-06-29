@@ -24,28 +24,32 @@ region = Rect2(64, 112, 64, 16)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_01dxt"]
 texture = SubResource("AtlasTexture_po7el")
-expand_margin_left = 1.0
-expand_margin_top = 1.0
-expand_margin_right = 1.0
-expand_margin_bottom = 1.0
-modulate_color = Color(1, 0.1882353, 0.10980392, 1)
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.82638633, 0, 0.065350935, 1)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2v76w"]
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_my3yu"]
 texture = SubResource("AtlasTexture_po7el")
-expand_margin_left = 1.0
-expand_margin_top = 1.0
-expand_margin_right = 1.0
-expand_margin_bottom = 1.0
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_my3yu"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_yfmxh"]
-texture = SubResource("AtlasTexture_po7el")
-expand_margin_left = 1.0
-expand_margin_top = 1.0
-expand_margin_right = 1.0
-expand_margin_bottom = 1.0
-modulate_color = Color(0.1928395, 0.041526474, 0.45248896, 1)
+[sub_resource type="AtlasTexture" id="AtlasTexture_yfmxh"]
+atlas = ExtResource("4_01dxt")
+region = Rect2(64, 112, 64, 16)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2v76w"]
+texture = SubResource("AtlasTexture_yfmxh")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.5456216, 1.790464e-05, 0.4052836, 1)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rpipr"]
 load_path = "res://.godot/imported/Icons.png-a24332a59a427aaf04ec263d25c271be.ctex"
@@ -139,10 +143,10 @@ metadata/_custom_type_script = "uid://bol7bb0n3rim5"
 [node name="HealthBar" type="ProgressBar" parent="HUD" unique_id=1844046137]
 custom_minimum_size = Vector2(100, 10)
 layout_mode = 0
-offset_left = 21.0
-offset_top = 16.0
-offset_right = 121.0
-offset_bottom = 26.0
+offset_left = 11.0
+offset_top = 14.0
+offset_right = 111.0
+offset_bottom = 24.0
 size_flags_horizontal = 0
 size_flags_vertical = 1
 localize_numeral_system = false
@@ -162,7 +166,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 1
 localize_numeral_system = false
 mouse_filter = 2
-theme_override_styles/fill = SubResource("StyleBoxTexture_2v76w")
+theme_override_styles/fill = SubResource("StyleBoxTexture_my3yu")
 show_percentage = false
 
 [node name="CurseBar" type="ProgressBar" parent="HUD/HealthBar" unique_id=2069860655]
@@ -175,16 +179,15 @@ size_flags_vertical = 1
 localize_numeral_system = false
 mouse_filter = 2
 theme_override_styles/background = SubResource("StyleBoxEmpty_my3yu")
-theme_override_styles/fill = SubResource("StyleBoxTexture_yfmxh")
+theme_override_styles/fill = SubResource("StyleBoxTexture_2v76w")
 show_percentage = false
 
 [node name="HeartIcon" type="TextureRect" parent="HUD/HealthBar" unique_id=1537346670]
+visible = false
 custom_minimum_size = Vector2(24, 24)
-layout_mode = 0
-offset_left = -9.0
-offset_top = -5.0
-offset_right = 15.0
-offset_bottom = 19.0
+layout_mode = 1
+offset_right = 24.0
+offset_bottom = 24.0
 scale = Vector2(0.7601346, 0.7601346)
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -206,14 +209,10 @@ layout_mode = 1
 
 [node name="InventorySlot37" parent="HUD" unique_id=1448857901 groups=["CoinSlot"] instance=ExtResource("6_01dxt")]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -462.0
-offset_top = 36.0
-offset_right = -446.0
-offset_bottom = 52.0
-grow_horizontal = 0
+offset_left = 10.0
+offset_top = 30.0
+offset_right = 26.0
+offset_bottom = 46.0
 script = ExtResource("7_my3yu")
 gold_item = ExtResource("8_yfmxh")
 max_stack = 9999
