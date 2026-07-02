@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://jl6w7073r4nv"]
 
 [ext_resource type="Script" uid="uid://b1l7sa4nobavs" path="res://misc/Projectiles/Projectile.gd" id="1_ocmba"]
-[ext_resource type="Texture2D" uid="uid://c58wps8d412of" path="res://Assets/Textures/SpriteSheets/Porjectiles.png" id="2_ocmba"]
+[ext_resource type="Texture2D" uid="uid://c58wps8d412of" path="res://Assets/Textures/Porjectiles.png" id="2_ocmba"]
 [ext_resource type="AudioStream" uid="uid://cgigsrfyxuodb" path="res://Assets/Audio/SFX/Swing.wav" id="3_mg0kq"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="4_p4qcp"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="4_p4qcp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_njjya"]
 radius = 4.0

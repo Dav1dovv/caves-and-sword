@@ -2,12 +2,12 @@
 
 [ext_resource type="Script" uid="uid://ck6fwtmpc5riu" path="res://misc/Stations/Activators/activator.gd" id="1_n4wj6"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="2_ifd3r"]
-[ext_resource type="Texture2D" uid="uid://76k3rd8s0r6e" path="res://Assets/Textures/Activator.png" id="3_53e6p"]
-[ext_resource type="Texture2D" uid="uid://fwrn3xk6rkdq" path="res://Assets/Textures/CrashedCapsulePart.png" id="3_jyyft"]
+[ext_resource type="Texture2D" path="res://Assets/Textures/Activator.png" id="3_53e6p"]
+[ext_resource type="Texture2D" path="res://Assets/Textures/CrashedCapsulePart.png" id="3_jyyft"]
 [ext_resource type="Script" uid="uid://btxho8sqg8tnx" path="res://scr/Systems/Interaction/Interaction.gd" id="4_jyyft"]
-[ext_resource type="AudioStream" uid="uid://cjxoks2fx7yg7" path="res://Assets/Audio/SFX/Activator.wav" id="6_1lcig"]
-[ext_resource type="AudioStream" uid="uid://dyu84cmlsd8im" path="res://Assets/Audio/SFX/Activated.wav" id="7_1x32m"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="7_jyyft"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Activator.wav" id="6_1lcig"]
+[ext_resource type="AudioStream" path="res://Assets/Audio/SFX/Activated.wav" id="7_1x32m"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="7_jyyft"]
 [ext_resource type="Texture2D" uid="uid://dsqxjnpk365qg" path="res://Assets/Textures/Light/Light.png" id="8_7tlw0"]
 
 [sub_resource type="Animation" id="Animation_7tlw0"]

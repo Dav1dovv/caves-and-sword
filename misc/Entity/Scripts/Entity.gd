@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends RapierCharacterBody2D
 class_name Entity
 
 @export var Entity_stats: stats

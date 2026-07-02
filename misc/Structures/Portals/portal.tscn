@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c35burxanwn45"]
 
-[ext_resource type="Texture2D" uid="uid://cc58jdop8ro4x" path="res://Assets/Textures/SpriteSheets/Portals.png" id="1_uqoqr"]
+[ext_resource type="Texture2D" uid="uid://cc58jdop8ro4x" path="res://Assets/Textures/Portals.png" id="1_uqoqr"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="2_h85vr"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uqoqr"]

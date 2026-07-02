@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dc6224o6es5o2"]
 
-[ext_resource type="Texture2D" uid="uid://0e258k1bemao" path="res://Assets/Textures/SpriteSheets/Camp.png" id="1_dumfu"]
+[ext_resource type="Texture2D" uid="uid://0e258k1bemao" path="res://Assets/Textures/Camp.png" id="1_dumfu"]
 [ext_resource type="Texture2D" uid="uid://dsqxjnpk365qg" path="res://Assets/Textures/Light/Light.png" id="2_0u7hf"]
 [ext_resource type="Script" uid="uid://dbxsovdq7bbia" path="res://scr/Misc/Optimizer.gd" id="3_gbsbb"]
 

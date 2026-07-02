@@ -20,13 +20,13 @@ func _ready() -> void:
 	if !player:
 		player = get_tree().get_first_node_in_group("Player")
 	inventory = get_tree().get_first_node_in_group("Inventory")
-	interaction.interact = Callable(self, "Interact")
+	#interaction.interact = Callable(self, "Interact")
 
-func Interact() -> void:
-	if !dialog_timeline.is_empty():
-		Dialogic.start(dialog_timeline.pick_random())
-	else:
-		push_warning("NPC '%s': dialog_timeline не задан!" % name)
+#func Interact() -> void:
+	#if !dialog_timeline.is_empty():
+		#Dialogic.start(dialog_timeline.pick_random())
+	#else:
+		#push_warning("NPC '%s': dialog_timeline не задан!" % name)
 
 func _process(_delta: float) -> void:
 	if not is_instance_valid(player):

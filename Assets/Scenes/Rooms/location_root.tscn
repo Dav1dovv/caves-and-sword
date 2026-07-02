@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://fgmnq4ft82wh"]
+
+[ext_resource type="Script" uid="uid://bdpkv7mxycsja" path="res://scr/Manager/GameManager.gd" id="1_8lo6w"]
+[ext_resource type="Shader" uid="uid://vrc5rp5ou1xx" path="res://Assets/Shader/FOG.gdshader" id="5_2wn0h"]
+[ext_resource type="PackedScene" uid="uid://qc6y8v64442s" path="res://misc/Entity/Player/player.tscn" id="6_bd8m6"]
+[ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="7_1ds54"]
+[ext_resource type="Script" uid="uid://kr53yw1cwmpq" path="res://scr/Misc/ZeldaCam.gd" id="8_xe8ot"]
+[ext_resource type="Script" uid="uid://cooaoinsq4ef1" path="res://scr/Systems/DayNightCycle/WeatherSystem.gd" id="12_0ah42"]
+[ext_resource type="PackedScene" uid="uid://fxof1sd0g3o4" path="res://scr/Systems/DayNightCycle/Weather/rain.tscn" id="13_2wn0h"]
+[ext_resource type="PackedScene" uid="uid://2o0o5m2mc63k" path="res://scr/Systems/DayNightCycle/Weather/heavy_rain.tscn" id="14_jigvp"]
+[ext_resource type="PackedScene" uid="uid://doqxo2pawi5rt" path="res://scr/Systems/DayNightCycle/Weather/fog.tscn" id="15_0okwq"]
+[ext_resource type="PackedScene" uid="uid://4yl2s8436vcp" path="res://scr/Systems/DayNightCycle/Weather/storm.tscn" id="16_2wn0h"]
+[ext_resource type="PackedScene" uid="uid://beftdhk2k5lrh" path="res://scr/Systems/DayNightCycle/Weather/clear.tscn" id="16_62pxm"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1656v"]
+frequency = 0.0202
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ts5k4"]
+width = 256
+height = 256
+noise = SubResource("FastNoiseLite_1656v")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2wn0h"]
+shader = ExtResource("5_2wn0h")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_ts5k4")
+shader_parameter/density = 0.9070000430825
+shader_parameter/speed = Vector2(0, 0)
+
+[sub_resource type="Resource" id="Resource_1ds54"]
+resource_local_to_scene = true
+resource_name = "Player Stat"
+script = ExtResource("7_1ds54")
+base_move_speed = 6.0
+base_armor = 10.0
+base_defense_modifier = 0.2
+metadata/_custom_type_script = "uid://cpp05fs341abo"
+
+[node name="LocationRoot" type="Node2D" unique_id=1133907741 groups=["World"]]
+y_sort_enabled = true
+script = ExtResource("1_8lo6w")
+
+[node name="Panel" type="ColorRect" parent="." unique_id=1457772363]
+z_index = -26
+material = SubResource("ShaderMaterial_2wn0h")
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Player" parent="." unique_id=1150737309 instance=ExtResource("6_bd8m6")]
+Entity_stats = SubResource("Resource_1ds54")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1490511306 node_paths=PackedStringArray("player")]
+physics_interpolation_mode = 1
+position = Vector2(0, -9.62)
+process_callback = 0
+position_smoothing_speed = 2.0
+editor_draw_limits = true
+script = ExtResource("8_xe8ot")
+player = NodePath("../Player")
+metadata/_custom_type_script = "uid://cx0477dq0nkws"
+
+[node name="weatherUI" type="CanvasLayer" parent="." unique_id=1699269038]
+layer = 0
+
+[node name="WeatherSystem" type="Node" parent="weatherUI" unique_id=684586093]
+script = ExtResource("12_0ah42")
+rain_effect = ExtResource("13_2wn0h")
+heavy_rain_effect = ExtResource("14_jigvp")
+fog_effect = ExtResource("15_0okwq")
+sandstorm_effect = ExtResource("16_2wn0h")
+clear_sky_effect = ExtResource("16_62pxm")
+morning_rays_effect = ExtResource("16_62pxm")
+rain_chance = 50
+min_minutes = 7.0
+max_minutes = 10.0
+metadata/_custom_type_script = "uid://cooaoinsq4ef1"

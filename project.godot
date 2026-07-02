@@ -37,7 +37,7 @@ config/tags=PackedStringArray("in_dev")
 run/main_scene="uid://bntky2x40cdr3"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Caves and Sword"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.7", "GL Compatibility")
 boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/show_image=false
 boot_splash/stretch_mode=0
@@ -50,10 +50,9 @@ buses/default_bus_layout="uid://dnm5q832g8ngf"
 
 [autoload]
 
+Global="*res://scr/Manager/global.tscn"
 PhantomCameraManager="*uid://duq6jhf6unyis"
 Cursor="*res://scr/Systems/Cursor/cursor.tscn"
-Global="*res://scr/Manager/global.tscn"
-Dialogic="*uid://ds2q0uclmolvu"
 SaveLoad="*uid://buc810hj77v4k"
 
 [dialogic]
@@ -123,7 +122,7 @@ movie_writer/movie_file="C:/Users/davit/OneDrive/Документы/TLOE_adventu
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dialogic/plugin.cfg", "res://addons/flickering_light/plugin.cfg", "res://addons/font_auto_size_labels/plugin.cfg", "res://addons/phantom_camera/plugin.cfg", "res://addons/script-ide/plugin.cfg")
+enabled=PackedStringArray("res://addons/flickering_light/plugin.cfg", "res://addons/font_auto_size_labels/plugin.cfg", "res://addons/phantom_camera/plugin.cfg", "res://addons/script-ide/plugin.cfg")
 
 [file_customization]
 
@@ -135,7 +134,8 @@ folder_colors={
 "res://misc/Entity/MISC/": "orange",
 "res://misc/Entity/Scripts/": "blue",
 "res://misc/Entity/Textures/": "yellow",
-"res://scr/": "blue"
+"res://scr/": "blue",
+"res://scr/Systems/Creautre Spawner Old/": "red"
 }
 
 [global_group]

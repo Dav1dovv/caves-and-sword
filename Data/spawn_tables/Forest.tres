@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="BiomeSpawnTable" format=3 uid="uid://batc2g5u0ve4l"]
+
+[ext_resource type="Script" uid="uid://b4jn4kkx3d5b8" path="res://scr/Systems/Creature_Spawner/CreatureSpawnEntry.gd" id="1_qtftx"]
+[ext_resource type="PackedScene" uid="uid://cvj174hseymkm" path="res://misc/Entity/Animals/Snail.tscn" id="2_etu6x"]
+[ext_resource type="Script" uid="uid://c26s28lndvwl4" path="res://scr/Systems/Creature_Spawner/BiomeSpawnTable.gd" id="2_wyirg"]
+[ext_resource type="PackedScene" uid="uid://daaj332bbjj6m" path="res://misc/Entity/NPC/NPC_anelim.tscn" id="3_etu6x"]
+
+[sub_resource type="Resource" id="Resource_32jna"]
+script = ExtResource("1_qtftx")
+creature_scene = ExtResource("2_etu6x")
+
+[sub_resource type="Resource" id="Resource_rdiq1"]
+script = ExtResource("1_qtftx")
+creature_scene = ExtResource("3_etu6x")
+metadata/_custom_type_script = "uid://b4jn4kkx3d5b8"
+
+[resource]
+script = ExtResource("2_wyirg")
+entries = Array[ExtResource("1_qtftx")]([SubResource("Resource_32jna"), SubResource("Resource_rdiq1")])

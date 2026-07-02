@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dp5snq7fa0jqr"]
 
 [ext_resource type="Script" uid="uid://b1l7sa4nobavs" path="res://misc/Projectiles/Projectile.gd" id="1_x0dfj"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="2_ar56o"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="2_ar56o"]
 [ext_resource type="AudioStream" uid="uid://cgigsrfyxuodb" path="res://Assets/Audio/SFX/Swing.wav" id="3_3pfxv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_njjya"]

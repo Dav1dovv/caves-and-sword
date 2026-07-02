@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://dyh83ojl28cng" path="res://misc/Boxes/PlayerHitBox.gd" id="5_kgjb5"]
 [ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="6_xdby1"]
 [ext_resource type="Script" uid="uid://8un4fxvacetp" path="res://misc/Entity/Player/skin.gd" id="8_na5cn"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="10_x7qg1"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="10_x7qg1"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="11_t4dtc"]
 [ext_resource type="Script" uid="uid://d2b3gchtl7jhb" path="res://misc/Boxes/HurtBox.gd" id="12_utbik"]
 [ext_resource type="Texture2D" uid="uid://cee8sykoffp27" path="res://misc/Entity/Player/Textures/Skin8.png" id="16_cylog"]
@@ -60,10 +60,10 @@ radius = 13.038404
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1ut5v"]
 atlas = ExtResource("10_x7qg1")
-region = Rect2(80, 96, 16, 16)
+region = Rect2(32, 96, 16, 16)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5fsrh"]
-random_pitch = 1.1892071
+random_pitch = 1.820393
 streams_count = 1
 stream_0/stream = ExtResource("19_07yfm")
 
@@ -334,6 +334,149 @@ tracks/7/keys = {
 }]
 }
 
+[sub_resource type="Animation" id="Animation_5fsrh"]
+resource_name = "Hit"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LeftHand:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.11439636, 0.2, 0.6),
+"transitions": PackedFloat32Array(1, 0.079660036, 0.088388406, 1),
+"update": 0,
+"values": [Vector2(-3.55887, -3.64698), Vector2(-2.088455, -1.6472137), Vector2(-2.088455, -1.6472137), Vector2(-3.55887, -3.64698)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("LeftHand:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.11439636, 0.2, 0.41767973, 0.6),
+"transitions": PackedFloat32Array(1, 0.079660036, 0.088388406, 1, 1),
+"update": 0,
+"values": [0.0, -0.88014716, -0.88014716, -3.498517, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("LeftHand:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("LeftHand/Equip:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.52675533, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0.18572333, 4.1189203), Vector2(1.6792076, 4.6430697), Vector2(0.18572333, 4.1189203)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("LeftHand/Equip:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.52675533, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.7853982, 0.7853982, 2.0943952, 0.7853982]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("LeftHand/Equip:scale")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("RightHand:position")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0, 0.11439636, 0.2, 0.6),
+"transitions": PackedFloat32Array(1, 0.079660036, 0.088388406, 1),
+"update": 0,
+"values": [Vector2(3.50243, -3.64698), Vector2(2.1790562, -2.999996), Vector2(2.1790562, -2.999996), Vector2(3.50243, -3.64698)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("RightHand:rotation")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.11439636, 0.2, 0.41767973, 0.6),
+"transitions": PackedFloat32Array(1, 0.079660036, 0.088388406, 1, 1),
+"update": 0,
+"values": [0.0, -0.49070543, -0.49070543, -3.1090753, 0.0]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("RightHand:scale")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.26869842, 0.6, 0.8000001),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 0.625079), Vector2(1, 1), Vector2(1, 0.625079)]
+}
+tracks/9/type = "audio"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../../../Swing")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": SubResource("AudioStreamRandomizer_5fsrh")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": SubResource("AudioStreamRandomizer_5fsrh")
+}],
+"times": PackedFloat32Array(0.2, 0.7)
+}
+tracks/9/use_blend = true
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("%player_HitBox/CollisionShape2D:disabled")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.5187742, 0.6172083),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+
 [sub_resource type="Animation" id="Animation_2x6pg"]
 resource_name = "Idle"
 loop_mode = 1
@@ -576,6 +719,30 @@ tracks/13/keys = {
 "update": 1,
 "values": [true]
 }
+tracks/14/type = "value"
+tracks/14/imported = false
+tracks/14/enabled = true
+tracks/14/path = NodePath("LeftHand/Equip:position")
+tracks/14/interp = 1
+tracks/14/loop_wrap = true
+tracks/14/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0.18572333, 4.1189203)]
+}
+tracks/15/type = "value"
+tracks/15/imported = false
+tracks/15/enabled = true
+tracks/15/path = NodePath("LeftHand/Equip:scale")
+tracks/15/interp = 1
+tracks/15/loop_wrap = true
+tracks/15/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_veb3l"]
 resource_name = "Shoot"
@@ -602,6 +769,20 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [-1.5707964, 0.0]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../../..")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.033333335),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"shoot"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_n3vuq"]
@@ -685,6 +866,7 @@ _data = {
 &"Attack": SubResource("Animation_c3sx8"),
 &"Drink": SubResource("Animation_q8wac"),
 &"Eating": SubResource("Animation_x7qg1"),
+&"Hit": SubResource("Animation_5fsrh"),
 &"Idle": SubResource("Animation_2x6pg"),
 &"RESET": SubResource("Animation_04t4o"),
 &"Shoot": SubResource("Animation_veb3l"),

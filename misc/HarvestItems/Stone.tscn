@@ -11,7 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://prb16b2eig2m" path="res://misc/HarvestItems/SFX/Mining/Destroy2.mp3" id="10_hlf2w"]
 [ext_resource type="AudioStream" uid="uid://c5rjjykffa2ub" path="res://misc/HarvestItems/SFX/Mining/Destroy3.mp3" id="11_bhrl0"]
 [ext_resource type="PackedScene" uid="uid://d4dhrx0cb6776" path="res://misc/Particles/SplashParticles.tscn" id="14_fma4y"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="15_s8fu3"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="15_s8fu3"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_bhrl0"]
 

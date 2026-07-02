@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://btxho8sqg8tnx" path="res://scr/Systems/Interaction/Interaction.gd" id="2_yb1kq"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="4_uyyit"]
 [ext_resource type="Texture2D" uid="uid://datsysl7u1w7" path="res://misc/Chest/Chest1.png" id="5_jct2l"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="9_2urs1"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="9_2urs1"]
 [ext_resource type="Resource" uid="uid://dthgslbfnjeal" path="res://misc/Content/Items/Slime.tres" id="9_72dcn"]
 [ext_resource type="Script" uid="uid://c6tw2fkklnri5" path="res://misc/Drop/DropItem.gd" id="11_8f5ct"]
 [ext_resource type="Script" uid="uid://ctm4b4v8txo1q" path="res://scr/Resources/WeightItem.gd" id="13_rn3rj"]

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://ecli8ul4w1xc"]
 
-[ext_resource type="Texture2D" uid="uid://drjlnqg58dect" path="res://misc/Entity/Player/Textures/Skin9.png" id="1_be30a"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="2_7mpav"]
-[ext_resource type="Texture2D" uid="uid://bbwrlu36nxdg1" path="res://misc/Entity/Player/Textures/Eyes.png" id="3_7mpav"]
+[ext_resource type="Texture2D" uid="uid://dsplngg2gyp50" path="res://misc/Entity/Player/Textures/Skin9.png" id="1_be30a"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="2_7mpav"]
+[ext_resource type="Texture2D" path="res://misc/Entity/Player/Textures/Eyes.png" id="3_7mpav"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="3_q0cn5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1ut5v"]

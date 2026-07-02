@@ -3,7 +3,7 @@ extends Resource
 class_name ItemData
 
 @export var icon : Texture
-@export_enum("Attack","Eating","Drink","Shoot") var play_anim : String = "Attack"
+@export_enum("Attack","Hit","Eating","Drink","Shoot") var play_anim : String = "Attack"
 @export_placeholder("Wood,Stone,Clay") var item_name : String
 @export_multiline var description : String
 @export var count : int 

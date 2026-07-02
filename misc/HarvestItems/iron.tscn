@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://c5rjjykffa2ub" path="res://misc/HarvestItems/SFX/Mining/Destroy3.mp3" id="9_e6m8d"]
 [ext_resource type="AudioStream" uid="uid://d0ih08d1mebf3" path="res://Assets/Audio/SFX/Environemnt/HarvesstItems/Mineral.mp3" id="11_e6m8d"]
 [ext_resource type="PackedScene" uid="uid://d4dhrx0cb6776" path="res://misc/Particles/SplashParticles.tscn" id="13_pvkrq"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="14_a56ye"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="14_a56ye"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_3dfft"]
 radius = 4.0000067

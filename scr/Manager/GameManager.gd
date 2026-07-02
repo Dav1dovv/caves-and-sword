@@ -10,6 +10,7 @@ class_name GameManager
 # ═══════════════════════════════════════════════════════════════════════════════
 
 signal world_ready
+signal biome_changed(new_biome: String)
 
 @export var world_seed: String = ""
 
@@ -80,6 +81,17 @@ func modify_corruption(delta: int) -> int:
 	corruption_level = clamp(corruption_level + delta, 0, 3)
 	# Убрать строки с Global.corruption — они затирали float-значение 0-100 числом 0-3
 	return corruption_level
+
+
+## Сообщает GameManager, в каком биоме сейчас находится игрок, и меняет
+## значение на нужное. Вызывается автоматически из RoomZone при входе в зону
+## с заданным zone_biome, либо вручную из любого другого места.
+func set_biome(new_biome: String) -> void:
+	if biome == new_biome:
+		return
+	biome = new_biome
+	emit_signal("biome_changed", new_biome)
+	print("[GameManager] Biome changed to: %s" % biome)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

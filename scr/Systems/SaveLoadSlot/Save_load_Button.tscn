@@ -13,7 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://cqcradnom2smb" path="res://misc/Entity/Player/Textures/Skin7.png" id="11_wwx2f"]
 [ext_resource type="Script" uid="uid://8un4fxvacetp" path="res://misc/Entity/Player/skin.gd" id="12_ew20d"]
 [ext_resource type="Texture2D" uid="uid://btck7ovd2kt5p" path="res://misc/Entity/Player/Textures/Skin11.png" id="13_kxodd"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="14_t6mi7"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="14_t6mi7"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="16_jdvgb"]
 [ext_resource type="Script" uid="uid://bttgnk3bb2a8i" path="res://addons/font_auto_size_labels/auto_size_label.gd" id="22_wwx2f"]
 [ext_resource type="PackedScene" uid="uid://gb7k36a7pc6o" path="res://scr/Misc/UIelements/button.tscn" id="23_b6csp"]
@@ -1282,9 +1282,11 @@ font_size = 13
 
 [node name="Panel" type="Button" unique_id=966165572 node_paths=PackedStringArray("player_name_label", "date_label")]
 custom_minimum_size = Vector2(261, 41)
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 2.0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -130.5
+offset_right = 130.5
+offset_bottom = 41.0
 grow_horizontal = 2
 script = ExtResource("1_fq7x7")
 player_name_label = NodePath("HBoxContainer2/HBoxContainer/Charachter_name")

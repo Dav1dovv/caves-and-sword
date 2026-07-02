@@ -57,6 +57,8 @@ var _lunge_hit_bodies: Array   = []
 @export var BodyAnimator:  AnimationPlayer
 @export var HandAanimator: AnimationPlayer
 
+var camera: ZeldaCam
+
 var dir:       Vector2 = Vector2.ZERO
 var mouse_pos: Vector2 = Vector2.ZERO
 var is_attack: bool    = false
@@ -72,7 +74,8 @@ func _ready() -> void:
 
 	Global.hotbar    = get_tree().get_first_node_in_group("Hotbar")    as Hotbar
 	Global.inventory = get_tree().get_first_node_in_group("Inventory") as Inventory
-	get_tree().get_first_node_in_group("DebugObject").update()
+	camera           = get_tree().get_first_node_in_group("MainCamera") as ZeldaCam
+	#get_tree().get_first_node_in_group("DebugObject").update()
 	gui.player = self
 
 	SaveLoad.load_player(self)
@@ -84,7 +87,7 @@ func _ready() -> void:
 
 	health_bar.update_value(Entity_stats.current_health,Entity_stats.max_health, corruption)
 	effect_display_ui.set_entity(self)
-	_register_commands()
+	#_register_commands()
 
 	if Global.get("pending_exit_walk") and Global.pending_exit_walk["active"]:
 		var d                 := Global.pending_exit_walk
@@ -95,15 +98,15 @@ func _ready() -> void:
 		Global.pending_exit_walk["active"] = false
 
 
-func _register_commands() -> void:
-	var c := Global.developer_console
-	c.register_command("set_speed",     _cmd_set_speed,                      "Set player speed: set_speed [value]")
-	c.register_command("tp",            _cmd_teleport,                       "Teleport: tp [x] [y]")
-	c.register_command("multiply",      _cmd_set_standart_multipilier_speed, "Default movement multiplier: multiply [value]")
-	c.register_command("slow_multiply", _cmd_set_slow_multipilier_speed,     "Slow multiplier: slow_multiply [value]")
-	c.register_command("dash_multiply", _cmd_set_dash_multipilier_speed,     "Dash multiplier: dash_multiply [value]")
-	c.register_command("scale",         _cmd_scale_change,                   "Player scale: scale [x] [y]")
-	c.register_command("unkillable",    _cmd_unkillable,                     "Toggle damage immunity")
+#func _register_commands() -> void:
+	#var c := Global.developer_console
+	#c.register_command("set_speed",     _cmd_set_speed,                      "Set player speed: set_speed [value]")
+	#c.register_command("tp",            _cmd_teleport,                       "Teleport: tp [x] [y]")
+	#c.register_command("multiply",      _cmd_set_standart_multipilier_speed, "Default movement multiplier: multiply [value]")
+	#c.register_command("slow_multiply", _cmd_set_slow_multipilier_speed,     "Slow multiplier: slow_multiply [value]")
+	#c.register_command("dash_multiply", _cmd_set_dash_multipilier_speed,     "Dash multiplier: dash_multiply [value]")
+	#c.register_command("scale",         _cmd_scale_change,                   "Player scale: scale [x] [y]")
+	#c.register_command("unkillable",    _cmd_unkillable,                     "Toggle damage immunity")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -116,7 +119,11 @@ func _physics_process(delta: float) -> void:
 	if is_alive:
 		_update_lunge(delta)
 		if not _is_lunging:
-			if _exit_walk_active:
+			if camera and camera.is_transitioning:
+				# Камера ещё едет к новой комнате — гасим скорость, чтобы игрок её не обогнал
+				_current_velocity = _current_velocity.lerp(Vector2.ZERO, friction)
+				velocity = _current_velocity
+			elif _exit_walk_active:
 				_update_exit_walk(delta)
 			else:
 				_movement(delta)
@@ -240,7 +247,7 @@ func _input(event: InputEvent) -> void:
 		if equip.lunge_enabled and not _is_lunging:
 			_start_lunge(equip)
 
-		if equip.play_anim == "Attack":
+		if equip.play_anim == "Hit":
 			call_deferred("_start_attack_cooldown", equip.one_shot_attack)
 		elif equip.play_anim == "Shoot":
 			_hand.look_at(mouse_pos)
@@ -431,3 +438,11 @@ func _cmd_unkillable(args: Array) -> String:
 	_hurt_col.disabled = not _hurt_col.disabled
 	return "Damage: " + ("OFF (unkillable)" if _hurt_col.disabled else "ON")
 #endregion
+
+func _get_global_position() -> Vector2:
+	return global_position + skin.position
+	
+
+func clamp_to_limits(limit_position : Vector2, limit_sizze : Vector2) -> void:
+	global_position.x = clamp(global_position.x, limit_position.x +20, limit_position.x + limit_sizze.x -20)
+	global_position.y = clamp(global_position.y, limit_position.y +25, limit_position.y + limit_sizze.y)

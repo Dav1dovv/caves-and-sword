@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="equip_data" format=3 uid="uid://knfwrxak5tso"]
 
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="1_nj5ww"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="1_nj5ww"]
 [ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="2_8t8fp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tuabl"]
@@ -20,6 +20,7 @@ critical_radius = 7.5
 critical_multiplier = 1.8
 one_shot_attack = false
 icon = SubResource("AtlasTexture_tuabl")
+play_anim = "Hit"
 item_name = "Iron Pickaxe"
 stackable = false
 metadata/_custom_type_script = "uid://b2ovoyoflp1gw"

@@ -29,8 +29,8 @@ func _ready() -> void:
 	_initialize_slots()
 	_initialize_gold_slot()
 	Global.inventory = self
-	Global.developer_console.register_command("all_items_list", _cmd_list, "List all items")
-	Global.developer_console.register_command("add_item", _cmd_add_item, "Usage: add_item [itm_indx] [count]")
+	#Global.developer_console.register_command("all_items_list", _cmd_list, "List all items")
+	#Global.developer_console.register_command("add_item", _cmd_add_item, "Usage: add_item [itm_indx] [count]")
 	gold_slot = get_tree().get_first_node_in_group("CoinSlot")
 
 # ─────────────────────────────────────────────────────────────────

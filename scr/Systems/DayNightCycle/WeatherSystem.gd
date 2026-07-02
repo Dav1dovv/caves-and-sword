@@ -44,6 +44,9 @@ func _ready() -> void:
 
 	Global.day_night.phase_changed.connect(_on_phase_changed)
 
+	if gm and gm.has_signal("biome_changed"):
+		gm.biome_changed.connect(_on_biome_changed)
+
 	if _biome != "" and Global.weather_state.has(_biome):
 		_apply_weather(Global.weather_state[_biome])
 	else:
@@ -118,6 +121,17 @@ func _save_weather(type: String) -> void:
 func _is_night() -> bool:
 	return Global.day_night and \
 		Global.day_night.current_phase == Global.day_night.Phase.NIGHT
+
+
+## Игрок перешёл в другой биом (GameManager.biome изменился) — переключаем
+## погоду на сохранённое состояние этого биома, либо запускаем новую если
+## для него ещё ничего не сохранено.
+func _on_biome_changed(new_biome: String) -> void:
+	_biome = new_biome
+	if Global.weather_state.has(_biome):
+		_apply_weather(Global.weather_state[_biome])
+	else:
+		_change_weather()
 
 
 func force_weather(type: String) -> void:

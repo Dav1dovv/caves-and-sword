@@ -1,4 +1,4 @@
-extends Area2D
+extends RapierArea2D
 class_name Harvestable
 
 signal collected
@@ -69,7 +69,13 @@ func _ready() -> void:
 	if Global.corruption.has(location_name):
 		corruption_value = Global.corruption[location_name]
 
-	var chance: float = (corruption_value / 100.0) * (gm.corruption_level / 3.0)
+	# Заражение берём из зоны, в которой физически стоит этот объект (если она
+	# есть и задаёт свой уровень), а не из общего заражения всей сцены —
+	# так один и тот же биом может иметь спокойные и сильно заражённые комнаты.
+	var zone := RoomZone.find_zone_at(get_tree(), global_position)
+	var effective_corruption_level: int = zone.get_effective_corruption(gm) if zone else gm.corruption_level
+
+	var chance: float = (corruption_value / 100.0) * (effective_corruption_level / 3.0)
 	is_corrupted = randf() < chance
 	
 	if is_corrupted:

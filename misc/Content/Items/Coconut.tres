@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cndi010t3aj7d" path="res://Assets/Textures/UI/Effects/Effect4.png" id="3_0du6l"]
 [ext_resource type="PackedScene" uid="uid://bpj1sgib1xsqp" path="res://misc/Particles/Effect.tscn" id="4_116bn"]
 [ext_resource type="Texture2D" uid="uid://bhs2ikxc2auo4" path="res://Assets/Textures/UI/Effects/Effect3.png" id="5_0wq7q"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="6_gwbl5"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="6_gwbl5"]
 
 [sub_resource type="Resource" id="Resource_8c3d7"]
 script = ExtResource("1_1fxk1")

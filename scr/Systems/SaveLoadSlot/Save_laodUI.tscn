@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://8un4fxvacetp" path="res://misc/Entity/Player/skin.gd" id="5_fleqo"]
 [ext_resource type="Texture2D" uid="uid://duv7dkh763fec" path="res://misc/Entity/Player/Textures/Skin1.png" id="6_rjumb"]
 [ext_resource type="Texture2D" uid="uid://dobdbv38qprsl" path="res://misc/Entity/Player/Textures/Skin2.png" id="7_e20lw"]
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="7_p2nwc"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="7_p2nwc"]
 [ext_resource type="Texture2D" uid="uid://btvrs73ifglv3" path="res://misc/Entity/Player/Textures/Skin3.png" id="8_d86rs"]
 [ext_resource type="Texture2D" uid="uid://btck7ovd2kt5p" path="res://misc/Entity/Player/Textures/Skin11.png" id="9_h50x6"]
 [ext_resource type="Texture2D" uid="uid://bvn1k3yr05y11" path="res://Assets/Textures/Shadows/Shadow.png" id="9_hkjfi"]
@@ -1188,6 +1188,7 @@ uppercase = true
 custom_minimum_size = Vector2(430, 178.83)
 layout_mode = 2
 theme_override_constants/scrollbar_v_separation = 14
+draw_focus_border = true
 
 [node name="SaveSlots" type="VBoxContainer" parent="Panel/VBoxContainer/ScrollContainer" unique_id=1118311292]
 custom_minimum_size = Vector2(371.8, 194.485)
@@ -1228,7 +1229,6 @@ mouse_filter = 1
 [node name="NewSavePanel" type="VBoxContainer" parent="." unique_id=1364592107]
 visible = false
 custom_minimum_size = Vector2(100, 100)
-layout_direction = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1236,6 +1236,7 @@ offset_left = 101.0
 offset_right = -101.0
 grow_horizontal = 2
 grow_vertical = 2
+layout_direction = 1
 alignment = 1
 
 [node name="Label" type="Label" parent="NewSavePanel" unique_id=913014593]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="equip_data" format=3 uid="uid://5iv0u43vsvvq"]
 
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="1_gy43c"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="1_gy43c"]
 [ext_resource type="PackedScene" uid="uid://bgoo5cwnuj0lj" path="res://misc/Projectiles/Arrow.tscn" id="2_icutk"]
 [ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="3_xcytg"]
 

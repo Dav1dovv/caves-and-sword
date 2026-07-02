@@ -1,6 +1,6 @@
 [gd_scene format=4 uid="uid://b00io70r6gr3g"]
 
-[ext_resource type="PackedScene" uid="uid://fgmnq4ft82wh" path="res://Assets/Scenes/Playable/location_root.tscn" id="1_g0u6v"]
+[ext_resource type="PackedScene" uid="uid://fgmnq4ft82wh" path="res://Assets/Scenes/Rooms/location_root.tscn" id="1_g0u6v"]
 [ext_resource type="TileSet" uid="uid://dfbl1otmpel7t" path="res://scr/Resources/TileMap/TileMap.tres" id="2_8o7jq"]
 [ext_resource type="Script" uid="uid://cpp05fs341abo" path="res://misc/Entity/Scripts/Stats.gd" id="3_14ked"]
 [ext_resource type="Script" uid="uid://bj528o0edtyfg" path="res://scr/Misc/Door.gd" id="4_8o7jq"]
@@ -19,11 +19,8 @@ size = Vector2(58, 34)
 
 [node name="LocationRoot" unique_id=1133907741 instance=ExtResource("1_g0u6v")]
 
-[node name="WorldGenerator" parent="." index="0" unique_id=569046359]
-visible = false
-
-[node name="CreatureSpawner" parent="." index="1" unique_id=2003484596]
-visible = false
+[node name="Player" parent="." index="1" unique_id=1150737309]
+Entity_stats = SubResource("Resource_8o7jq")
 
 [node name="Tiles" type="Node2D" parent="." index="2" unique_id=1995110314]
 y_sort_enabled = true
@@ -43,10 +40,7 @@ y_sort_enabled = true
 tile_map_data = PackedByteArray("AAD+//f/AwAHAAMAAAAAAPf/AwAHAAMAAAAFAPf/AwAHAAMAAAD5//f/AwAHAAMAAAD///n/AwAHAAAAAAD9//n/AwAFAAEAAAD+//n/AwAGAAEAAAAAAPn/AwAFAAEAAAABAPn/AwAGAAEAAAD///v/AwAFAAIAAAD4//j/AwAGAAQAAAD5//j/AwAHAAQAAAD6//j/AwAHAAQAAAD9//j/AwAHAAQAAAD+//j/AwAHAAQAAAD///j/AwAHAAQAAAAAAPj/AwAHAAQAAAABAPj/AwAHAAQAAAACAPj/AwAHAAQAAAADAPj/AwAHAAQAAAAEAPj/AwAHAAQAAAAFAPj/AwAHAAQAAAAGAPj/AwAIAAQAAAD7//j/AwAAAAIAAAD8//j/AwAHAAQAAAD7/wAAAwAGAAcAAAD7/wIAAwAEAAgAAAD5/wAAAwAEAAgAAAD9/wEAAwAEAAgAAAA=")
 tile_set = ExtResource("2_8o7jq")
 
-[node name="Player" parent="." index="3" unique_id=1150737309]
-Entity_stats = SubResource("Resource_8o7jq")
-
-[node name="Camera2D" parent="." index="4" unique_id=1490511306]
+[node name="Camera2D" parent="." index="3" unique_id=1490511306]
 physics_interpolation_mode = 0
 position = Vector2(0, -44.807953)
 zoom = Vector2(0.755, 0.755)
@@ -56,15 +50,7 @@ limit_top = -222
 limit_right = 330
 limit_bottom = 134
 
-[node name="PhantomCamera2D" parent="." index="5" unique_id=2085077661 node_paths=PackedStringArray("follow_target")]
-position = Vector2(0, -44.807953)
-follow_mode = 5
-follow_target = NodePath("../Tiles/Floor")
-zoom = Vector2(0.755, 0.755)
-limit_target = NodePath("../Tiles/Walls")
-limit_margin = Vector4i(-194, -46, -186, 10)
-
-[node name="ColorRect" type="ColorRect" parent="." index="6" unique_id=1772210208]
+[node name="ColorRect" type="ColorRect" parent="." index="5" unique_id=1772210208]
 z_index = -69
 offset_left = -376.0
 offset_top = -240.0
@@ -72,7 +58,7 @@ offset_right = 352.0
 offset_bottom = 200.0
 color = Color(0, 0, 0, 1)
 
-[node name="Door" type="Area2D" parent="." index="7" unique_id=559897070]
+[node name="Door" type="Area2D" parent="." index="6" unique_id=559897070]
 collision_layer = 1024
 collision_mask = 4
 script = ExtResource("4_8o7jq")

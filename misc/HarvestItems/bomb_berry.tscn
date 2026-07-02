@@ -18,6 +18,8 @@ metadata/_custom_type_script = "uid://c81sr08jd14rd"
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lh7ix"]
 size = Vector2(28, 5.2601004)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ber6s"]
+
 [node name="BombBerry" unique_id=1934415035 instance=ExtResource("1_4dqry")]
 script = ExtResource("2_4n17v")
 harvest_action = SubResource("Resource_1e128")
@@ -33,6 +35,9 @@ rect = Rect2(-10, -10, 39, 35)
 
 [node name="droper" parent="." index="3" unique_id=1465568748]
 drop_item = Array[ExtResource("5_phmaj")]([ExtResource("6_lh7ix")])
+
+[node name="CollisionShape2D" parent="." index="5" unique_id=1716306559]
+shape = SubResource("CircleShape2D_ber6s")
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="7" unique_id=267037277]
 position = Vector2(0, -6)

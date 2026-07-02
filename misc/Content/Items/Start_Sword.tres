@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="equip_data" format=3 uid="uid://drk017uaofosr"]
 
-[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/SpriteSheets/Items-Sheet.png" id="1_hwcr2"]
+[ext_resource type="Texture2D" uid="uid://cf3avrbvs0ues" path="res://Assets/Textures/Items-Sheet.png" id="1_hwcr2"]
 [ext_resource type="Script" uid="uid://b2ovoyoflp1gw" path="res://scr/Resources/ItemData/Equip_item_data.gd" id="1_ua3gp"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ber6s"]
@@ -21,6 +21,7 @@ miss_chance_per_unit = 0.08
 critical_chance = 0.1
 critical_multiplier = 1.5
 icon = SubResource("AtlasTexture_snlep")
+play_anim = "Hit"
 item_name = "Knife"
 stackable = false
 price = 0
